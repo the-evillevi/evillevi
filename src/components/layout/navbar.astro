@@ -1,0 +1,78 @@
+---
+const navItems = [
+  { href: "#components", label: "Components" },
+  { href: "#playground", label: "Playground" },
+  { href: "#tokens", label: "Tokens" },
+  { href: "#docs", label: "Docs" },
+];
+---
+
+<header
+  class="nb-navbar sticky top-0 z-50 border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)]/95 backdrop-blur"
+>
+  <nav
+    class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6"
+    aria-label="Primary navigation"
+  >
+    <a
+      class="nb-brand nb-shadow-sm inline-flex items-center border-4 border-[var(--nb-ink)] bg-[var(--nb-peach)] px-3 py-2 text-sm font-black tracking-normal text-[var(--nb-button-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:-translate-y-0.5 hover:bg-[var(--nb-pink)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
+      href="#top"
+    >
+      NB.CC
+    </a>
+
+    <div class="hidden items-center gap-2 md:flex">
+      {
+        navItems.map((item) => (
+          <a
+            class="border-4 border-transparent px-3 py-2 text-sm font-black text-[var(--nb-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:border-[var(--nb-ink)] hover:bg-[var(--nb-yellow)] hover:text-[var(--nb-button-text)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        class="nb-theme-toggle nb-shadow-sm border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-3 py-2 text-sm font-black text-[var(--nb-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:-translate-y-0.5 hover:bg-[var(--nb-lavender)] hover:text-[var(--nb-button-text)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)] active:translate-x-1 active:translate-y-1 active:shadow-none"
+        type="button"
+        aria-label="Toggle light and dark theme"
+        data-theme-toggle
+      >
+        <span aria-hidden="true" data-theme-icon>☀</span>
+        <span class="sr-only">Toggle theme</span>
+      </button>
+      <button
+        class="nb-menu-button nb-shadow-sm border-4 border-[var(--nb-ink)] bg-[var(--nb-teal)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)] active:translate-x-1 active:translate-y-1 active:shadow-none md:hidden"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        data-menu-toggle
+      >
+        Menu
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="mobile-menu"
+    class="nb-mobile-menu hidden border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-4 md:hidden"
+    data-mobile-menu
+  >
+    <div class="grid gap-2">
+      {
+        navItems.map((item) => (
+          <a
+            class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-3 text-base font-black text-[var(--nb-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:bg-[var(--nb-yellow)] hover:text-[var(--nb-button-text)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
+            href={item.href}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</header>

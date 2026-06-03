@@ -1,0 +1,79 @@
+---
+const {
+  eyebrow = "Design System",
+  title = "Neobrutalism + Catppuccin",
+  description = "A tactile Astro component showcase with thick borders, hard shadows, sharp focus states, and theme-aware Catppuccin color tokens.",
+} = Astro.props;
+---
+
+<section
+  id="top"
+  class="nb-hero relative overflow-hidden border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)]"
+>
+  <div
+    class="mx-auto grid max-w-7xl gap-8 px-4 py-14 md:grid-cols-[1.08fr_0.92fr] md:px-6 md:py-20 lg:py-24"
+  >
+    <div class="nb-enter space-y-6">
+      <p
+        class="inline-flex border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
+      >
+        {eyebrow}
+      </p>
+      <h1
+        class="max-w-4xl text-5xl leading-[0.95] font-black text-[var(--nb-text)] uppercase [text-shadow:5px_5px_0_var(--nb-peach)] md:text-7xl lg:text-8xl"
+      >
+        {title}
+      </h1>
+      <p class="max-w-2xl text-lg leading-8 font-bold text-[var(--nb-muted)] md:text-xl">
+        {description}
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a
+          class="nb-shadow border-4 border-[var(--nb-ink)] bg-[var(--nb-peach)] px-6 py-4 text-base font-black text-[var(--nb-button-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:-translate-y-1 hover:bg-[var(--nb-pink)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)] active:translate-x-1 active:translate-y-1 active:scale-[0.98] active:shadow-none"
+          href="#components"
+        >
+          Inspect Components
+        </a>
+        <a
+          class="nb-shadow border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-6 py-4 text-base font-black text-[var(--nb-text)] uppercase transition-all duration-200 ease-[var(--nb-ease)] hover:-translate-y-1 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)] active:translate-x-1 active:translate-y-1 active:scale-[0.98] active:shadow-none"
+          href="#tokens"
+        >
+          View Tokens
+        </a>
+      </div>
+    </div>
+
+    <div class="relative min-h-[340px] md:min-h-[440px]" aria-hidden="true">
+      <div
+        class="absolute top-6 left-8 h-32 w-32 rotate-6 border-4 border-[var(--nb-ink)] bg-[var(--nb-blue)] shadow-[8px_8px_0_0_var(--nb-ink)]"
+      >
+      </div>
+      <div
+        class="absolute top-16 right-4 h-44 w-44 -rotate-6 border-4 border-[var(--nb-ink)] bg-[var(--nb-pink)] shadow-[8px_8px_0_0_var(--nb-ink)]"
+      >
+      </div>
+      <div
+        class="absolute bottom-10 left-2 grid h-48 w-56 -rotate-3 grid-cols-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] shadow-[10px_10px_0_0_var(--nb-ink)]"
+      >
+        {
+          Array.from({ length: 16 }).map((_, index) => (
+            <span
+              class:list={[
+                "border-r-4 border-b-4 border-[var(--nb-ink)]",
+                index % 3 === 0
+                  ? "bg-[var(--nb-yellow)]"
+                  : index % 4 === 0
+                    ? "bg-[var(--nb-teal)]"
+                    : "bg-transparent",
+              ]}
+            />
+          ))
+        }
+      </div>
+      <div
+        class="absolute right-10 bottom-24 h-24 w-40 rotate-12 border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] shadow-[8px_8px_0_0_var(--nb-ink)]"
+      >
+      </div>
+    </div>
+  </div>
+</section>

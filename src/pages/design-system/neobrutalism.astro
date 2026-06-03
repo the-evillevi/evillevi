@@ -1,0 +1,725 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/layout/navbar.astro";
+import Hero from "@/components/layout/hero.astro";
+import Footer from "@/components/layout/footer.astro";
+import ShowcaseCard from "@/components/layout/ShowcaseCard.astro";
+import Metric from "@/components/layout/Metric.astro";
+import DocBlock from "@/components/layout/DocBlock.astro";
+
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/starwind/accordion";
+import { Alert, AlertTitle, AlertDescription } from "@/components/starwind/alert";
+import { Badge } from "@/components/starwind/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/starwind/breadcrumb";
+import { Button } from "@/components/starwind/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/starwind/card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/starwind/dialog";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownContent,
+  DropdownItem,
+  DropdownLabel,
+  DropdownSeparator,
+} from "@/components/starwind/dropdown";
+import { Input } from "@/components/starwind/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupButton,
+} from "@/components/starwind/input-group";
+import { Label } from "@/components/starwind/label";
+import { Progress } from "@/components/starwind/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/starwind/radio-group";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/starwind/select";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/starwind/sheet";
+import { Skeleton } from "@/components/starwind/skeleton";
+import { Spinner } from "@/components/starwind/spinner";
+import { Switch } from "@/components/starwind/switch";
+import { Textarea } from "@/components/starwind/textarea";
+import { Toggle } from "@/components/starwind/toggle";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/starwind/tooltip";
+
+const componentGroups = [
+  {
+    title: "Layout & Structure",
+    items: ["accordion", "alert", "badge", "breadcrumb", "card"],
+  },
+  {
+    title: "Forms & Inputs",
+    items: [
+      "button",
+      "checkbox",
+      "input",
+      "input-group",
+      "label",
+      "radio-group",
+      "select",
+      "textarea",
+    ],
+  },
+  {
+    title: "Feedback & Display",
+    items: [
+      "dialog",
+      "dropdown",
+      "image",
+      "progress",
+      "sheet",
+      "skeleton",
+      "spinner",
+      "toggle",
+      "tooltip",
+    ],
+  },
+];
+
+const tokens = [
+  ["Base", "var(--nb-base)", "#eff1f5 / #1e1e2e"],
+  ["Surface", "var(--nb-surface)", "#ccd0da / #313244"],
+  ["Text", "var(--nb-text)", "#4c4f69 / #cdd6f4"],
+  ["Peach", "var(--nb-peach)", "#fe640b / #fab387"],
+  ["Pink", "var(--nb-pink)", "#ea76cb / #f5c2e7"],
+  ["Red", "var(--nb-red)", "#d20f39 / #f38ba8"],
+  ["Yellow", "var(--nb-yellow)", "#df8e1d / #f9e2af"],
+  ["Green", "var(--nb-green)", "#40a02b / #a6e3a1"],
+  ["Teal", "var(--nb-teal)", "#179299 / #94e2d5"],
+  ["Blue", "var(--nb-blue)", "#1e66f5 / #89b4fa"],
+  ["Lavender", "var(--nb-lavender)", "#7287fd / #b4befe"],
+];
+---
+
+<Layout title="Neobrutalism + Catppuccin Design System">
+  <script is:inline>
+    (() => {
+      const savedTheme = localStorage.getItem("nb-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = savedTheme || (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.classList.toggle("dark", theme === "dark");
+    })();
+  </script>
+
+  <div class="nb-page min-h-screen bg-[var(--nb-base)] text-[var(--nb-text)]">
+    <Navbar />
+    <main>
+      <Hero />
+
+      <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-8 md:px-6">
+        <div class="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {
+            componentGroups.map((group) => (
+              <article class="nb-shadow-sm border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-5">
+                <h2 class="mb-3 text-lg font-black uppercase">{group.title}</h2>
+                <div class="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <a
+                      class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase transition-all duration-150 hover:-translate-y-0.5 hover:bg-[var(--nb-peach)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
+                      href={`#${item}`}
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="components" class="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
+        <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p class="mb-2 text-sm font-black text-[var(--nb-peach)] uppercase">
+              Component Gallery
+            </p>
+            <h2 class="text-4xl font-black uppercase md:text-6xl">Tactile UI Blocks</h2>
+          </div>
+          <p class="max-w-xl text-base leading-7 font-bold text-[var(--nb-muted)]">
+            Components inherit a physical surface language through scoped `nb-*` tokens, hard
+            shadows, square corners, and visible keyboard states.
+          </p>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <ShowcaseCard id="accordion" title="Accordion">
+            <Accordion defaultValue="item-1">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Why the heavy border?</AccordionTrigger>
+                <AccordionContent
+                  >It creates instant affordance and makes every panel feel like a movable object.</AccordionContent
+                >
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>What happens on motion?</AccordionTrigger>
+                <AccordionContent
+                  >Transitions stay short and physical, with the layout doing the expressive work.</AccordionContent
+                >
+              </AccordionItem>
+            </Accordion>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="alert" title="Alert + Badge">
+            <Alert class="border-[var(--nb-red)]">
+              <AlertTitle>Build signal detected</AlertTitle>
+              <AlertDescription
+                >Use red only for destructive or urgent states. Pair it with a direct message.</AlertDescription
+              >
+            </Alert>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <Badge class="bg-[var(--nb-green)] text-[var(--nb-button-text)]">Stable</Badge>
+              <Badge class="bg-[var(--nb-pink)] text-[var(--nb-button-text)]">Beta</Badge>
+              <Badge class="bg-[var(--nb-yellow)] text-[var(--nb-button-text)]">Experimental</Badge>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="breadcrumb" title="Breadcrumb">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem><BreadcrumbLink href="#">System</BreadcrumbLink></BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem
+                  ><BreadcrumbLink href="#">Neobrutalism</BreadcrumbLink></BreadcrumbItem
+                >
+                <BreadcrumbSeparator />
+                <BreadcrumbItem><BreadcrumbPage>Catppuccin</BreadcrumbPage></BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="card" title="Card">
+            <Card>
+              <CardHeader>
+                <CardTitle>Release Readiness</CardTitle>
+                <CardDescription>Dense, scannable, and intentionally loud.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div class="grid gap-3 sm:grid-cols-3">
+                  <Metric label="A11y" value="98" />
+                  <Metric label="Motion" value="12" />
+                  <Metric label="Tokens" value="11" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button class="nb-action">Approve</Button>
+              </CardFooter>
+            </Card>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="button" title="Button + Toggle">
+            <div class="flex flex-wrap gap-3">
+              <Button class="nb-action bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
+                >Primary</Button
+              >
+              <Button class="nb-action bg-[var(--nb-blue)] text-[var(--nb-button-text)]"
+                >Secondary</Button
+              >
+              <Button class="nb-action bg-[var(--nb-base)]">Outline</Button>
+              <Toggle class="nb-action" aria-label="Toggle pressed state">Snap</Toggle>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="checkbox" title="Checkbox + Label">
+            <div class="grid gap-4">
+              <Label for="nb-checkbox" class="text-base font-black uppercase"
+                >Component contract</Label
+              >
+              <label class="flex items-center gap-3 text-sm font-bold">
+                <input
+                  id="nb-checkbox"
+                  class="size-6 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] text-[var(--nb-peach)] focus:ring-4 focus:ring-[var(--nb-blue)] focus:ring-offset-4 focus:ring-offset-[var(--nb-base)]"
+                  type="checkbox"
+                  checked
+                />
+                Visible focus, square shape, obvious selected state
+              </label>
+              <Switch aria-label="Enable high contrast" />
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="input" title="Input + Textarea">
+            <div class="grid gap-4">
+              <div>
+                <Label for="project-name">Project name</Label>
+                <Input id="project-name" placeholder="catppuccin-board" />
+              </div>
+              <div>
+                <Label for="notes">Notes</Label>
+                <Textarea id="notes" placeholder="Describe the component state..." />
+              </div>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="input-group" title="Input Group">
+            <InputGroup>
+              <InputGroupAddon>@</InputGroupAddon>
+              <InputGroupInput placeholder="workspace" />
+              <InputGroupButton>Claim</InputGroupButton>
+            </InputGroup>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="radio-group" title="Radio Group">
+            <RadioGroup defaultValue="peach" class="grid gap-3">
+              <label class="flex items-center gap-3 font-bold"
+                ><RadioGroupItem value="peach" /> Peach primary</label
+              >
+              <label class="flex items-center gap-3 font-bold"
+                ><RadioGroupItem value="teal" /> Teal secondary</label
+              >
+              <label class="flex items-center gap-3 font-bold"
+                ><RadioGroupItem value="pink" /> Pink emphasis</label
+              >
+            </RadioGroup>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="select" title="Select">
+            <Select defaultValue="mocha">
+              <SelectTrigger aria-label="Theme flavor">
+                <SelectValue placeholder="Choose flavor" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Catppuccin</SelectLabel>
+                  <SelectItem value="latte">Latte</SelectItem>
+                  <SelectItem value="frappe">Frappe</SelectItem>
+                  <SelectItem value="macchiato">Macchiato</SelectItem>
+                  <SelectItem value="mocha">Mocha</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="dialog" title="Dialog + Dropdown">
+            <div class="flex flex-wrap gap-3">
+              <Dialog>
+                <DialogTrigger asChild
+                  ><Button class="nb-action bg-[var(--nb-pink)] text-[var(--nb-button-text)]"
+                    >Open Dialog</Button
+                  ></DialogTrigger
+                >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm component tone</DialogTitle>
+                    <DialogDescription
+                      >Neobrutalism can be playful while still being readable, accessible, and fast.</DialogDescription
+                    >
+                  </DialogHeader>
+                  <DialogFooter><Button class="nb-action">Got it</Button></DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Dropdown>
+                <DropdownTrigger asChild
+                  ><Button class="nb-action bg-[var(--nb-teal)] text-[var(--nb-button-text)]"
+                    >Menu</Button
+                  ></DropdownTrigger
+                >
+                <DropdownContent>
+                  <DropdownLabel>Actions</DropdownLabel>
+                  <DropdownSeparator />
+                  <DropdownItem>Duplicate</DropdownItem>
+                  <DropdownItem>Export</DropdownItem>
+                  <DropdownItem>Archive</DropdownItem>
+                </DropdownContent>
+              </Dropdown>
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="image" title="Image">
+            <figure
+              class="overflow-hidden border-4 border-[var(--nb-ink)] bg-[var(--nb-blue)] shadow-[6px_6px_0_0_var(--nb-ink)]"
+            >
+              <div
+                class="grid aspect-[16/9] place-items-center bg-[linear-gradient(135deg,var(--nb-blue)_0_24%,var(--nb-pink)_24%_48%,var(--nb-yellow)_48%_72%,var(--nb-green)_72%)]"
+              >
+                <span
+                  class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-2 text-2xl font-black uppercase"
+                  >Framed Media</span
+                >
+              </div>
+            </figure>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="progress" title="Progress + Skeleton + Spinner">
+            <div class="grid gap-5">
+              <Progress value={68} />
+              <div class="grid gap-2">
+                <Skeleton class="h-5 w-4/5" />
+                <Skeleton class="h-5 w-2/3" />
+              </div>
+              <Spinner class="text-[var(--nb-peach)]" />
+            </div>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="sheet" title="Sheet">
+            <Sheet>
+              <SheetTrigger asChild
+                ><Button class="nb-action bg-[var(--nb-green)] text-[var(--nb-button-text)]"
+                  >Open Sheet</Button
+                ></SheetTrigger
+              >
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Token Inspector</SheetTitle>
+                  <SheetDescription
+                    >Side panels use the same thick frame and dramatic depth as cards.</SheetDescription
+                  >
+                </SheetHeader>
+                <SheetFooter><Button class="nb-action">Close Enough</Button></SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="tooltip" title="Tooltip">
+            <Tooltip>
+              <TooltipTrigger asChild
+                ><Button class="nb-action bg-[var(--nb-lavender)] text-[var(--nb-button-text)]"
+                  >Hover</Button
+                ></TooltipTrigger
+              >
+              <TooltipContent>Sharp pointer, strong contrast, quick reveal.</TooltipContent>
+            </Tooltip>
+          </ShowcaseCard>
+        </div>
+      </section>
+
+      <section
+        id="playground"
+        class="border-y-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-12 md:px-6 md:py-16"
+      >
+        <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <p class="mb-2 text-sm font-black text-[var(--nb-peach)] uppercase">
+              Interactive Playground
+            </p>
+            <h2 class="text-4xl font-black uppercase md:text-5xl">Press, Lift, Snap</h2>
+            <p class="mt-4 leading-7 font-bold text-[var(--nb-muted)]">
+              Use the controls to preview how accent color, density, and shadow depth combine into a
+              physical UI rhythm.
+            </p>
+          </div>
+          <div class="nb-shadow grid gap-5 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-5">
+            <div class="grid gap-4 md:grid-cols-3">
+              <button class="nb-play bg-[var(--nb-peach)]">Peach</button>
+              <button class="nb-play bg-[var(--nb-teal)]">Teal</button>
+              <button class="nb-play bg-[var(--nb-pink)]">Pink</button>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="font-black uppercase"
+                >Shadow depth <input
+                  class="mt-2 w-full accent-[var(--nb-peach)]"
+                  type="range"
+                  min="2"
+                  max="10"
+                  value="6"
+                /></label
+              >
+              <label class="font-black uppercase"
+                >Density <input
+                  class="mt-2 w-full accent-[var(--nb-blue)]"
+                  type="range"
+                  min="1"
+                  max="5"
+                  value="3"
+                /></label
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tokens" class="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
+        <div class="mb-8">
+          <p class="mb-2 text-sm font-black text-[var(--nb-peach)] uppercase">Design Tokens</p>
+          <h2 class="text-4xl font-black uppercase md:text-5xl">Catppuccin Variables</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            tokens.map(([name, color, hex]) => (
+              <article class="nb-shadow-sm border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-4">
+                <div
+                  class="mb-4 h-20 border-4 border-[var(--nb-ink)]"
+                  style={`background:${color}`}
+                />
+                <h3 class="text-lg font-black uppercase">{name}</h3>
+                <p class="text-sm font-bold text-[var(--nb-muted)]">{hex}</p>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        id="docs"
+        class="border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-12 md:px-6 md:py-16"
+      >
+        <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
+          <DocBlock title="Color Usage">
+            Use peach for primary actions, blue for focus and navigation, green for success, yellow
+            for warning, red for destructive states, and pink or lavender for expressive highlights.
+            Keep base and surface quiet so accent blocks stay meaningful.
+          </DocBlock>
+          <DocBlock title="Principles">
+            Borders are 3-4px, shadows are offset with no blur, corners stay sharp, and hover states
+            lift while active states compress. The result should feel touchable rather than
+            ornamental.
+          </DocBlock>
+          <DocBlock title="Example">
+            `Button class="nb-action bg-[var(--nb-peach)]"` creates a pressable component with a
+            thick frame, hard shadow, visible focus ring, and Catppuccin-aware theme color.
+          </DocBlock>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+
+  <script is:inline>
+    const applyTheme = (theme) => {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      localStorage.setItem("nb-theme", theme);
+      document.querySelectorAll("[data-theme-icon]").forEach((icon) => {
+        icon.textContent = theme === "dark" ? "☾" : "☀";
+      });
+    };
+
+    const setupNeobrutalism = () => {
+      const currentTheme = document.documentElement.dataset.theme || "light";
+      applyTheme(currentTheme);
+
+      document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+          applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+        });
+      });
+
+      document.querySelectorAll("[data-menu-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const menu = document.querySelector("[data-mobile-menu]");
+          const isOpen = !menu.classList.toggle("hidden");
+          button.setAttribute("aria-expanded", String(isOpen));
+        });
+      });
+    };
+
+    setupNeobrutalism();
+    document.addEventListener("astro:after-swap", setupNeobrutalism);
+  </script>
+</Layout>
+
+<style is:global>
+  :root,
+  html[data-theme="light"] {
+    --nb-base: #eff1f5;
+    --nb-surface: #ccd0da;
+    --nb-text: #4c4f69;
+    --nb-muted: #6c6f85;
+    --nb-peach: #fe640b;
+    --nb-pink: #ea76cb;
+    --nb-red: #d20f39;
+    --nb-yellow: #df8e1d;
+    --nb-green: #40a02b;
+    --nb-teal: #179299;
+    --nb-blue: #1e66f5;
+    --nb-lavender: #7287fd;
+    --nb-ink: #11111b;
+    --nb-button-text: #11111b;
+    --nb-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html[data-theme="dark"] {
+    --nb-base: #1e1e2e;
+    --nb-surface: #313244;
+    --nb-text: #cdd6f4;
+    --nb-muted: #a6adc8;
+    --nb-peach: #fab387;
+    --nb-pink: #f5c2e7;
+    --nb-red: #f38ba8;
+    --nb-yellow: #f9e2af;
+    --nb-green: #a6e3a1;
+    --nb-teal: #94e2d5;
+    --nb-blue: #89b4fa;
+    --nb-lavender: #b4befe;
+    --nb-ink: #11111b;
+    --nb-button-text: #11111b;
+  }
+
+  .nb-page {
+    color-scheme: light dark;
+  }
+
+  .nb-shadow {
+    box-shadow: 8px 8px 0 0 var(--nb-ink);
+  }
+
+  .nb-shadow-sm {
+    box-shadow: 4px 4px 0 0 var(--nb-ink);
+  }
+
+  .nb-enter {
+    animation: nb-slide-in 700ms var(--nb-ease) both;
+  }
+
+  .nb-action,
+  .nb-page [data-slot="button"],
+  .nb-page [data-slot="toggle"],
+  .nb-page [data-slot="select-trigger"],
+  .nb-page [data-slot="dropdown-trigger"],
+  .nb-page [data-slot="dialog-trigger"],
+  .nb-page [data-slot="sheet-trigger"] {
+    border: 4px solid var(--nb-ink) !important;
+    border-radius: 0 !important;
+    box-shadow: 5px 5px 0 0 var(--nb-ink) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    transition:
+      transform 180ms var(--nb-ease),
+      box-shadow 180ms var(--nb-ease),
+      background-color 180ms var(--nb-ease);
+  }
+
+  .nb-action:hover,
+  .nb-page [data-slot="button"]:hover,
+  .nb-page [data-slot="toggle"]:hover {
+    transform: translateY(-2px);
+  }
+
+  .nb-action:active,
+  .nb-page [data-slot="button"]:active,
+  .nb-page [data-slot="toggle"]:active {
+    box-shadow: 0 0 0 0 var(--nb-ink) !important;
+    transform: translate(4px, 4px) scale(0.98);
+  }
+
+  .nb-page [data-slot="card"],
+  .nb-page [data-slot="alert"],
+  .nb-page [data-slot="dialog-content"],
+  .nb-page [data-slot="sheet-content"],
+  .nb-page [data-slot="dropdown-content"],
+  .nb-page [data-slot="tooltip-content"],
+  .nb-page [data-slot="accordion-item"] {
+    border: 4px solid var(--nb-ink) !important;
+    border-radius: 0 !important;
+    background: var(--nb-surface) !important;
+    color: var(--nb-text) !important;
+    box-shadow: 6px 6px 0 0 var(--nb-ink) !important;
+  }
+
+  .nb-page [data-slot="input"],
+  .nb-page [data-slot="textarea"],
+  .nb-page input,
+  .nb-page textarea {
+    border: 4px solid var(--nb-ink) !important;
+    border-radius: 0 !important;
+    background: var(--nb-base) !important;
+    color: var(--nb-text) !important;
+  }
+
+  .nb-page :focus-visible {
+    outline: 4px solid var(--nb-blue) !important;
+    outline-offset: 4px !important;
+  }
+
+  .nb-page [data-slot="progress"] {
+    height: 1.25rem;
+    border: 4px solid var(--nb-ink);
+    border-radius: 0;
+    background: var(--nb-base);
+  }
+
+  .nb-page [data-slot="progress"] > div {
+    background: repeating-linear-gradient(
+      45deg,
+      var(--nb-peach),
+      var(--nb-peach) 10px,
+      var(--nb-yellow) 10px,
+      var(--nb-yellow) 20px
+    );
+  }
+
+  .nb-play {
+    border: 4px solid var(--nb-ink);
+    box-shadow: 6px 6px 0 0 var(--nb-ink);
+    color: var(--nb-button-text);
+    font-weight: 900;
+    padding: 1rem;
+    text-transform: uppercase;
+    transition:
+      transform 180ms var(--nb-ease),
+      box-shadow 180ms var(--nb-ease);
+  }
+
+  .nb-play:hover {
+    transform: translateY(-4px);
+  }
+
+  .nb-play:active {
+    box-shadow: 0 0 0 0 var(--nb-ink);
+    transform: translate(6px, 6px) scale(0.96);
+  }
+
+  @keyframes nb-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-32px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nb-page *,
+    .nb-page *::before,
+    .nb-page *::after {
+      animation-duration: 1ms !important;
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
+    }
+  }
+</style>

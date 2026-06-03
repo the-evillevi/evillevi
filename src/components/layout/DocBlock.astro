@@ -1,0 +1,10 @@
+---
+const { title } = Astro.props;
+---
+
+<article class="nb-shadow-sm border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-5">
+  <h3 class="mb-3 text-xl font-black uppercase">{title}</h3>
+  <p class="leading-7 font-bold text-[var(--nb-muted)]">
+    <slot />
+  </p>
+</article>

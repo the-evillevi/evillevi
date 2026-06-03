@@ -1,0 +1,21 @@
+---
+const { id, title } = Astro.props;
+---
+
+<article
+  id={id}
+  class="nb-shadow scroll-mt-24 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-5"
+>
+  <div class="mb-5 flex items-start justify-between gap-3 border-b-4 border-[var(--nb-ink)] pb-3">
+    <h3 class="text-2xl font-black uppercase">{title}</h3>
+    <a
+      class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase hover:bg-[var(--nb-peach)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
+      href={`#${id}`}
+    >
+      #{id}
+    </a>
+  </div>
+  <div class="space-y-4">
+    <slot />
+  </div>
+</article>

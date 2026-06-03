@@ -1,0 +1,10 @@
+---
+const { label, value } = Astro.props;
+---
+
+<div
+  class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center shadow-[3px_3px_0_0_var(--nb-ink)]"
+>
+  <p class="text-3xl font-black">{value}</p>
+  <p class="text-xs font-black text-[var(--nb-muted)] uppercase">{label}</p>
+</div>
