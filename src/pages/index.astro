@@ -1,11 +1,180 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/starwind/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/starwind/alert";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/starwind/alert-dialog";
+import { AspectRatio } from "@/components/starwind/aspect-ratio";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/starwind/avatar";
+import { Badge } from "@/components/starwind/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+} from "@/components/starwind/breadcrumb";
+import { Button } from "@/components/starwind/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/starwind/card";
+import { Input } from "@/components/starwind/input";
+import { Label } from "@/components/starwind/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+} from "@/components/starwind/select";
+
+import { CalendarDemo } from "@/components/ui/calendar";
 ---
 
 <Layout>
-	<Welcome />
+  <Accordion defaultValue="item-1">
+    <AccordionItem value="item-1">
+      <AccordionTrigger>What is Astro?</AccordionTrigger>
+      <AccordionContent>
+        Astro is an web framework for building fast, scalable, and secure websites.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-2">
+      <AccordionTrigger>Why should I use Astro?</AccordionTrigger>
+      <AccordionContent>
+        Astro provides a set of features that make it an ideal choice for building fast, scalable,
+        and secure websites.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-3">
+      <AccordionTrigger>How do I get started with Astro?</AccordionTrigger>
+      <AccordionContent>
+        To get started with Astro, follow the instructions in the documentation.
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+
+  <Alert variant="info">
+    <AlertTitle>Heads up!</AlertTitle>
+    <AlertDescription>
+      A simple alert with an "AlertTitle" and an "AlertDescription".
+    </AlertDescription>
+  </Alert>
+
+  <AlertDialog>
+    <AlertDialogTrigger asChild>
+      <Button variant="outline">Show Alert Dialog</Button>
+    </AlertDialogTrigger>
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+        <AlertDialogDescription>
+          This action cannot be undone. This will permanently delete your account and remove your
+          data from our servers.
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogAction>Continue</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
+
+  <div class="h-10 w-10">
+    <AspectRatio ratio={16 / 9}>
+      <img
+        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        alt="Photo by Drew Beamer"
+        class="h-full w-full rounded-md object-cover"
+      />
+    </AspectRatio>
+  </div>
+
+  <Avatar>
+    <AvatarImage src="https://i.pravatar.cc/150?u=a04258a2462d826712d" alt="John Doe" />
+    <AvatarFallback>JD</AvatarFallback>
+  </Avatar>
+
+  <Badge>Badge</Badge>
+
+  <Breadcrumb>
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbEllipsis />
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/products/categories">Categories</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage>Electronics</BreadcrumbPage>
+      </BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+
+  <Button>Button</Button>
+
+  <CalendarDemo client:load />
+
+  <Card class="w-[360px]" slot="preview">
+    <CardHeader>
+      <CardTitle>Create project</CardTitle>
+      <CardDescription>Deploy your new project in one-click.</CardDescription>
+    </CardHeader>
+    <CardContent class="flex flex-col gap-4">
+      <div class="flex w-full flex-col gap-2">
+        <Label for="name">Name</Label>
+        <Input type="text" id="name" placeholder="Name of your project" />
+      </div>
+      <div class="flex w-full flex-col gap-2">
+        <Label for="framework">Framework</Label>
+        <Select id="framework">
+          <SelectTrigger class="w-full" required>
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent class="w-full">
+            <SelectGroup>
+              <SelectLabel>Frameworks</SelectLabel>
+              <SelectItem value="astro">Astro</SelectItem>
+              <SelectItem value="next">Next.js</SelectItem>
+              <SelectItem value="svelte">SvelteKit</SelectItem>
+              <SelectItem value="solid">SolidStart</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    </CardContent>
+    <CardFooter class="flex justify-between">
+      <Button variant="outline">Cancel</Button>
+      <Button type="submit">Deploy</Button>
+    </CardFooter>
+  </Card>
 </Layout>
