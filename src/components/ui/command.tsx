@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   Command,
@@ -10,4 +10,4 @@ export {
   CommandItem,
   CommandShortcut,
   CommandSeparator,
-} from "@/components/shadcn/command"
+} from "@/components/shadcn/command";

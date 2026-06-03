@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   ChartContainer,
@@ -8,4 +8,4 @@ export {
   ChartLegendContent,
   ChartStyle,
   type ChartConfig,
-} from "@/components/shadcn/chart"
+} from "@/components/shadcn/chart";

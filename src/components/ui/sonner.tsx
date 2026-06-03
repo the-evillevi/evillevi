@@ -1,3 +1,3 @@
-"use client"
+"use client";
 
-export { Toaster } from "@/components/shadcn/sonner"
+export { Toaster } from "@/components/shadcn/sonner";

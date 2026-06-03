@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   Drawer,
@@ -11,4 +11,4 @@ export {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
-} from "@/components/shadcn/drawer"
+} from "@/components/shadcn/drawer";

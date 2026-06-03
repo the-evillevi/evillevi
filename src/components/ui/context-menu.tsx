@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   ContextMenu,
@@ -16,4 +16,4 @@ export {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuRadioGroup,
-} from "@/components/shadcn/context-menu"
+} from "@/components/shadcn/context-menu";

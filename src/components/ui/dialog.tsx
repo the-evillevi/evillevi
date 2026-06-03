@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   Dialog,
@@ -11,4 +11,4 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from "@/components/shadcn/dialog"
+} from "@/components/shadcn/dialog";

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   Menubar,
@@ -17,4 +17,4 @@ export {
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
-} from "@/components/shadcn/menubar"
+} from "@/components/shadcn/menubar";

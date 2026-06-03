@@ -1,7 +1,3 @@
-"use client"
+"use client";
 
-export {
-  HoverCard,
-  HoverCardTrigger,
-  HoverCardContent,
-} from "@/components/shadcn/hover-card"
+export { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/shadcn/hover-card";

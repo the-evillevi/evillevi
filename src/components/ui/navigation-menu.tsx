@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 export {
   NavigationMenu,
@@ -10,4 +10,4 @@ export {
   NavigationMenuIndicator,
   NavigationMenuViewport,
   navigationMenuTriggerStyle,
-} from "@/components/shadcn/navigation-menu"
+} from "@/components/shadcn/navigation-menu";

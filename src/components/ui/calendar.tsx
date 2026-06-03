@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { Calendar } from "@/components/shadcn/calendar"
+import { Calendar } from "@/components/shadcn/calendar";
 
 export function CalendarDemo() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   return (
     <Calendar
@@ -15,6 +15,5 @@ export function CalendarDemo() {
       className="rounded-lg border"
       captionLayout="dropdown"
     />
-  )
+  );
 }
-

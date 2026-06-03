@@ -1,4 +1,1 @@
-export {
-  ScrollArea,
-  ScrollBar,
-} from "@/components/shadcn/scroll-area"
+export { ScrollArea, ScrollBar } from "@/components/shadcn/scroll-area";

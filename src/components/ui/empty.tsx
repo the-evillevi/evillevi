@@ -5,4 +5,4 @@ export {
   EmptyDescription,
   EmptyContent,
   EmptyMedia,
-} from "@/components/shadcn/empty"
+} from "@/components/shadcn/empty";
