@@ -277,7 +277,7 @@ const tokens = [
                 />
                 Visible focus, square shape, obvious selected state
               </label>
-              <Switch aria-label="Enable high contrast" />
+              <Switch id="nb-high-contrast" aria-label="Enable high contrast" />
             </div>
           </ShowcaseCard>
 
@@ -415,7 +415,7 @@ const tokens = [
 
           <ShowcaseCard id="tooltip" title="Tooltip">
             <Tooltip>
-              <TooltipTrigger asChild
+              <TooltipTrigger
                 ><Button class="nb-action bg-[var(--nb-lavender)] text-[var(--nb-button-text)]"
                   >Hover</Button
                 ></TooltipTrigger

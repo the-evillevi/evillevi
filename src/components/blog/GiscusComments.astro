@@ -1,0 +1,29 @@
+---
+import { siteConfig } from "@/site.config";
+
+const giscus = siteConfig.giscus;
+---
+
+{
+  giscus.enabled && giscus.repo && giscus.repoId && giscus.category && giscus.categoryId && (
+    <section class="nb-panel mt-10 p-4">
+      <script
+        is:inline
+        src="https://giscus.app/client.js"
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async
+      />
+    </section>
+  )
+}

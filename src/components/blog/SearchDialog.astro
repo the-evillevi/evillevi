@@ -1,0 +1,33 @@
+---
+---
+
+<section class="nb-panel p-4" data-search-root>
+  <div class="flex flex-col gap-3 md:flex-row">
+    <input
+      class="min-h-12 flex-1 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 font-black text-[var(--nb-text)]"
+      type="search"
+      data-search-input
+      placeholder="Search notes, docs, and tags"
+      aria-label="Search"
+    />
+    <select
+      class="min-h-12 border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-3 font-black text-[var(--nb-button-text)]"
+      data-search-type
+      aria-label="Filter by type"
+    >
+      <option value="all">All</option>
+      <option value="blog">Blog</option>
+      <option value="docs">Docs</option>
+    </select>
+  </div>
+  <div class="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <div class="grid gap-3" data-search-results></div>
+    <article class="hidden border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-4 lg:block" data-search-preview>
+      <p class="font-black uppercase text-[var(--nb-muted)]">Search preview</p>
+    </article>
+  </div>
+</section>
+
+<script>
+  import("@/components/scripts/search").then(({ initSearch }) => initSearch());
+</script>

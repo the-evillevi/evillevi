@@ -1,0 +1,90 @@
+---
+import type { MarkdownHeading } from "astro";
+import type { ContentEntry } from "@/utils/content";
+import { entryHref, formatDate } from "@/utils/content";
+import type { Backlink, ContentLink } from "@/utils/links";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import Backlinks from "@/components/blog/Backlinks.astro";
+import GiscusComments from "@/components/blog/GiscusComments.astro";
+import GraphView from "@/components/blog/GraphView.astro";
+import OutgoingLinks from "@/components/blog/OutgoingLinks.astro";
+
+interface Props {
+  entry: ContentEntry;
+  headings: MarkdownHeading[];
+  backlinks?: Backlink[];
+  outgoingLinks?: ContentLink[];
+}
+
+const { entry, headings, backlinks = [], outgoingLinks = [] } = Astro.props;
+const pageDate = entry.collection === "blog" ? entry.data.publishDate : entry.data.publishDate;
+---
+
+<SiteLayout title={entry.data.title} description={entry.data.description}>
+  <article class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div class="min-w-0">
+      <header
+        class="nb-shadow mb-8 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5 md:p-8"
+        style={`--accent:${entry.data.accentColor ?? "var(--nb-peach)"}`}
+      >
+        <a
+          class="mb-4 inline-flex border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black uppercase text-[var(--nb-button-text)]"
+          href={`/${entry.collection}`}
+        >
+          {entry.collection}
+        </a>
+        <h1 class="max-w-4xl text-5xl leading-none font-black uppercase md:text-7xl">
+          {entry.data.title}
+        </h1>
+        <p class="mt-4 max-w-3xl text-lg font-bold text-[var(--nb-muted)]">
+          {entry.data.description}
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2 text-sm font-black uppercase">
+          {pageDate && <span>{formatDate(pageDate)}</span>}
+          {entry.data.updatedDate && <span>Updated {formatDate(entry.data.updatedDate)}</span>}
+          {entry.data.tags.map((tag) => <a href={`/tags/${tag}`}>#{tag}</a>)}
+        </div>
+      </header>
+
+      <div id="content" class="nb-prose">
+        <slot />
+      </div>
+
+      <section id="relations" class="mt-10 grid gap-5">
+        {outgoingLinks.length > 0 && <OutgoingLinks links={outgoingLinks} />}
+        {backlinks.length > 0 && <Backlinks backlinks={backlinks} currentEntryId={`${entry.collection}/${entry.id}`} />}
+      </section>
+
+      {entry.data.comment && <GiscusComments />}
+    </div>
+
+    <aside class="grid h-fit gap-5 lg:sticky lg:top-6">
+      {
+        headings.length > 0 && (
+          <section class="nb-panel p-4">
+            <h2 class="mb-3 text-sm font-black uppercase">Table of contents</h2>
+            <nav class="grid gap-2 text-sm font-bold">
+              {headings
+                .filter((heading) => heading.depth <= 3)
+                .map((heading) => (
+                  <a class={heading.depth === 3 ? "pl-4" : ""} href={`#${heading.slug}`}>
+                    {heading.text}
+                  </a>
+                ))}
+            </nav>
+          </section>
+        )
+      }
+      <GraphView currentSlug={`${entry.collection}/${entry.id}`} />
+      <a class="nb-action block px-4 py-3 text-center text-sm" href={entryHref(entry)}>
+        Permalink
+      </a>
+    </aside>
+  </article>
+
+  <script>
+    import("@/components/scripts/wikilink-preview").catch((error) => {
+      console.error("Failed to load wikilink previews", error);
+    });
+  </script>
+</SiteLayout>

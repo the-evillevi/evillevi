@@ -1,0 +1,26 @@
+---
+import type { Backlink } from "@/utils/links";
+
+interface Props {
+  backlinks: Backlink[];
+  currentEntryId: string;
+}
+
+const { backlinks, currentEntryId } = Astro.props;
+---
+
+<section class="nb-panel p-4">
+  <h2 class="mb-3 text-sm font-black uppercase">Backlinks ({backlinks.length})</h2>
+  <ul class="grid gap-3">
+    {
+      backlinks.map((link) => (
+        <li class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3">
+          <a class="font-black uppercase" href={`${link.url}?locate=${currentEntryId}`}>
+            {link.title}
+          </a>
+          {link.context && <p class="mt-1 text-sm font-bold text-[var(--nb-muted)]">{link.context}</p>}
+        </li>
+      ))
+    }
+  </ul>
+</section>

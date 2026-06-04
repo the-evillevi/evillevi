@@ -199,3 +199,218 @@
     @apply font-sans;
   }
 }
+
+:root,
+html[data-theme="light"] {
+  --nb-base: #eff1f5;
+  --nb-surface: #ccd0da;
+  --nb-text: #4c4f69;
+  --nb-muted: #6c6f85;
+  --nb-peach: #fe640b;
+  --nb-pink: #ea76cb;
+  --nb-red: #d20f39;
+  --nb-yellow: #df8e1d;
+  --nb-green: #40a02b;
+  --nb-teal: #179299;
+  --nb-blue: #1e66f5;
+  --nb-lavender: #7287fd;
+  --nb-ink: #11111b;
+  --nb-button-text: #11111b;
+  --nb-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-theme="dark"] {
+  --nb-base: #1e1e2e;
+  --nb-surface: #313244;
+  --nb-text: #cdd6f4;
+  --nb-muted: #a6adc8;
+  --nb-peach: #fab387;
+  --nb-pink: #f5c2e7;
+  --nb-red: #f38ba8;
+  --nb-yellow: #f9e2af;
+  --nb-green: #a6e3a1;
+  --nb-teal: #94e2d5;
+  --nb-blue: #89b4fa;
+  --nb-lavender: #b4befe;
+  --nb-ink: #11111b;
+  --nb-button-text: #11111b;
+}
+
+.nb-page {
+  min-height: 100vh;
+  background: var(--nb-base);
+  color: var(--nb-text);
+  color-scheme: light dark;
+}
+
+.nb-shadow {
+  box-shadow: 8px 8px 0 0 var(--nb-ink);
+}
+
+.nb-shadow-sm {
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}
+
+.nb-panel {
+  border: 4px solid var(--nb-ink);
+  background: var(--nb-surface);
+  box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+.nb-card {
+  border: 4px solid var(--nb-ink);
+  background: var(--nb-base);
+  box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+.nb-action {
+  border: 4px solid var(--nb-ink);
+  background: var(--nb-peach);
+  color: var(--nb-button-text);
+  box-shadow: 5px 5px 0 0 var(--nb-ink);
+  font-weight: 900;
+  text-transform: uppercase;
+  transition:
+    transform 180ms var(--nb-ease),
+    box-shadow 180ms var(--nb-ease),
+    background-color 180ms var(--nb-ease);
+}
+
+.nb-action:hover {
+  transform: translateY(-2px);
+}
+
+.nb-action:active {
+  box-shadow: 0 0 0 0 var(--nb-ink);
+  transform: translate(4px, 4px) scale(0.98);
+}
+
+.nb-page :focus-visible {
+  outline: 4px solid var(--nb-blue);
+  outline-offset: 4px;
+}
+
+.nb-prose {
+  line-height: 1.75;
+  font-weight: 600;
+}
+
+.nb-prose :where(h1, h2, h3, h4) {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-weight: 900;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.nb-prose :where(h1) {
+  font-size: clamp(2.5rem, 9vw, 5rem);
+}
+
+.nb-prose :where(h2) {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+}
+
+.nb-prose :where(h3) {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+
+.nb-prose :where(p, ul, ol, blockquote, pre, table) {
+  margin-block: 1rem;
+}
+
+.nb-prose :where(a) {
+  color: var(--nb-blue);
+  font-weight: 900;
+  text-decoration: underline;
+  text-decoration-thickness: 0.16em;
+  text-underline-offset: 0.18em;
+}
+
+.nb-prose :where(blockquote) {
+  border-left: 8px solid var(--nb-ink);
+  background: var(--nb-surface);
+  padding: 1rem;
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}
+
+.nb-prose :where(code) {
+  border: 2px solid var(--nb-ink);
+  background: var(--nb-yellow);
+  color: var(--nb-button-text);
+  padding: 0.1rem 0.35rem;
+  font-weight: 900;
+}
+
+.nb-prose :where(pre) {
+  overflow: auto;
+  border: 4px solid var(--nb-ink);
+  background: #11111b;
+  color: #cdd6f4;
+  padding: 1rem;
+  box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+.nb-prose :where(pre code) {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.nb-prose :where(img, table) {
+  border: 4px solid var(--nb-ink);
+  box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+.heading-anchor {
+  margin-left: 0.5rem;
+  color: var(--nb-peach) !important;
+  text-decoration: none !important;
+}
+
+a.wikilink {
+  background: color-mix(in srgb, var(--nb-yellow) 45%, transparent);
+  color: var(--nb-text);
+  border: 2px solid var(--nb-ink);
+  padding: 0.05rem 0.3rem;
+  text-decoration: none;
+}
+
+a.wikilink:hover,
+a.wikilink-highlight {
+  background: var(--nb-yellow);
+  color: var(--nb-button-text);
+}
+
+a.wikilink-broken {
+  background: var(--nb-red);
+  color: var(--nb-button-text);
+}
+
+.tippy-box[data-theme~="wikilink-preview"] {
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-base);
+  color: var(--nb-text);
+  box-shadow: 8px 8px 0 0 var(--nb-ink);
+}
+
+.tippy-box[data-theme~="wikilink-preview"] .tippy-content {
+  padding: 0;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nb-page *,
+  .nb-page *::before,
+  .nb-page *::after {
+    animation-duration: 1ms !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}

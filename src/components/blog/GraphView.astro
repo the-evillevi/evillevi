@@ -1,0 +1,21 @@
+---
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+---
+
+<section class="nb-panel p-4" data-graph-view data-current-slug={currentSlug}>
+  <div class="mb-3 flex items-center justify-between gap-3">
+    <h2 class="text-sm font-black uppercase">Graph View</h2>
+    <button class="nb-action bg-[var(--nb-teal)] px-2 py-1 text-xs" type="button" data-graph-toggle>
+      Global
+    </button>
+  </div>
+  <div class="h-56 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)]" data-graph-canvas></div>
+</section>
+
+<script>
+  import("@/components/scripts/graph-view").then(({ initGraphViews }) => initGraphViews());
+</script>

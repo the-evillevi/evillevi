@@ -1,0 +1,106 @@
+---
+import "@/styles/starwind.css";
+import { siteConfig } from "@/site.config";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const title = Astro.props.title
+  ? `${Astro.props.title} • ${siteConfig.title}`
+  : siteConfig.title;
+const description = Astro.props.description ?? siteConfig.description;
+---
+
+<!doctype html>
+<html lang={siteConfig.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const savedTheme = localStorage.getItem("nb-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const theme = savedTheme || (prefersDark ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.classList.toggle("dark", theme === "dark");
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="nb-page flex min-h-screen flex-col">
+      <header class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-4 md:px-6">
+        <nav class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <a
+            href="/"
+            class="inline-flex w-fit border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-3 py-2 text-lg font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
+          >
+            {siteConfig.title}
+          </a>
+          <div class="flex flex-wrap items-center gap-2">
+            {
+              siteConfig.nav.map((item) => (
+                <a
+                  href={item.href}
+                  class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black uppercase text-[var(--nb-text)] transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
+                >
+                  {item.title}
+                </a>
+              ))
+            }
+            <button
+              class="nb-action bg-[var(--nb-peach)] px-3 py-2 text-xs"
+              type="button"
+              data-theme-toggle
+              aria-label="Toggle theme"
+            >
+              <span data-theme-icon>☀</span>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <main class="flex-1">
+        <slot />
+      </main>
+
+      <footer class="border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-8 md:px-6">
+        <div class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="text-xl font-black uppercase">{siteConfig.author}</p>
+            <p class="max-w-2xl font-bold text-[var(--nb-muted)]">{siteConfig.description}</p>
+          </div>
+          <p class="text-sm font-black uppercase">Built with Astro + Tailwind</p>
+        </div>
+      </footer>
+    </div>
+    <script is:inline>
+      const applyTheme = (theme) => {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        localStorage.setItem("nb-theme", theme);
+        document.querySelectorAll("[data-theme-icon]").forEach((icon) => {
+          icon.textContent = theme === "dark" ? "☾" : "☀";
+        });
+      };
+
+      const setupTheme = () => {
+        applyTheme(document.documentElement.dataset.theme || "light");
+        document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+          });
+        });
+      };
+
+      setupTheme();
+      document.addEventListener("astro:after-swap", setupTheme);
+    </script>
+  </body>
+</html>

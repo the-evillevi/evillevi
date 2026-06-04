@@ -1,0 +1,25 @@
+---
+import type { ContentLink } from "@/utils/links";
+
+interface Props {
+  links: ContentLink[];
+}
+
+const { links } = Astro.props;
+---
+
+<section class="nb-panel p-4">
+  <h2 class="mb-3 text-sm font-black uppercase">Outgoing Links ({links.length})</h2>
+  <ul class="grid gap-2">
+    {
+      links.map((link, index) => (
+        <li class="flex items-center gap-3 border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3">
+          <span class="grid size-7 place-items-center border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] text-xs font-black text-[var(--nb-button-text)]">
+            {index + 1}
+          </span>
+          <a class="font-black uppercase" href={link.url}>{link.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
