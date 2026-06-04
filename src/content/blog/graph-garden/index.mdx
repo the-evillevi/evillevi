@@ -1,0 +1,16 @@
+---
+title: "Graph Garden"
+description: "How links become a local and global map of the knowledge base."
+publishDate: 2026-06-04
+tags: ["garden", "graph", "d3"]
+accentColor: "var(--nb-teal)"
+comment: false
+---
+
+The graph reads from the same `/contentIndex.json` file that powers search and wikilink previews. That keeps the model honest: if a link is searchable, it can also become visible.
+
+This note links back to [[field-notes|the field notes]] and points at [[docs/publishing/content-model|the content model]]. The relationship panels at the bottom of the page should show both outgoing links and backlinks.
+
+## Local First
+
+The default graph view shows the current note, notes it links to, notes that link back, and tag nodes. The global toggle expands the same canvas to the whole indexed knowledge base.

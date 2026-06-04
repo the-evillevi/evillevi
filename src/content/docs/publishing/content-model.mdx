@@ -1,0 +1,22 @@
+---
+title: "Content Model"
+description: "Frontmatter fields and publishing rules for the blog and docs collections."
+tags: ["docs", "publishing", "astro"]
+order: 2
+comment: false
+---
+
+Blog posts require `title`, `description`, and `publishDate`. Docs require `title` and `description`, and can use `order` to control docs listing order.
+
+Shared fields include:
+
+- `updatedDate`
+- `tags`
+- `draft`
+- `comment`
+- `heroImage`
+- `accentColor`
+
+Production builds exclude drafts. Development builds show drafts so writing can happen in place.
+
+This page is linked from [[graph-garden|Graph Garden]] and [[docs/setup/getting-started|Getting Started]].

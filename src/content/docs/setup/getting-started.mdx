@@ -1,0 +1,21 @@
+---
+title: "Getting Started"
+description: "The minimum workflow for writing in the new knowledge base."
+tags: ["docs", "setup"]
+order: 1
+comment: false
+---
+
+Write blog posts in `src/content/blog` and longer-lived docs in `src/content/docs`.
+
+Use wikilinks when one note should point to another:
+
+```md
+[[field-notes]]
+[[blog/graph-garden|Graph Garden]]
+[[docs/publishing/content-model|Content Model]]
+```
+
+Unqualified wikilinks default to blog posts. Use `blog/` or `docs/` prefixes when linking across collections.
+
+Next, read [[docs/publishing/content-model|the content model]].
