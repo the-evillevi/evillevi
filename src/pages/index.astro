@@ -1,180 +1,81 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import PostCard from "@/components/blog/PostCard.astro";
+import SearchDialog from "@/components/blog/SearchDialog.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { siteConfig } from "@/site.config";
+import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/starwind/accordion";
-import { Alert, AlertDescription, AlertTitle } from "@/components/starwind/alert";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/starwind/alert-dialog";
-import { AspectRatio } from "@/components/starwind/aspect-ratio";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/starwind/avatar";
-import { Badge } from "@/components/starwind/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-  BreadcrumbEllipsis,
-} from "@/components/starwind/breadcrumb";
-import { Button } from "@/components/starwind/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/starwind/card";
-import { Input } from "@/components/starwind/input";
-import { Label } from "@/components/starwind/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-  SelectGroup,
-  SelectLabel,
-  SelectSeparator,
-} from "@/components/starwind/select";
-
-import { CalendarDemo } from "@/components/ui/calendar";
+const posts = await getBlogPosts();
+const docs = await getDocsEntries();
+const tags = getAllTags([...posts, ...docs]).slice(0, 10);
 ---
 
-<Layout>
-  <Accordion defaultValue="item-1">
-    <AccordionItem value="item-1">
-      <AccordionTrigger>What is Astro?</AccordionTrigger>
-      <AccordionContent>
-        Astro is an web framework for building fast, scalable, and secure websites.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="item-2">
-      <AccordionTrigger>Why should I use Astro?</AccordionTrigger>
-      <AccordionContent>
-        Astro provides a set of features that make it an ideal choice for building fast, scalable,
-        and secure websites.
-      </AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="item-3">
-      <AccordionTrigger>How do I get started with Astro?</AccordionTrigger>
-      <AccordionContent>
-        To get started with Astro, follow the instructions in the documentation.
-      </AccordionContent>
-    </AccordionItem>
-  </Accordion>
-
-  <Alert variant="info">
-    <AlertTitle>Heads up!</AlertTitle>
-    <AlertDescription>
-      A simple alert with an "AlertTitle" and an "AlertDescription".
-    </AlertDescription>
-  </Alert>
-
-  <AlertDialog>
-    <AlertDialogTrigger asChild>
-      <Button variant="outline">Show Alert Dialog</Button>
-    </AlertDialogTrigger>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-        <AlertDialogDescription>
-          This action cannot be undone. This will permanently delete your account and remove your
-          data from our servers.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <AlertDialogAction>Continue</AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
-
-  <div class="h-10 w-10">
-    <AspectRatio ratio={16 / 9}>
-      <img
-        src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
-        alt="Photo by Drew Beamer"
-        class="h-full w-full rounded-md object-cover"
-      />
-    </AspectRatio>
-  </div>
-
-  <Avatar>
-    <AvatarImage src="https://i.pravatar.cc/150?u=a04258a2462d826712d" alt="John Doe" />
-    <AvatarFallback>JD</AvatarFallback>
-  </Avatar>
-
-  <Badge>Badge</Badge>
-
-  <Breadcrumb>
-    <BreadcrumbList>
-      <BreadcrumbItem>
-        <BreadcrumbLink href="/">Home</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <BreadcrumbEllipsis />
-      <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbLink href="/products/categories">Categories</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbPage>Electronics</BreadcrumbPage>
-      </BreadcrumbItem>
-    </BreadcrumbList>
-  </Breadcrumb>
-
-  <Button>Button</Button>
-
-  <CalendarDemo client:load />
-
-  <Card class="w-[360px]" slot="preview">
-    <CardHeader>
-      <CardTitle>Create project</CardTitle>
-      <CardDescription>Deploy your new project in one-click.</CardDescription>
-    </CardHeader>
-    <CardContent class="flex flex-col gap-4">
-      <div class="flex w-full flex-col gap-2">
-        <Label for="name">Name</Label>
-        <Input type="text" id="name" placeholder="Name of your project" />
+<SiteLayout>
+  <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-12 md:px-6 md:py-20">
+    <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+      <div>
+        <p class="mb-4 inline-flex border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]">
+          Personal knowledge base
+        </p>
+        <h1 class="max-w-5xl text-6xl leading-[0.92] font-black uppercase md:text-8xl">
+          Notes with sharp edges and visible links.
+        </h1>
+        <p class="mt-6 max-w-3xl text-xl font-bold text-[var(--nb-muted)]">
+          {siteConfig.description}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a class="nb-action px-5 py-4" href="/blog">Read blog</a>
+          <a class="nb-action bg-[var(--nb-blue)] px-5 py-4" href="/docs">Open docs</a>
+        </div>
       </div>
-      <div class="flex w-full flex-col gap-2">
-        <Label for="framework">Framework</Label>
-        <Select id="framework">
-          <SelectTrigger class="w-full" required>
-            <SelectValue placeholder="Select" />
-          </SelectTrigger>
-          <SelectContent class="w-full">
-            <SelectGroup>
-              <SelectLabel>Frameworks</SelectLabel>
-              <SelectItem value="astro">Astro</SelectItem>
-              <SelectItem value="next">Next.js</SelectItem>
-              <SelectItem value="svelte">SvelteKit</SelectItem>
-              <SelectItem value="solid">SolidStart</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+      <div class="nb-shadow grid gap-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5">
+        <p class="text-sm font-black uppercase text-[var(--nb-peach)]">Garden stats</p>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+            <p class="text-4xl font-black">{posts.length}</p>
+            <p class="text-xs font-black uppercase">Posts</p>
+          </div>
+          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+            <p class="text-4xl font-black">{docs.length}</p>
+            <p class="text-xs font-black uppercase">Docs</p>
+          </div>
+          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+            <p class="text-4xl font-black">{tags.length}</p>
+            <p class="text-xs font-black uppercase">Tags</p>
+          </div>
+        </div>
       </div>
-    </CardContent>
-    <CardFooter class="flex justify-between">
-      <Button variant="outline">Cancel</Button>
-      <Button type="submit">Deploy</Button>
-    </CardFooter>
-  </Card>
-</Layout>
+    </div>
+  </section>
+
+  <section class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div>
+      <div class="mb-5 flex items-end justify-between gap-4">
+        <h2 class="text-4xl font-black uppercase">Recent posts</h2>
+        <a class="font-black uppercase underline" href="/blog">All posts</a>
+      </div>
+      <div class="grid gap-5 md:grid-cols-2">
+        {posts.slice(0, 4).map((entry) => <PostCard {entry} />)}
+      </div>
+    </div>
+
+    <aside class="grid h-fit gap-5">
+      <SearchDialog />
+      <section class="nb-panel p-4">
+        <h2 class="mb-3 text-sm font-black uppercase">Tags</h2>
+        <div class="flex flex-wrap gap-2">
+          {
+            tags.map(({ tag, count }) => (
+              <a
+                class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase"
+                href={`/tags/${tag}`}
+              >
+                #{tag} {count}
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </aside>
+  </section>
+</SiteLayout>

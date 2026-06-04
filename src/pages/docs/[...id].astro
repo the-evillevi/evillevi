@@ -1,0 +1,28 @@
+---
+import { render } from "astro:content";
+import ContentLayout from "@/layouts/ContentLayout.astro";
+import { getDocsEntries, getBlogPosts } from "@/utils/content";
+import { getBacklinks, getOutgoingLinks } from "@/utils/links";
+
+export async function getStaticPaths() {
+  const docs = await getDocsEntries();
+  const posts = await getBlogPosts();
+  const entries = [...posts, ...docs];
+
+  return docs.map((entry) => ({
+    params: { id: entry.id },
+    props: {
+      entry,
+      backlinks: getBacklinks(entry, entries),
+      outgoingLinks: getOutgoingLinks(entry, entries),
+    },
+  }));
+}
+
+const { entry, backlinks, outgoingLinks } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+
+<ContentLayout {entry} {headings} {backlinks} {outgoingLinks}>
+  <Content />
+</ContentLayout>

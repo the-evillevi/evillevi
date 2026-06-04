@@ -1,0 +1,21 @@
+---
+import PostCard from "@/components/blog/PostCard.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { getDocsEntries } from "@/utils/content";
+
+const docs = await getDocsEntries();
+---
+
+<SiteLayout title="Docs" description="Knowledge-base documents">
+  <section class="mx-auto max-w-7xl px-4 py-10 md:px-6">
+    <header class="nb-shadow mb-8 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-6">
+      <h1 class="text-6xl font-black uppercase md:text-8xl">Docs</h1>
+      <p class="mt-3 max-w-2xl text-lg font-bold text-[var(--nb-muted)]">
+        Evergreen notes and operating manuals.
+      </p>
+    </header>
+    <div class="grid gap-5 md:grid-cols-2">
+      {docs.map((entry) => <PostCard {entry} />)}
+    </div>
+  </section>
+</SiteLayout>
