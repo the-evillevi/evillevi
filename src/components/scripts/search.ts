@@ -63,7 +63,10 @@ function renderPreview(container: HTMLElement, item: SearchItem) {
     <h2 class="text-2xl font-black uppercase">${item.title}</h2>
     <p class="mt-3 font-bold">${item.content.slice(0, 700)}</p>
     <div class="mt-4 flex flex-wrap gap-2">${item.tags
-      .map((tag) => `<span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)]">#${tag}</span>`)
+      .map(
+        (tag) =>
+          `<span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)]">#${tag}</span>`,
+      )
       .join("")}</div>
   `;
 }
@@ -114,7 +117,9 @@ export async function initSearch() {
       results.replaceChildren(...matches.map((item) => renderResult(item, term)));
       if (preview) {
         if (matches[0]) renderPreview(preview, matches[0]);
-        else preview.innerHTML = '<p class="font-black uppercase text-[var(--nb-muted)]">No results</p>';
+        else
+          preview.innerHTML =
+            '<p class="font-black uppercase text-[var(--nb-muted)]">No results</p>';
       }
     };
 

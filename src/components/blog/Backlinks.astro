@@ -18,7 +18,9 @@ const { backlinks, currentEntryId } = Astro.props;
           <a class="font-black uppercase" href={`${link.url}?locate=${currentEntryId}`}>
             {link.title}
           </a>
-          {link.context && <p class="mt-1 text-sm font-bold text-[var(--nb-muted)]">{link.context}</p>}
+          {link.context && (
+            <p class="mt-1 text-sm font-bold text-[var(--nb-muted)]">{link.context}</p>
+          )}
         </li>
       ))
     }

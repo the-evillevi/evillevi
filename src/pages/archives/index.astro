@@ -12,8 +12,13 @@ const posts = await getBlogPosts();
       {
         posts.map((post) => (
           <li class="nb-card flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
-            <a class="text-xl font-black uppercase" href={entryHref(post)}>{post.data.title}</a>
-            <time class="font-bold text-[var(--nb-muted)]" datetime={post.data.publishDate.toISOString()}>
+            <a class="text-xl font-black uppercase" href={entryHref(post)}>
+              {post.data.title}
+            </a>
+            <time
+              class="font-bold text-[var(--nb-muted)]"
+              datetime={post.data.publishDate.toISOString()}
+            >
               {formatDate(post.data.publishDate)}
             </time>
           </li>

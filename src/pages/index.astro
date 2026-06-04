@@ -11,10 +11,14 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
 ---
 
 <SiteLayout>
-  <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-12 md:px-6 md:py-20">
+  <section
+    class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-12 md:px-6 md:py-20"
+  >
     <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
       <div>
-        <p class="mb-4 inline-flex border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]">
+        <p
+          class="mb-4 inline-flex border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
+        >
           Personal knowledge base
         </p>
         <h1 class="max-w-5xl text-6xl leading-[0.92] font-black uppercase md:text-8xl">
@@ -29,7 +33,7 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
         </div>
       </div>
       <div class="nb-shadow grid gap-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5">
-        <p class="text-sm font-black uppercase text-[var(--nb-peach)]">Garden stats</p>
+        <p class="text-sm font-black text-[var(--nb-peach)] uppercase">Garden stats</p>
         <div class="grid grid-cols-3 gap-3">
           <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
             <p class="text-4xl font-black">{posts.length}</p>
@@ -48,7 +52,9 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
     </div>
   </section>
 
-  <section class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+  <section
+    class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_360px]"
+  >
     <div>
       <div class="mb-5 flex items-end justify-between gap-4">
         <h2 class="text-4xl font-black uppercase">Recent posts</h2>

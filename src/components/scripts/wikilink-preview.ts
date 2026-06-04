@@ -30,13 +30,15 @@ function extractSlug(href: string) {
 
 function normalizeRelativeUrls(root: Element | Document, targetUrl: string) {
   const base = new URL(targetUrl);
-  root.querySelectorAll("[href^='./'], [href^='../'], [src^='./'], [src^='../']").forEach((node) => {
-    const attr = node.hasAttribute("href") ? "href" : "src";
-    const value = node.getAttribute(attr);
-    if (!value) return;
-    const rebased = new URL(value, base);
-    node.setAttribute(attr, `${rebased.pathname}${rebased.hash}`);
-  });
+  root
+    .querySelectorAll("[href^='./'], [href^='../'], [src^='./'], [src^='../']")
+    .forEach((node) => {
+      const attr = node.hasAttribute("href") ? "href" : "src";
+      const value = node.getAttribute(attr);
+      if (!value) return;
+      const rebased = new URL(value, base);
+      node.setAttribute(attr, `${rebased.pathname}${rebased.hash}`);
+    });
 }
 
 async function createPreview(slug: string) {

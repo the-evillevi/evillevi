@@ -15,10 +15,11 @@ function extractText(tree: Root) {
 }
 
 function toIndexEntry(entry: ContentEntry) {
-  const tree = unified().use(remarkParse).parse(entry.body ?? "") as Root;
+  const tree = unified()
+    .use(remarkParse)
+    .parse(entry.body ?? "") as Root;
   const slug = `${entry.collection}/${entry.id}`;
-  const publishDate =
-    entry.collection === "blog" ? entry.data.publishDate : entry.data.publishDate;
+  const publishDate = entry.collection === "blog" ? entry.data.publishDate : entry.data.publishDate;
 
   return [
     slug,

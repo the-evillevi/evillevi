@@ -21,14 +21,16 @@ const pageDate = entry.collection === "blog" ? entry.data.publishDate : entry.da
 ---
 
 <SiteLayout title={entry.data.title} description={entry.data.description}>
-  <article class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+  <article
+    class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_320px]"
+  >
     <div class="min-w-0">
       <header
         class="nb-shadow mb-8 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5 md:p-8"
         style={`--accent:${entry.data.accentColor ?? "var(--nb-peach)"}`}
       >
         <a
-          class="mb-4 inline-flex border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black uppercase text-[var(--nb-button-text)]"
+          class="mb-4 inline-flex border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase"
           href={`/${entry.collection}`}
         >
           {entry.collection}
@@ -52,7 +54,11 @@ const pageDate = entry.collection === "blog" ? entry.data.publishDate : entry.da
 
       <section id="relations" class="mt-10 grid gap-5">
         {outgoingLinks.length > 0 && <OutgoingLinks links={outgoingLinks} />}
-        {backlinks.length > 0 && <Backlinks backlinks={backlinks} currentEntryId={`${entry.collection}/${entry.id}`} />}
+        {
+          backlinks.length > 0 && (
+            <Backlinks backlinks={backlinks} currentEntryId={`${entry.collection}/${entry.id}`} />
+          )
+        }
       </section>
 
       {entry.data.comment && <GiscusComments />}

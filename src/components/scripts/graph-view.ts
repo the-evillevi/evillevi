@@ -36,7 +36,8 @@ function buildGraph(data: ContentIndex, currentSlug?: string | null, global = fa
     include.add(currentSlug);
     data[currentSlug].links.forEach((link) => include.add(link.replace(/^\/+/, "")));
     Object.values(data).forEach((item) => {
-      if (item.links.map((link) => link.replace(/^\/+/, "")).includes(currentSlug)) include.add(item.slug);
+      if (item.links.map((link) => link.replace(/^\/+/, "")).includes(currentSlug))
+        include.add(item.slug);
     });
   }
 
@@ -82,7 +83,13 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
 
   const simulation = d3
     .forceSimulation(nodes)
-    .force("link", d3.forceLink<GraphNode, GraphLink>(links).id((node) => node.id).distance(55))
+    .force(
+      "link",
+      d3
+        .forceLink<GraphNode, GraphLink>(links)
+        .id((node) => node.id)
+        .distance(55),
+    )
     .force("charge", d3.forceManyBody().strength(-180))
     .force("center", d3.forceCenter(width / 2, height / 2));
 

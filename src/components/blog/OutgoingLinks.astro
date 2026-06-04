@@ -17,7 +17,9 @@ const { links } = Astro.props;
           <span class="grid size-7 place-items-center border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] text-xs font-black text-[var(--nb-button-text)]">
             {index + 1}
           </span>
-          <a class="font-black uppercase" href={link.url}>{link.title}</a>
+          <a class="font-black uppercase" href={link.url}>
+            {link.title}
+          </a>
         </li>
       ))
     }

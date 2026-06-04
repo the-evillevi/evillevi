@@ -7,9 +7,7 @@ interface Props {
   description?: string;
 }
 
-const title = Astro.props.title
-  ? `${Astro.props.title} • ${siteConfig.title}`
-  : siteConfig.title;
+const title = Astro.props.title ? `${Astro.props.title} • ${siteConfig.title}` : siteConfig.title;
 const description = Astro.props.description ?? siteConfig.description;
 ---
 
@@ -34,7 +32,9 @@ const description = Astro.props.description ?? siteConfig.description;
   <body>
     <div class="nb-page flex min-h-screen flex-col">
       <header class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-4 md:px-6">
-        <nav class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <nav
+          class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between"
+        >
           <a
             href="/"
             class="inline-flex w-fit border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-3 py-2 text-lg font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
@@ -46,7 +46,7 @@ const description = Astro.props.description ?? siteConfig.description;
               siteConfig.nav.map((item) => (
                 <a
                   href={item.href}
-                  class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black uppercase text-[var(--nb-text)] transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
+                  class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black text-[var(--nb-text)] uppercase transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
                 >
                   {item.title}
                 </a>
@@ -69,7 +69,9 @@ const description = Astro.props.description ?? siteConfig.description;
       </main>
 
       <footer class="border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-8 md:px-6">
-        <div class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div
+          class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between"
+        >
           <div>
             <p class="text-xl font-black uppercase">{siteConfig.author}</p>
             <p class="max-w-2xl font-bold text-[var(--nb-muted)]">{siteConfig.description}</p>
