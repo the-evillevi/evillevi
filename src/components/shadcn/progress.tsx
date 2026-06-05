@@ -8,14 +8,11 @@ const Progress = React.forwardRef<
   <div
     ref={ref}
     data-slot="progress"
-    className={cn(
-      "relative h-3 w-full overflow-hidden rounded-full bg-secondary",
-      className,
-    )}
+    className={cn("bg-secondary relative h-3 w-full overflow-hidden rounded-full", className)}
     {...props}
   >
     <div
-      className="h-full w-full flex-1 bg-primary transition-all"
+      className="bg-primary h-full w-full flex-1 transition-all"
       style={{ transform: `translateX(-${100 - value}%)` }}
     />
   </div>

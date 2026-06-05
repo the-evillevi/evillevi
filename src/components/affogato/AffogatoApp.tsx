@@ -59,11 +59,7 @@ import {
   serializePersistedState,
   STORAGE_KEY,
 } from "@/lib/affogato/storage";
-import {
-  focusMinutesForSessions,
-  sessionsForDay,
-  sevenDayFocusStats,
-} from "@/lib/affogato/stats";
+import { focusMinutesForSessions, sessionsForDay, sevenDayFocusStats } from "@/lib/affogato/stats";
 import {
   defaultPreferences,
   defaultTimer,
@@ -104,9 +100,7 @@ function clampNumber(value: number, min: number, max: number) {
 const SITE_THEME_STORAGE_KEY = "nb-theme";
 
 function systemTheme(): "light" | "dark" {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function readSiteTheme(): "light" | "dark" {
@@ -136,10 +130,8 @@ function VoxelFallback({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "grid place-items-center overflow-hidden border bg-card",
-        compact
-          ? "h-full w-full border-0 bg-transparent"
-          : "h-48 w-full rounded-lg voxel-shadow",
+        "bg-card grid place-items-center overflow-hidden border",
+        compact ? "h-full w-full border-0 bg-transparent" : "voxel-shadow h-48 w-full rounded-lg",
       )}
       aria-label="Loading voxel placeholder"
     >
@@ -148,7 +140,7 @@ function VoxelFallback({ compact = false }: { compact?: boolean }) {
           <span
             key={index}
             className={cn(
-              "block border bg-primary",
+              "bg-primary block border",
               compact ? "size-2" : "size-4",
               index % 3 === 0 && "bg-accent",
             )}
@@ -162,9 +154,7 @@ function VoxelFallback({ compact = false }: { compact?: boolean }) {
 export function AffogatoApp() {
   const [preferences, setPreferences] = useState(defaultPreferences);
   const [timer, setTimer] = useState(defaultTimer);
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    defaultTimer.pausedRemainingSeconds,
-  );
+  const [remainingSeconds, setRemainingSeconds] = useState(defaultTimer.pausedRemainingSeconds);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [beans, setBeans] = useState(0);
@@ -177,15 +167,12 @@ export function AffogatoApp() {
   const [loaded, setLoaded] = useState(false);
   const lastTickAt = useRef(Date.now());
 
-  const activeTask =
-    tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
+  const activeTask = tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
   const duration = durationFor(timer.mode, preferences);
   const progress = clampProgress(
     duration === 0 ? 0 : ((duration - remainingSeconds) / duration) * 100,
   );
-  const completedTasks = tasks.filter(
-    (task) => task.status === "completed",
-  ).length;
+  const completedTasks = tasks.filter((task) => task.status === "completed").length;
   const todaySessions = sessionsForDay(sessions);
   const focusMinutesToday = focusMinutesForSessions(todaySessions);
 
@@ -200,9 +187,7 @@ export function AffogatoApp() {
         const state = parsePersistedState(saved);
         setPreferences(state.preferences);
         setTimer(state.timer);
-        setRemainingSeconds(
-          getRemainingSeconds(state.timer, state.preferences),
-        );
+        setRemainingSeconds(getRemainingSeconds(state.timer, state.preferences));
         setTasks(state.tasks);
         setSessions(state.sessions);
         setBeans(state.beans);
@@ -249,9 +234,7 @@ export function AffogatoApp() {
     const syncPreferenceFromSiteTheme = () => {
       const theme = readSiteTheme();
       setPreferences((current) =>
-        current.theme === theme
-          ? current
-          : normalizePreferences({ ...current, theme }),
+        current.theme === theme ? current : normalizePreferences({ ...current, theme }),
       );
     };
 
@@ -279,9 +262,7 @@ export function AffogatoApp() {
 
   useEffect(() => {
     document.title =
-      timer.status === "running"
-        ? `${formatTime(remainingSeconds)} - Affogato`
-        : "Affogato";
+      timer.status === "running" ? `${formatTime(remainingSeconds)} - Affogato` : "Affogato";
   }, [remainingSeconds, timer.status]);
 
   useEffect(() => {
@@ -297,11 +278,7 @@ export function AffogatoApp() {
         const nextRemaining = getRemainingSeconds(current, preferences, now);
         const earnedSeconds = Math.min(
           elapsedBeanSeconds(current.lastBeanAccruedAt, now),
-          getRemainingSeconds(
-            current,
-            preferences,
-            current.lastBeanAccruedAt ?? now,
-          ),
+          getRemainingSeconds(current, preferences, current.lastBeanAccruedAt ?? now),
         );
 
         if (earnedSeconds > 0) {
@@ -334,11 +311,7 @@ export function AffogatoApp() {
     if (current.status !== "running") return 0;
     return Math.min(
       elapsedBeanSeconds(current.lastBeanAccruedAt, at),
-      getRemainingSeconds(
-        current,
-        preferences,
-        current.lastBeanAccruedAt ?? at,
-      ),
+      getRemainingSeconds(current, preferences, current.lastBeanAccruedAt ?? at),
     );
   }
 
@@ -374,10 +347,7 @@ export function AffogatoApp() {
     const wasFocus = current.mode === "pomodoro";
     const nextMode = nextModeAfterCompletion(current, preferences);
     const nextCycle = nextCycleAfterCompletion(current);
-    const resetCompleted = nextCompletedInCycleAfterCompletion(
-      current,
-      preferences,
-    );
+    const resetCompleted = nextCompletedInCycleAfterCompletion(current, preferences);
     const shouldAutoStart = shouldAutoStartNextTimer(current.mode, preferences);
     const nextDuration = durationFor(nextMode, preferences);
 
@@ -388,10 +358,10 @@ export function AffogatoApp() {
         items.map((task) =>
           task.id === current.selectedTaskId
             ? {
-              ...task,
-              completedPomodoros: task.completedPomodoros + 1,
-              updatedAt: endedAt,
-            }
+                ...task,
+                completedPomodoros: task.completedPomodoros + 1,
+                updatedAt: endedAt,
+              }
             : task,
         ),
       );
@@ -409,10 +379,7 @@ export function AffogatoApp() {
       oscillator.stop(context.currentTime + 0.16);
     }
 
-    if (
-      preferences.notificationsEnabled &&
-      Notification.permission === "granted"
-    ) {
+    if (preferences.notificationsEnabled && Notification.permission === "granted") {
       new Notification("Affogato timer complete", {
         body: `${modeLabels[current.mode]} is done.`,
       });
@@ -474,9 +441,7 @@ export function AffogatoApp() {
     const now = Date.now();
     setTimer((current) => {
       const nextRemaining = getRemainingSeconds(current, preferences, now);
-      const earnedBeans = calculateEarnedBeans(
-        pendingBeanAccrual(current, now),
-      );
+      const earnedBeans = calculateEarnedBeans(pendingBeanAccrual(current, now));
       const currentWithAccrual = {
         ...current,
         currentSessionBeans: current.currentSessionBeans + earnedBeans,
@@ -504,9 +469,7 @@ export function AffogatoApp() {
     const nextDuration = durationFor(mode, preferences);
     setTimer((current) => {
       const nextRemaining = getRemainingSeconds(current, preferences, now);
-      const earnedBeans = calculateEarnedBeans(
-        pendingBeanAccrual(current, now),
-      );
+      const earnedBeans = calculateEarnedBeans(pendingBeanAccrual(current, now));
       const currentWithAccrual = {
         ...current,
         currentSessionBeans: current.currentSessionBeans + earnedBeans,
@@ -550,17 +513,10 @@ export function AffogatoApp() {
     setTaskDraft({ title: "", estimatedPomodoros: 4, notes: "" });
   }
 
-  function updatePreference<K extends keyof Preferences>(
-    key: K,
-    value: Preferences[K],
-  ) {
+  function updatePreference<K extends keyof Preferences>(key: K, value: Preferences[K]) {
     setPreferences((current) => {
       const next = normalizePreferences({ ...current, [key]: value });
-      if (
-        key === "pomodoroMinutes" ||
-        key === "shortBreakMinutes" ||
-        key === "longBreakMinutes"
-      ) {
+      if (key === "pomodoroMinutes" || key === "shortBreakMinutes" || key === "longBreakMinutes") {
         setTimer((timerState) => {
           if (timerState.status !== "idle") return timerState;
           const nextDuration = durationFor(timerState.mode, next);
@@ -577,11 +533,7 @@ export function AffogatoApp() {
 
   function requestNotifications(enabled: boolean) {
     updatePreference("notificationsEnabled", enabled);
-    if (
-      enabled &&
-      "Notification" in window &&
-      Notification.permission === "default"
-    ) {
+    if (enabled && "Notification" in window && Notification.permission === "default") {
       Notification.requestPermission();
     }
   }
@@ -599,9 +551,7 @@ export function AffogatoApp() {
               <Cat className="size-6" />
             </div>
             <div>
-              <p className="text-xl font-black tracking-normal uppercase">
-                Affogato
-              </p>
+              <p className="text-xl font-black tracking-normal uppercase">Affogato</p>
               <p className="text-sm font-bold text-[var(--nb-muted)]">
                 Focus timer with voxel placeholders
               </p>
@@ -612,7 +562,7 @@ export function AffogatoApp() {
             <Badge
               className={cn(
                 "h-10 gap-2 px-3 text-sm",
-                beanPulse && "scale-105 bg-accent text-accent-foreground",
+                beanPulse && "bg-accent text-accent-foreground scale-105",
               )}
             >
               <Coffee className="size-4" />
@@ -625,10 +575,7 @@ export function AffogatoApp() {
                   size="icon"
                   aria-label="Toggle theme"
                   onClick={() =>
-                    updatePreference(
-                      "theme",
-                      preferences.theme === "dark" ? "light" : "dark",
-                    )
+                    updatePreference("theme", preferences.theme === "dark" ? "light" : "dark")
                   }
                 >
                   {preferences.theme === "dark" ? <Sun /> : <Moon />}
@@ -665,11 +612,7 @@ export function AffogatoApp() {
               variant="outline"
               size="icon"
               aria-label="Account placeholder"
-              onClick={() =>
-                toast.info(
-                  "Accounts arrive later. Affogato works locally today.",
-                )
-              }
+              onClick={() => toast.info("Accounts arrive later. Affogato works locally today.")}
             >
               <User />
             </Button>
@@ -683,12 +626,8 @@ export function AffogatoApp() {
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Button
                     size="icon"
-                    aria-label={
-                      timer.status === "running" ? "Pause timer" : "Start timer"
-                    }
-                    onClick={
-                      timer.status === "running" ? pauseTimer : startTimer
-                    }
+                    aria-label={timer.status === "running" ? "Pause timer" : "Start timer"}
+                    onClick={timer.status === "running" ? pauseTimer : startTimer}
                   >
                     {timer.status === "running" ? <Pause /> : <Play />}
                   </Button>
@@ -704,12 +643,7 @@ export function AffogatoApp() {
                     variant="outline"
                     size="icon"
                     aria-label="Toggle sound"
-                    onClick={() =>
-                      updatePreference(
-                        "soundEnabled",
-                        !preferences.soundEnabled,
-                      )
-                    }
+                    onClick={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
                   >
                     {preferences.soundEnabled ? <Volume2 /> : <VolumeX />}
                   </Button>
@@ -755,16 +689,13 @@ export function AffogatoApp() {
                     </Suspense>
                   </div>
                   <div className="relative mt-16 text-center">
-                    <p className="text-sm font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
                       {modeLabels[timer.mode]}
                     </p>
-                    <p className="text-6xl font-black tabular-nums tracking-normal sm:text-7xl">
+                    <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl">
                       {formatTime(remainingSeconds)}
                     </p>
-                    <p
-                      aria-live="polite"
-                      className="mt-2 text-sm text-muted-foreground"
-                    >
+                    <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
                       {timer.status === "running"
                         ? "Earning beans in real time"
                         : "Ready when you are"}
@@ -778,7 +709,7 @@ export function AffogatoApp() {
                   variant="outline"
                   spacing={0}
                   aria-label="Timer mode"
-                  className="grid p-4 w-full max-w-md grid-cols-3"
+                  className="grid w-full max-w-md grid-cols-3 p-4"
                   onValueChange={(value) => {
                     if (!value) return;
                     setMode(value as TimerMode);
@@ -789,46 +720,32 @@ export function AffogatoApp() {
                   <ToggleGroupItem value="longBreak">Long</ToggleGroupItem>
                 </ToggleGroup>
 
-
                 <Tooltip>
                   <TooltipTrigger>
                     <div className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
-                      <span className="text-sm font-black uppercase text-[var(--nb-muted)]">
+                      <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
                         cycle {timer.cycle}
                       </span>
                       <div className="flex gap-2">
-                        {Array.from(
-                          { length: preferences.pomodorosPerCycle },
-                          (_, index) => (
-                            <span
-                              className={cn(
-                                "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
-                                index < timer.completedInCycle
-                                  ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
-                                  : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
-                              )}
-                            >
-                              <Coffee className="size-4" />
-                            </span>
-                          )
-                        )}
-
+                        {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
+                          <span
+                            className={cn(
+                              "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
+                              index < timer.completedInCycle
+                                ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
+                                : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
+                            )}
+                          >
+                            <Coffee className="size-4" />
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </TooltipTrigger>
 
                   <TooltipContent>
-                    {Math.min(
-                      timer.completedInCycle,
-                      preferences.pomodorosPerCycle,
-                    )}{" "}
-                    done,{" "}
-                    {Math.max(
-                      0,
-                      preferences.pomodorosPerCycle -
-                      timer.completedInCycle,
-                    )}{" "}
-                    to go
+                    {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
+                    {Math.max(0, preferences.pomodorosPerCycle - timer.completedInCycle)} to go
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -849,13 +766,13 @@ export function AffogatoApp() {
                             100
                           }
                         />
-                        <p className="text-sm text-muted-foreground">
-                          {activeTask.completedPomodoros}/
-                          {activeTask.estimatedPomodoros} focus sessions
+                        <p className="text-muted-foreground text-sm">
+                          {activeTask.completedPomodoros}/{activeTask.estimatedPomodoros} focus
+                          sessions
                         </p>
                       </>
                     ) : (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Pick or create a task to connect focus time to a goal.
                       </p>
                     )}
@@ -866,12 +783,9 @@ export function AffogatoApp() {
                     <CardTitle className="text-lg">Bean stream</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <p className="text-3xl font-black tabular-nums">
-                      {beanLabel}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Beans rise while focus and break timers are active.
-                      Pausing stops the drip.
+                    <p className="text-3xl font-black tabular-nums">{beanLabel}</p>
+                    <p className="text-muted-foreground text-sm">
+                      Beans rise while focus and break timers are active. Pausing stops the drip.
                     </p>
                   </CardContent>
                 </Card>
@@ -885,13 +799,11 @@ export function AffogatoApp() {
             </Suspense>
             <div className="mt-5 space-y-3">
               <Badge variant="secondary">Voxel art placeholder</Badge>
-              <h2 className="text-2xl font-bold tracking-normal">
-                Future cozy desk scene
-              </h2>
-              <p className="text-sm leading-6 text-muted-foreground">
-                This canvas marks where Affogato's original 3D voxel assets will
-                live. For now it uses simple cube beans, lighting, and motion so
-                the layout and island boundary are real.
+              <h2 className="text-2xl font-bold tracking-normal">Future cozy desk scene</h2>
+              <p className="text-muted-foreground text-sm leading-6">
+                This canvas marks where Affogato's original 3D voxel assets will live. For now it
+                uses simple cube beans, lighting, and motion so the layout and island boundary are
+                real.
               </p>
             </div>
           </section>
@@ -935,9 +847,7 @@ function TasksPanel({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Tasks</SheetTitle>
-          <SheetDescription>
-            Select a task to receive completed focus sessions.
-          </SheetDescription>
+          <SheetDescription>Select a task to receive completed focus sessions.</SheetDescription>
         </SheetHeader>
         <div className="mt-5 space-y-4">
           <div className="grid gap-3 rounded-lg border p-3">
@@ -977,7 +887,7 @@ function TasksPanel({
           </div>
           <div className="space-y-2">
             {tasks.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No tasks yet.</p>
+              <p className="text-muted-foreground text-sm">No tasks yet.</p>
             ) : null}
             {tasks.map((task) => (
               <div
@@ -992,15 +902,13 @@ function TasksPanel({
                     <p
                       className={cn(
                         "font-medium",
-                        task.status === "completed" &&
-                        "line-through text-muted-foreground",
+                        task.status === "completed" && "text-muted-foreground line-through",
                       )}
                     >
                       {task.title}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {task.completedPomodoros}/{task.estimatedPomodoros}{" "}
-                      sessions
+                    <p className="text-muted-foreground text-xs">
+                      {task.completedPomodoros}/{task.estimatedPomodoros} sessions
                     </p>
                   </div>
                   <div className="flex gap-1">
@@ -1026,11 +934,11 @@ function TasksPanel({
                           items.map((item) =>
                             item.id === task.id
                               ? {
-                                ...item,
-                                status: "completed",
-                                completedAt: Date.now(),
-                                updatedAt: Date.now(),
-                              }
+                                  ...item,
+                                  status: "completed",
+                                  completedAt: Date.now(),
+                                  updatedAt: Date.now(),
+                                }
                               : item,
                           ),
                         )
@@ -1043,9 +951,7 @@ function TasksPanel({
                       size="icon"
                       aria-label="Delete task"
                       onClick={() =>
-                        setTasks((items) =>
-                          items.filter((item) => item.id !== task.id),
-                        )
+                        setTasks((items) => items.filter((item) => item.id !== task.id))
                       }
                     >
                       <X />
@@ -1087,16 +993,11 @@ function StatsPanel({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Stats</DialogTitle>
-          <DialogDescription>
-            Local productivity totals for this browser.
-          </DialogDescription>
+          <DialogDescription>Local productivity totals for this browser.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-3 sm:grid-cols-2">
           <Stat label="Pomodoros today" value={sessionsToday.toString()} />
-          <Stat
-            label="Focus minutes"
-            value={Math.round(focusMinutesToday).toString()}
-          />
+          <Stat label="Focus minutes" value={Math.round(focusMinutesToday).toString()} />
           <Stat label="Current cycle" value={timer.cycle.toString()} />
           <Stat
             label="Beans earned"
@@ -1110,17 +1011,12 @@ function StatsPanel({
           <p className="mb-3 text-sm font-medium">Last seven days</p>
           <div className="flex h-32 items-end gap-2">
             {sevenDayStats.map((day) => (
-              <div
-                key={day.label}
-                className="flex flex-1 flex-col items-center gap-2"
-              >
+              <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
                 <div
-                  className="w-full rounded-md bg-primary"
+                  className="bg-primary w-full rounded-md"
                   style={{ height: `${Math.max(8, (day.count / max) * 100)}%` }}
                 />
-                <span className="text-xs text-muted-foreground">
-                  {day.label}
-                </span>
+                <span className="text-muted-foreground text-xs">{day.label}</span>
               </div>
             ))}
           </div>
@@ -1133,7 +1029,7 @@ function StatsPanel({
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="text-muted-foreground text-sm">{label}</p>
       <p className="text-2xl font-bold tabular-nums">{value}</p>
     </div>
   );
@@ -1148,10 +1044,7 @@ function SettingsPanel({
   preferences: Preferences;
   requestNotifications: (enabled: boolean) => void;
   setPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
-  updatePreference: <K extends keyof Preferences>(
-    key: K,
-    value: Preferences[K],
-  ) => void;
+  updatePreference: <K extends keyof Preferences>(key: K, value: Preferences[K]) => void;
 }) {
   const durationKeys = [
     ["pomodoroMinutes", "Focus minutes"],
@@ -1170,9 +1063,7 @@ function SettingsPanel({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>
-            Adjust local timer behavior and preferences.
-          </DialogDescription>
+          <DialogDescription>Adjust local timer behavior and preferences.</DialogDescription>
         </DialogHeader>
         <div className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-2">
@@ -1201,16 +1092,12 @@ function SettingsPanel({
           <SettingRow
             label="Auto-start breaks"
             checked={preferences.autoStartBreaks}
-            onCheckedChange={(checked) =>
-              updatePreference("autoStartBreaks", checked)
-            }
+            onCheckedChange={(checked) => updatePreference("autoStartBreaks", checked)}
           />
           <SettingRow
             label="Auto-start focus"
             checked={preferences.autoStartPomodoros}
-            onCheckedChange={(checked) =>
-              updatePreference("autoStartPomodoros", checked)
-            }
+            onCheckedChange={(checked) => updatePreference("autoStartPomodoros", checked)}
           />
           <SettingRow
             label="Notifications"
@@ -1221,9 +1108,7 @@ function SettingsPanel({
           <SettingRow
             label="Sound"
             checked={preferences.soundEnabled}
-            onCheckedChange={(checked) =>
-              updatePreference("soundEnabled", checked)
-            }
+            onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
           />
           <div className="space-y-2">
             <p className="text-sm font-medium">Volume</p>
@@ -1248,14 +1133,9 @@ function SettingsPanel({
           <SettingRow
             label="Reduced motion"
             checked={preferences.reducedMotion}
-            onCheckedChange={(checked) =>
-              updatePreference("reducedMotion", checked)
-            }
+            onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
           />
-          <Button
-            variant="secondary"
-            onClick={() => setPreferences(defaultPreferences)}
-          >
+          <Button variant="secondary" onClick={() => setPreferences(defaultPreferences)}>
             Restore defaults
           </Button>
         </div>

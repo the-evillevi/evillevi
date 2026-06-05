@@ -13,12 +13,7 @@ export function createDefaultState(): PersistedAffogatoState {
   };
 }
 
-function clampNumber(
-  value: unknown,
-  min: number,
-  max: number,
-  fallback: number,
-) {
+function clampNumber(value: unknown, min: number, max: number, fallback: number) {
   const number = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(number)) return fallback;
   return Math.min(max, Math.max(min, Math.round(number)));
@@ -28,12 +23,7 @@ export function normalizePreferences(value: Partial<Preferences> = {}) {
   return {
     ...defaultPreferences,
     ...value,
-    pomodoroMinutes: clampNumber(
-      value.pomodoroMinutes,
-      1,
-      90,
-      defaultPreferences.pomodoroMinutes,
-    ),
+    pomodoroMinutes: clampNumber(value.pomodoroMinutes, 1, 90, defaultPreferences.pomodoroMinutes),
     shortBreakMinutes: clampNumber(
       value.shortBreakMinutes,
       1,
@@ -74,9 +64,7 @@ export function parsePersistedState(value: string | null) {
     timer: {
       ...timer,
       lastBeanAccruedAt:
-        timer.status === "running"
-          ? (timer.lastBeanAccruedAt ?? timer.startedAt)
-          : null,
+        timer.status === "running" ? (timer.lastBeanAccruedAt ?? timer.startedAt) : null,
     },
     tasks: parsed.tasks ?? [],
     sessions: parsed.sessions ?? [],

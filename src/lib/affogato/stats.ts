@@ -13,9 +13,7 @@ export function localDayKey(time = Date.now()) {
 }
 
 export function sessionsForDay(sessions: Session[], key = todayKey()) {
-  return sessions.filter(
-    (session) => session.completed && todayKey(session.endedAt) === key,
-  );
+  return sessions.filter((session) => session.completed && todayKey(session.endedAt) === key);
 }
 
 export function focusMinutesForSessions(sessions: Session[]) {
@@ -31,9 +29,7 @@ export function sevenDayFocusStats(sessions: Session[], now = Date.now()) {
     const key = todayKey(day.getTime());
     const count = sessions.filter(
       (session) =>
-        session.completed &&
-        session.mode === "pomodoro" &&
-        todayKey(session.endedAt) === key,
+        session.completed && session.mode === "pomodoro" && todayKey(session.endedAt) === key,
     ).length;
     return {
       label: day.toLocaleDateString(undefined, { weekday: "short" }),

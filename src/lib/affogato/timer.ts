@@ -42,11 +42,7 @@ export function durationFor(mode: TimerMode, preferences: Preferences) {
   return Math.max(1, Math.round(minutes)) * 60;
 }
 
-export function getRemainingSeconds(
-  timer: TimerState,
-  preferences: Preferences,
-  at = Date.now(),
-) {
+export function getRemainingSeconds(timer: TimerState, preferences: Preferences, at = Date.now()) {
   if (timer.status === "running" && timer.startedAt) {
     const elapsed = Math.floor((at - timer.startedAt) / 1000);
     return Math.max(0, timer.pausedRemainingSeconds - elapsed);
@@ -70,36 +66,25 @@ export function formatTime(totalSeconds: number) {
   return `${minutes}:${seconds}`;
 }
 
-export function nextModeAfterCompletion(
-  timer: TimerState,
-  preferences: Preferences,
-) {
+export function nextModeAfterCompletion(timer: TimerState, preferences: Preferences) {
   if (timer.mode !== "pomodoro") {
     return "pomodoro" satisfies TimerMode;
   }
 
-  return timer.completedInCycle + 1 >= preferences.pomodorosPerCycle
-    ? "longBreak"
-    : "shortBreak";
+  return timer.completedInCycle + 1 >= preferences.pomodorosPerCycle ? "longBreak" : "shortBreak";
 }
 
 export function nextCycleAfterCompletion(timer: TimerState) {
   return timer.mode === "longBreak" ? timer.cycle + 1 : timer.cycle;
 }
 
-export function nextCompletedInCycleAfterCompletion(
-  timer: TimerState,
-  preferences: Preferences,
-) {
+export function nextCompletedInCycleAfterCompletion(timer: TimerState, preferences: Preferences) {
   if (timer.mode === "longBreak") return 0;
   if (timer.mode !== "pomodoro") return timer.completedInCycle;
   return Math.min(timer.completedInCycle + 1, preferences.pomodorosPerCycle);
 }
 
-export function shouldAutoStartNextTimer(
-  completedMode: TimerMode,
-  preferences: Preferences,
-) {
+export function shouldAutoStartNextTimer(completedMode: TimerMode, preferences: Preferences) {
   return completedMode === "pomodoro"
     ? preferences.autoStartBreaks
     : preferences.autoStartPomodoros;

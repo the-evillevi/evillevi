@@ -15,11 +15,7 @@ function VoxelBeanStack() {
     <Float speed={1.4} rotationIntensity={0.28} floatIntensity={0.45}>
       <group rotation={[0.2, -0.45, 0.08]}>
         {beans.map(([x, y, z], index) => (
-          <mesh
-            key={`${x}-${y}-${z}`}
-            position={[x, y, z]}
-            scale={[0.45, 0.28, 0.32]}
-          >
+          <mesh key={`${x}-${y}-${z}`} position={[x, y, z]} scale={[0.45, 0.28, 0.32]}>
             <boxGeometry args={[1, 1, 1]} />
             <meshStandardMaterial
               color={index % 2 === 0 ? "#8f4d25" : "#c17838"}
@@ -49,7 +45,7 @@ export function VoxelPlaceholder({
         "overflow-hidden",
         compact
           ? "h-full w-full bg-transparent"
-          : "h-48 w-full rounded-lg border bg-card voxel-shadow",
+          : "bg-card voxel-shadow h-48 w-full rounded-lg border",
         className,
       )}
       aria-label="Voxel art placeholder"
@@ -58,12 +54,7 @@ export function VoxelPlaceholder({
         <ambientLight intensity={0.9} />
         <directionalLight position={[3, 5, 4]} intensity={1.7} />
         <VoxelBeanStack />
-        <OrbitControls
-          enablePan={false}
-          enableZoom={false}
-          autoRotate
-          autoRotateSpeed={0.8}
-        />
+        <OrbitControls enablePan={false} enableZoom={false} autoRotate autoRotateSpeed={0.8} />
       </Canvas>
     </div>
   );
