@@ -19,7 +19,13 @@ function clampNumber(value: unknown, min: number, max: number, fallback: number)
   return Math.min(max, Math.max(min, Math.round(number)));
 }
 
-export function normalizePreferences(value: Partial<Preferences> = {}) {
+function normalizeTheme(value: unknown): Preferences["theme"] {
+  return value === "light" || value === "dark" || value === "system"
+    ? value
+    : defaultPreferences.theme;
+}
+
+export function normalizePreferences(value: Partial<Preferences> = {}): Preferences {
   return {
     ...defaultPreferences,
     ...value,
@@ -43,10 +49,8 @@ export function normalizePreferences(value: Partial<Preferences> = {}) {
       defaultPreferences.pomodorosPerCycle,
     ),
     volume: clampNumber(value.volume, 0, 100, defaultPreferences.volume),
-    theme: ["light", "dark", "system"].includes(value.theme ?? "")
-      ? value.theme
-      : defaultPreferences.theme,
-  } satisfies Preferences;
+    theme: normalizeTheme(value.theme),
+  };
 }
 
 export function parsePersistedState(value: string | null) {
