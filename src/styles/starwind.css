@@ -285,6 +285,160 @@ html[data-theme="dark"] {
   transform: translate(4px, 4px) scale(0.98);
 }
 
+.voxel-shadow {
+  box-shadow: 8px 8px 0 0 var(--nb-ink);
+}
+
+.nb-page [data-slot="button"],
+.nb-page [data-slot="tabs-trigger"],
+.nb-page [data-slot="toggle"],
+.nb-page [data-slot="toggle-group-item"],
+.nb-page [data-slot="dialog-trigger"],
+.nb-page [data-slot="sheet-trigger"] {
+  border: 4px solid var(--nb-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 5px 5px 0 0 var(--nb-ink) !important;
+  color: var(--nb-button-text);
+  font-weight: 900;
+  text-transform: uppercase;
+  transition:
+    transform 180ms var(--nb-ease),
+    box-shadow 180ms var(--nb-ease),
+    background-color 180ms var(--nb-ease);
+}
+
+.nb-page [data-slot="button"]:hover,
+.nb-page [data-slot="tabs-trigger"]:hover,
+.nb-page [data-slot="toggle"]:hover,
+.nb-page [data-slot="toggle-group-item"]:hover {
+  transform: translate(-2px, -2px);
+}
+
+.nb-page [data-slot="button"]:active,
+.nb-page [data-slot="tabs-trigger"]:active,
+.nb-page [data-slot="toggle"]:active,
+.nb-page [data-slot="toggle-group-item"]:active {
+  box-shadow: 0 0 0 0 var(--nb-ink) !important;
+  transform: translate(5px, 5px);
+}
+
+.nb-page [data-slot="card"],
+.nb-page [data-slot="dialog-content"],
+.nb-page [data-slot="tooltip-content"],
+.nb-page [aria-label="Voxel art placeholder"] {
+  border: 4px solid var(--nb-ink) !important;
+  border-radius: 0 !important;
+  background: var(--nb-surface) !important;
+  color: var(--nb-text) !important;
+  box-shadow: 6px 6px 0 0 var(--nb-ink) !important;
+}
+
+.nb-page [data-slot="input"],
+.nb-page [data-slot="textarea"] {
+  border: 4px solid var(--nb-ink) !important;
+  border-radius: 0 !important;
+  background: var(--nb-base) !important;
+  color: var(--nb-text) !important;
+  font-weight: 800;
+}
+
+.nb-page [data-slot="badge"] {
+  border: 4px solid var(--nb-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.nb-page [data-slot="progress"] {
+  height: 1rem;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-base);
+}
+
+.nb-page [data-slot="tabs-list"] {
+  height: auto;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-surface);
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}
+
+.nb-page [data-slot="toggle-group"] {
+  height: auto;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-surface);
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}
+
+.nb-page [data-slot="toggle-group-item"] {
+  width: 100%;
+  min-width: 0;
+  background: var(--nb-base);
+  color: var(--nb-text);
+  box-shadow: none !important;
+}
+
+.nb-page [data-slot="toggle-group-item"][data-state="on"] {
+  background: var(--nb-peach);
+  color: var(--nb-button-text);
+  box-shadow: inset 4px 4px 0 0 var(--nb-ink) !important;
+  transform: translate(2px, 2px);
+}
+
+.nb-page [data-slot="toggle-group-item"][data-state="on"]:hover,
+.nb-page [data-slot="toggle-group-item"][data-state="on"]:active {
+  transform: translate(2px, 2px);
+}
+
+.nb-page [data-slot="switch"] {
+  height: 2rem;
+  width: 3.5rem;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-base);
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}
+
+.nb-page [data-slot="switch"] > span {
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 0;
+  background: var(--nb-yellow);
+}
+
+.nb-page [data-slot="slider-track"] {
+  height: 1rem;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-base);
+}
+
+.nb-page [data-slot="slider-range"] {
+  background: var(--nb-peach);
+}
+
+.nb-page [data-slot="slider-thumb"] {
+  height: 1.5rem;
+  width: 1.5rem;
+  border: 4px solid var(--nb-ink);
+  border-radius: 0;
+  background: var(--nb-yellow);
+  box-shadow: 3px 3px 0 0 var(--nb-ink);
+}
+
+.nb-page [data-slot="progress"] > div {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--nb-peach),
+    var(--nb-peach) 10px,
+    var(--nb-yellow) 10px,
+    var(--nb-yellow) 20px
+  );
+}
+
 .nb-page :focus-visible {
   outline: 4px solid var(--nb-blue);
   outline-offset: 4px;
