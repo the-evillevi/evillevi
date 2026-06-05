@@ -741,6 +741,7 @@ export function AffogatoApp() {
                       <div className="flex gap-2">
                         {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
                           <span
+                            key={index}
                             className={cn(
                               "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
                               index < timer.completedInCycle
