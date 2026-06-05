@@ -166,6 +166,7 @@ export function AffogatoApp() {
   });
   const [loaded, setLoaded] = useState(false);
   const lastTickAt = useRef(Date.now());
+  const initialDocumentTitle = useRef<string | null>(null);
 
   const activeTask = tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
   const duration = durationFor(timer.mode, preferences);
@@ -261,8 +262,19 @@ export function AffogatoApp() {
   }, []);
 
   useEffect(() => {
+    initialDocumentTitle.current = document.title;
+
+    return () => {
+      if (initialDocumentTitle.current) {
+        document.title = initialDocumentTitle.current;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const baseTitle = initialDocumentTitle.current ?? document.title;
     document.title =
-      timer.status === "running" ? `${formatTime(remainingSeconds)} - Affogato` : "Affogato";
+      timer.status === "running" ? `${formatTime(remainingSeconds)} - ${baseTitle}` : baseTitle;
   }, [remainingSeconds, timer.status]);
 
   useEffect(() => {
