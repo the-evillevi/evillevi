@@ -20,6 +20,9 @@ import {
 import type * as React from "react";
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
+
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
@@ -52,6 +55,7 @@ import {
   TooltipTrigger,
 } from "@/components/shadcn/tooltip";
 import { Toaster } from "@/components/shadcn/sonner";
+
 import { calculateEarnedBeans, elapsedBeanSeconds } from "@/lib/affogato/beans";
 import {
   normalizePreferences,
@@ -81,13 +85,11 @@ import type {
   TimerState,
   TimerStatus,
 } from "@/lib/affogato/types";
-import { cn } from "@/lib/utils";
 
-const VoxelPlaceholder = lazy(() =>
-  import("./VoxelPlaceholder").then((module) => ({
-    default: module.VoxelPlaceholder,
-  })),
-);
+import VoxelPlaceholder from "@/components/affogato/VoxelPlaceholder"
+import CubeCat from "@/components/affogato/CubeCat";
+
+import { cn } from "@/lib/utils";
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -370,10 +372,10 @@ export function AffogatoApp() {
         items.map((task) =>
           task.id === current.selectedTaskId
             ? {
-                ...task,
-                completedPomodoros: task.completedPomodoros + 1,
-                updatedAt: endedAt,
-              }
+              ...task,
+              completedPomodoros: task.completedPomodoros + 1,
+              updatedAt: endedAt,
+            }
             : task,
         ),
       );
@@ -696,9 +698,28 @@ export function AffogatoApp() {
                     />
                   </svg>
                   <div className="absolute top-8 h-16 w-24">
-                    <Suspense fallback={<VoxelFallback compact />}>
-                      <VoxelPlaceholder compact />
-                    </Suspense>
+                    <Canvas camera={{ position: [0, 2, 5], fov: 50 }} dpr={[1, 1.5]} shadows>
+                      {/* fill light, soft, no harsh shadows */}
+                      <ambientLight intensity={1.2} />
+
+                      {/* key light, main directional light, angled toward camera-facing side */}
+                      <directionalLight
+                        position={[2, 4, 3]}
+                        intensity={2.5}
+                        castShadow
+                      />
+
+                      {/* gives realistic ambient fill for PBR materials */}
+                      <Environment preset="city" />
+
+                      <ContactShadows position={[0, -0.01, 0]} opacity={0.4} blur={2} far={4} />
+                      <OrbitControls enablePan={false} maxPolarAngle={Math.PI / 2} />
+
+                      <Suspense fallback={<VoxelFallback compact />}>
+                        {/*<VoxelPlaceholder compact />*/}
+                        <CubeCat />
+                      </Suspense>
+                    </Canvas>
                   </div>
                   <div className="relative mt-16 text-center">
                     <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
@@ -807,9 +828,9 @@ export function AffogatoApp() {
           </section>
 
           <section className="nb-panel p-4 md:p-6">
-            <Suspense fallback={<VoxelFallback />}>
+            {/*<Suspense fallback={<VoxelFallback />}>
               <VoxelPlaceholder />
-            </Suspense>
+            </Suspense>*/}
             <div className="mt-5 space-y-3">
               <Badge variant="secondary">Voxel art placeholder</Badge>
               <h2 className="text-2xl font-bold tracking-normal">Future cozy desk scene</h2>
@@ -947,11 +968,11 @@ function TasksPanel({
                           items.map((item) =>
                             item.id === task.id
                               ? {
-                                  ...item,
-                                  status: "completed",
-                                  completedAt: Date.now(),
-                                  updatedAt: Date.now(),
-                                }
+                                ...item,
+                                status: "completed",
+                                completedAt: Date.now(),
+                                updatedAt: Date.now(),
+                              }
                               : item,
                           ),
                         )
