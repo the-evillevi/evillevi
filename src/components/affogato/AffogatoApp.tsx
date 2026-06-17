@@ -18,10 +18,9 @@ import {
   X,
 } from "lucide-react";
 import type * as React from "react";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
+
 
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
@@ -87,7 +86,7 @@ import type {
 } from "@/lib/affogato/types";
 
 import VoxelPlaceholder from "@/components/affogato/VoxelPlaceholder"
-import CubeCat from "@/components/affogato/CubeCat";
+import TimerScene from "@/components/affogato/TimerScene";
 
 import { cn } from "@/lib/utils";
 
@@ -697,31 +696,10 @@ export function AffogatoApp() {
                       strokeDashoffset={326.7 - (326.7 * progress) / 100}
                     />
                   </svg>
-                  <div className="absolute top-8 h-16 w-24">
-                    <Canvas camera={{ position: [0, 2, 5], fov: 50 }} dpr={[1, 1.5]} shadows>
-                      {/* fill light, soft, no harsh shadows */}
-                      <ambientLight intensity={1.2} />
-
-                      {/* key light, main directional light, angled toward camera-facing side */}
-                      <directionalLight
-                        position={[2, 4, 3]}
-                        intensity={2.5}
-                        castShadow
-                      />
-
-                      {/* gives realistic ambient fill for PBR materials */}
-                      <Environment preset="city" />
-
-                      <ContactShadows position={[0, -0.01, 0]} opacity={0.4} blur={2} far={4} />
-                      <OrbitControls enablePan={false} maxPolarAngle={Math.PI / 2} />
-
-                      <Suspense fallback={<VoxelFallback compact />}>
-                        {/*<VoxelPlaceholder compact />*/}
-                        <CubeCat />
-                      </Suspense>
-                    </Canvas>
+                  <div className="absolute inset-x-2 top-4 h-40">
+                    <TimerScene timer={timer} />
                   </div>
-                  <div className="relative mt-16 text-center">
+                  <div className="relative mt-48 text-center">
                     <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
                       {modeLabels[timer.mode]}
                     </p>
