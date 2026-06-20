@@ -41,6 +41,12 @@ export type Task = {
   completedAt: number | null;
 };
 
+export type TaskDraft = {
+  title: string;
+  estimatedPomodoros: number;
+  notes: string;
+};
+
 export type Session = {
   id: string;
   mode: TimerMode;

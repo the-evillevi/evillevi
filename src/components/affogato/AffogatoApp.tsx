@@ -1,56 +1,12 @@
-import {
-  BarChart3,
-  Bell,
-  Cat,
-  Check,
-  Coffee,
-  Expand,
-  ListTodo,
-  Moon,
-  Pause,
-  Play,
-  RotateCcw,
-  Settings,
-  Sun,
-  User,
-  Volume2,
-  VolumeX,
-  X,
-} from "lucide-react";
-import type * as React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { Badge } from "@/components/shadcn/badge";
-import { Button } from "@/components/shadcn/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/shadcn/dialog";
-import { Input } from "@/components/shadcn/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/shadcn/sheet";
-import { Slider } from "@/components/shadcn/slider";
-import { Switch } from "@/components/shadcn/switch";
-import { Textarea } from "@/components/shadcn/textarea";
-import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/shadcn/tooltip";
+import { AffogatoHeader } from "@/components/affogato/AffogatoHeader";
+import { StatsPanel } from "@/components/affogato/StatsPanel";
+import { TasksPanel } from "@/components/affogato/TasksPanel";
+import { TimerWorkspace } from "@/components/affogato/TimerWorkspace";
 import { Toaster } from "@/components/shadcn/sonner";
+import { TooltipProvider } from "@/components/shadcn/tooltip";
 
 import { calculateEarnedBeans, elapsedBeanSeconds } from "@/lib/affogato/beans";
 import {
@@ -76,14 +32,11 @@ import type {
   Preferences,
   Session,
   Task,
+  TaskDraft,
   TimerMode,
   TimerState,
   TimerStatus,
 } from "@/lib/affogato/types";
-
-import TimerScene from "@/components/affogato/TimerScene";
-
-import { cn } from "@/lib/utils";
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -130,13 +83,7 @@ export function AffogatoApp() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [beans, setBeans] = useState(0);
   const [beanPulse, setBeanPulse] = useState(false);
-  const [taskDraft, setTaskDraft] = useState({
-    title: "",
-    estimatedPomodoros: 4,
-    notes: "",
-  });
   const [loaded, setLoaded] = useState(false);
-  const lastTickAt = useRef(Date.now());
   const initialDocumentTitle = useRef<string | null>(null);
 
   const activeTask = tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
@@ -249,7 +196,6 @@ export function AffogatoApp() {
       const now = Date.now();
       setTimer((current) => {
         if (current.status !== "running") {
-          lastTickAt.current = now;
           setRemainingSeconds(getRemainingSeconds(current, preferences, now));
           return current;
         }
@@ -272,7 +218,6 @@ export function AffogatoApp() {
           };
         }
 
-        lastTickAt.current = now;
         setRemainingSeconds(nextRemaining);
 
         if (nextRemaining > 0) {
@@ -384,7 +329,6 @@ export function AffogatoApp() {
 
   function startTimer() {
     const now = Date.now();
-    lastTickAt.current = now;
     setTimer((current) => ({
       ...current,
       status: "running",
@@ -473,15 +417,15 @@ export function AffogatoApp() {
     setRemainingSeconds(nextDuration);
   }
 
-  function addTask() {
-    if (!taskDraft.title.trim()) return;
+  function addTask(draft: TaskDraft) {
+    if (!draft.title.trim()) return;
     const now = Date.now();
     const task: Task = {
       id: newId("task"),
-      title: taskDraft.title.trim(),
-      estimatedPomodoros: clampNumber(taskDraft.estimatedPomodoros, 1, 24),
+      title: draft.title.trim(),
+      estimatedPomodoros: clampNumber(draft.estimatedPomodoros, 1, 24),
       completedPomodoros: 0,
-      notes: taskDraft.notes.trim(),
+      notes: draft.notes.trim(),
       status: "active",
       createdAt: now,
       updatedAt: now,
@@ -489,7 +433,25 @@ export function AffogatoApp() {
     };
     setTasks((items) => [task, ...items]);
     setTimer((current) => ({ ...current, selectedTaskId: task.id }));
-    setTaskDraft({ title: "", estimatedPomodoros: 4, notes: "" });
+  }
+
+  function selectTask(taskId: string) {
+    setTimer((current) => ({ ...current, selectedTaskId: taskId }));
+  }
+
+  function completeTask(taskId: string) {
+    const now = Date.now();
+    setTasks((items) =>
+      items.map((task) =>
+        task.id === taskId
+          ? { ...task, status: "completed", completedAt: now, updatedAt: now }
+          : task,
+      ),
+    );
+  }
+
+  function deleteTask(taskId: string) {
+    setTasks((items) => items.filter((task) => task.id !== taskId));
   }
 
   function updatePreference<K extends keyof Preferences>(key: K, value: Preferences[K]) {
@@ -517,6 +479,10 @@ export function AffogatoApp() {
     }
   }
 
+  function restoreDefaultPreferences() {
+    setPreferences(defaultPreferences);
+  }
+
   const beanLabel = beans.toLocaleString(undefined, {
     maximumFractionDigits: 1,
   });
@@ -524,531 +490,48 @@ export function AffogatoApp() {
   return (
     <TooltipProvider>
       <div className="nb-page mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <header className="nb-panel flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="nb-shadow-sm flex size-11 items-center justify-center border-4 border-[var(--nb-ink)] bg-[var(--nb-peach)] text-[var(--nb-button-text)]">
-              <Cat className="size-6" />
-            </div>
-            <div>
-              <p className="text-xl font-black tracking-normal uppercase">Affogato</p>
-              <p className="text-sm font-bold text-[var(--nb-muted)]">
-                Focus timer with voxel placeholders
-              </p>
-            </div>
-          </div>
+        <AffogatoHeader
+          beanLabel={beanLabel}
+          beanPulse={beanPulse}
+          theme={preferences.theme}
+          onToggleTheme={() =>
+            updatePreference("theme", preferences.theme === "dark" ? "light" : "dark")
+          }
+        >
+          <TasksPanel
+            activeTaskId={activeTask?.id ?? null}
+            tasks={tasks}
+            onAddTask={addTask}
+            onCompleteTask={completeTask}
+            onDeleteTask={deleteTask}
+            onSelectTask={selectTask}
+          />
+          <StatsPanel
+            beans={beans}
+            completedTasks={completedTasks}
+            currentCycle={timer.cycle}
+            focusMinutesToday={focusMinutesToday}
+            sevenDayStats={sevenDayStats}
+            sessionsToday={todaySessions.length}
+          />
+        </AffogatoHeader>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge
-              className={cn(
-                "h-10 gap-2 px-3 text-sm",
-                beanPulse && "bg-accent text-accent-foreground scale-105",
-              )}
-            >
-              <Coffee className="size-4" />
-              {beanLabel} beans
-            </Badge>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="Toggle theme"
-                  onClick={() =>
-                    updatePreference("theme", preferences.theme === "dark" ? "light" : "dark")
-                  }
-                >
-                  {preferences.theme === "dark" ? <Sun /> : <Moon />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Toggle theme</TooltipContent>
-            </Tooltip>
-            <TasksPanel
-              activeTask={activeTask}
-              addTask={addTask}
-              taskDraft={taskDraft}
-              tasks={tasks}
-              setTaskDraft={setTaskDraft}
-              setTasks={setTasks}
-              setTimer={setTimer}
-            />
-            <StatsPanel
-              beans={beans}
-              completedTasks={completedTasks}
-              focusMinutesToday={focusMinutesToday}
-              sevenDayStats={sevenDayStats}
-              sessionsToday={todaySessions.length}
-              timer={timer}
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Toggle fullscreen"
-              onClick={() => document.documentElement.requestFullscreen?.()}
-            >
-              <Expand />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Account placeholder"
-              onClick={() => toast.info("Accounts arrive later. Affogato works locally today.")}
-            >
-              <User />
-            </Button>
-          </div>
-        </header>
+        <TimerWorkspace
+          preferences={preferences}
+          remainingSeconds={remainingSeconds}
+          timer={timer}
+          onModeChange={setMode}
+          onPause={pauseTimer}
+          onPreferenceChange={updatePreference}
+          onRequestNotifications={requestNotifications}
+          onReset={resetTimer}
+          onRestoreDefaults={restoreDefaultPreferences}
+          onStart={startTimer}
+          onToggleSound={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
+        />
 
-        <main>
-          <section className="nb-panel grid gap-6 p-4 md:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:items-center md:gap-8 md:p-6 lg:grid-cols-[minmax(20rem,0.8fr)_minmax(0,1.2fr)]">
-            <div className="flex flex-col items-center gap-5 md:col-start-1 md:row-start-1">
-              <div className="text-center">
-                <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
-                  {modeLabels[timer.mode]}
-                </p>
-                <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl lg:text-8xl">
-                  {formatTime(remainingSeconds)}
-                </p>
-                <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
-                  {timer.status === "running" ? "Earning beans in real time" : "Ready when you are"}
-                </p>
-              </div>
-
-              <ToggleGroup
-                type="single"
-                value={timer.mode}
-                variant="outline"
-                spacing={0}
-                aria-label="Timer mode"
-                className="grid w-full max-w-md grid-cols-3 p-3"
-                onValueChange={(value) => {
-                  if (!value) return;
-                  setMode(value as TimerMode);
-                }}
-              >
-                <ToggleGroupItem value="pomodoro">Focus</ToggleGroupItem>
-                <ToggleGroupItem value="shortBreak">Short</ToggleGroupItem>
-                <ToggleGroupItem value="longBreak">Long</ToggleGroupItem>
-              </ToggleGroup>
-
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
-                    <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
-                      cycle {timer.cycle}
-                    </span>
-                    <div className="flex gap-2">
-                      {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
-                        <span
-                          key={index}
-                          className={cn(
-                            "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
-                            index < timer.completedInCycle
-                              ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
-                              : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
-                          )}
-                        >
-                          <Coffee className="size-4" />
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
-                  {Math.max(0, preferences.pomodorosPerCycle - timer.completedInCycle)} to go
-                </TooltipContent>
-              </Tooltip>
-            </div>
-
-            <div
-              className="relative h-80 w-full overflow-hidden sm:h-96 md:col-start-2 md:row-span-2 md:row-start-1 md:h-[30rem] lg:h-[34rem]"
-              aria-label="Animated timer character"
-            >
-              <TimerScene timer={timer} />
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-3 md:col-start-1 md:row-start-2 md:self-start">
-              <Button
-                size="icon"
-                aria-label={timer.status === "running" ? "Pause timer" : "Start timer"}
-                onClick={timer.status === "running" ? pauseTimer : startTimer}
-              >
-                {timer.status === "running" ? <Pause /> : <Play />}
-              </Button>
-              <Button variant="outline" size="icon" aria-label="Reset timer" onClick={resetTimer}>
-                <RotateCcw />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Toggle sound"
-                onClick={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
-              >
-                {preferences.soundEnabled ? <Volume2 /> : <VolumeX />}
-              </Button>
-              <SettingsPanel
-                preferences={preferences}
-                requestNotifications={requestNotifications}
-                setPreferences={setPreferences}
-                updatePreference={updatePreference}
-              />
-            </div>
-          </section>
-        </main>
         <Toaster richColors position="bottom-right" />
       </div>
     </TooltipProvider>
-  );
-}
-
-function TasksPanel({
-  activeTask,
-  addTask,
-  taskDraft,
-  tasks,
-  setTaskDraft,
-  setTasks,
-  setTimer,
-}: {
-  activeTask: Task | null;
-  addTask: () => void;
-  taskDraft: { title: string; estimatedPomodoros: number; notes: string };
-  tasks: Task[];
-  setTaskDraft: React.Dispatch<
-    React.SetStateAction<{
-      title: string;
-      estimatedPomodoros: number;
-      notes: string;
-    }>
-  >;
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  setTimer: React.Dispatch<React.SetStateAction<TimerState>>;
-}) {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Open tasks">
-          <ListTodo />
-        </Button>
-      </SheetTrigger>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Tasks</SheetTitle>
-          <SheetDescription>Select a task to receive completed focus sessions.</SheetDescription>
-        </SheetHeader>
-        <div className="mt-5 space-y-4">
-          <div className="grid gap-3 rounded-lg border p-3">
-            <Input
-              placeholder="Task title"
-              value={taskDraft.title}
-              onChange={(event) =>
-                setTaskDraft((draft) => ({
-                  ...draft,
-                  title: event.target.value,
-                }))
-              }
-            />
-            <Input
-              min={1}
-              max={24}
-              type="number"
-              value={taskDraft.estimatedPomodoros}
-              onChange={(event) =>
-                setTaskDraft((draft) => ({
-                  ...draft,
-                  estimatedPomodoros: Number(event.target.value),
-                }))
-              }
-            />
-            <Textarea
-              placeholder="Notes"
-              value={taskDraft.notes}
-              onChange={(event) =>
-                setTaskDraft((draft) => ({
-                  ...draft,
-                  notes: event.target.value,
-                }))
-              }
-            />
-            <Button onClick={addTask}>Add task</Button>
-          </div>
-          <div className="space-y-2">
-            {tasks.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No tasks yet.</p>
-            ) : null}
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className={cn(
-                  "rounded-lg border p-3",
-                  activeTask?.id === task.id && "border-primary bg-primary/5",
-                )}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p
-                      className={cn(
-                        "font-medium",
-                        task.status === "completed" && "text-muted-foreground line-through",
-                      )}
-                    >
-                      {task.title}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
-                      {task.completedPomodoros}/{task.estimatedPomodoros} sessions
-                    </p>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Select task"
-                      onClick={() =>
-                        setTimer((current) => ({
-                          ...current,
-                          selectedTaskId: task.id,
-                        }))
-                      }
-                    >
-                      <Check />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Complete task"
-                      onClick={() =>
-                        setTasks((items) =>
-                          items.map((item) =>
-                            item.id === task.id
-                              ? {
-                                  ...item,
-                                  status: "completed",
-                                  completedAt: Date.now(),
-                                  updatedAt: Date.now(),
-                                }
-                              : item,
-                          ),
-                        )
-                      }
-                    >
-                      <Coffee />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Delete task"
-                      onClick={() =>
-                        setTasks((items) => items.filter((item) => item.id !== task.id))
-                      }
-                    >
-                      <X />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-function StatsPanel({
-  beans,
-  completedTasks,
-  focusMinutesToday,
-  sevenDayStats,
-  sessionsToday,
-  timer,
-}: {
-  beans: number;
-  completedTasks: number;
-  focusMinutesToday: number;
-  sevenDayStats: { label: string; count: number }[];
-  sessionsToday: number;
-  timer: TimerState;
-}) {
-  const max = Math.max(1, ...sevenDayStats.map((day) => day.count));
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Open statistics">
-          <BarChart3 />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Stats</DialogTitle>
-          <DialogDescription>Local productivity totals for this browser.</DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Stat label="Pomodoros today" value={sessionsToday.toString()} />
-          <Stat label="Focus minutes" value={Math.round(focusMinutesToday).toString()} />
-          <Stat label="Current cycle" value={timer.cycle.toString()} />
-          <Stat
-            label="Beans earned"
-            value={beans.toLocaleString(undefined, {
-              maximumFractionDigits: 1,
-            })}
-          />
-          <Stat label="Completed tasks" value={completedTasks.toString()} />
-        </div>
-        <div className="rounded-lg border p-4">
-          <p className="mb-3 text-sm font-medium">Last seven days</p>
-          <div className="flex h-32 items-end gap-2">
-            {sevenDayStats.map((day) => (
-              <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className="bg-primary w-full rounded-md"
-                  style={{ height: `${Math.max(8, (day.count / max) * 100)}%` }}
-                />
-                <span className="text-muted-foreground text-xs">{day.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border p-4">
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="text-2xl font-bold tabular-nums">{value}</p>
-    </div>
-  );
-}
-
-function SettingsPanel({
-  preferences,
-  requestNotifications,
-  setPreferences,
-  updatePreference,
-}: {
-  preferences: Preferences;
-  requestNotifications: (enabled: boolean) => void;
-  setPreferences: React.Dispatch<React.SetStateAction<Preferences>>;
-  updatePreference: <K extends keyof Preferences>(key: K, value: Preferences[K]) => void;
-}) {
-  const durationKeys = [
-    ["pomodoroMinutes", "Focus minutes"],
-    ["shortBreakMinutes", "Short break"],
-    ["longBreakMinutes", "Long break"],
-    ["pomodorosPerCycle", "Sessions per cycle"],
-  ] as const;
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" aria-label="Open settings">
-          <Settings />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
-          <DialogDescription>Adjust local timer behavior and preferences.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-5">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {durationKeys.map(([key, label]) => (
-              <label key={key} className="grid gap-1 text-sm">
-                {label}
-                <Input
-                  type="number"
-                  min={1}
-                  max={key === "pomodorosPerCycle" ? 8 : 90}
-                  value={preferences[key]}
-                  onChange={(event) =>
-                    updatePreference(
-                      key,
-                      clampNumber(
-                        Number(event.target.value),
-                        1,
-                        key === "pomodorosPerCycle" ? 8 : 90,
-                      ),
-                    )
-                  }
-                />
-              </label>
-            ))}
-          </div>
-          <SettingRow
-            label="Auto-start breaks"
-            checked={preferences.autoStartBreaks}
-            onCheckedChange={(checked) => updatePreference("autoStartBreaks", checked)}
-          />
-          <SettingRow
-            label="Auto-start focus"
-            checked={preferences.autoStartPomodoros}
-            onCheckedChange={(checked) => updatePreference("autoStartPomodoros", checked)}
-          />
-          <SettingRow
-            label="Notifications"
-            checked={preferences.notificationsEnabled}
-            onCheckedChange={requestNotifications}
-            icon={<Bell className="size-4" />}
-          />
-          <SettingRow
-            label="Sound"
-            checked={preferences.soundEnabled}
-            onCheckedChange={(checked) => updatePreference("soundEnabled", checked)}
-          />
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Volume</p>
-            <Slider
-              value={[preferences.volume]}
-              max={100}
-              step={1}
-              onValueChange={([value]) => updatePreference("volume", value)}
-            />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {(["light", "dark", "system"] as const).map((theme) => (
-              <Button
-                key={theme}
-                variant={preferences.theme === theme ? "default" : "outline"}
-                onClick={() => updatePreference("theme", theme)}
-              >
-                {theme}
-              </Button>
-            ))}
-          </div>
-          <SettingRow
-            label="Reduced motion"
-            checked={preferences.reducedMotion}
-            onCheckedChange={(checked) => updatePreference("reducedMotion", checked)}
-          />
-          <Button variant="secondary" onClick={() => setPreferences(defaultPreferences)}>
-            Restore defaults
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function SettingRow({
-  checked,
-  icon,
-  label,
-  onCheckedChange,
-}: {
-  checked: boolean;
-  icon?: React.ReactNode;
-  label: string;
-  onCheckedChange: (checked: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-lg border p-3">
-      <span className="flex items-center gap-2 text-sm font-medium">
-        {icon}
-        {label}
-      </span>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
-    </div>
   );
 }
