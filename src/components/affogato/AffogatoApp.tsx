@@ -18,13 +18,11 @@ import {
   X,
 } from "lucide-react";
 import type * as React from "react";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-
 
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +32,6 @@ import {
   DialogTrigger,
 } from "@/components/shadcn/dialog";
 import { Input } from "@/components/shadcn/input";
-import { Progress } from "@/components/shadcn/progress";
 import {
   Sheet,
   SheetContent,
@@ -66,7 +63,6 @@ import { focusMinutesForSessions, sessionsForDay, sevenDayFocusStats } from "@/l
 import {
   defaultPreferences,
   defaultTimer,
-  clampProgress,
   durationFor,
   formatTime,
   getRemainingSeconds,
@@ -85,7 +81,6 @@ import type {
   TimerStatus,
 } from "@/lib/affogato/types";
 
-import VoxelPlaceholder from "@/components/affogato/VoxelPlaceholder"
 import TimerScene from "@/components/affogato/TimerScene";
 
 import { cn } from "@/lib/utils";
@@ -127,31 +122,6 @@ function applySiteTheme(theme: "light" | "dark") {
   });
 }
 
-function VoxelFallback({ compact = false }: { compact?: boolean }) {
-  return (
-    <div
-      className={cn(
-        "bg-card grid place-items-center overflow-hidden border",
-        compact ? "h-full w-full border-0 bg-transparent" : "voxel-shadow h-48 w-full rounded-lg",
-      )}
-      aria-label="Loading voxel placeholder"
-    >
-      <div className="grid grid-cols-3 gap-1">
-        {Array.from({ length: compact ? 5 : 9 }, (_, index) => (
-          <span
-            key={index}
-            className={cn(
-              "bg-primary block border",
-              compact ? "size-2" : "size-4",
-              index % 3 === 0 && "bg-accent",
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function AffogatoApp() {
   const [preferences, setPreferences] = useState(defaultPreferences);
   const [timer, setTimer] = useState(defaultTimer);
@@ -170,10 +140,6 @@ export function AffogatoApp() {
   const initialDocumentTitle = useRef<string | null>(null);
 
   const activeTask = tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
-  const duration = durationFor(timer.mode, preferences);
-  const progress = clampProgress(
-    duration === 0 ? 0 : ((duration - remainingSeconds) / duration) * 100,
-  );
   const completedTasks = tasks.filter((task) => task.status === "completed").length;
   const todaySessions = sessionsForDay(sessions);
   const focusMinutesToday = focusMinutesForSessions(todaySessions);
@@ -371,10 +337,10 @@ export function AffogatoApp() {
         items.map((task) =>
           task.id === current.selectedTaskId
             ? {
-              ...task,
-              completedPomodoros: task.completedPomodoros + 1,
-              updatedAt: endedAt,
-            }
+                ...task,
+                completedPomodoros: task.completedPomodoros + 1,
+                updatedAt: endedAt,
+              }
             : task,
         ),
       );
@@ -632,191 +598,100 @@ export function AffogatoApp() {
           </div>
         </header>
 
-        <main className="grid items-start gap-6 lg:grid-cols-[1fr_360px]">
-          <section className="nb-panel p-4 md:p-6">
-            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-              <div className="flex flex-col items-center gap-5">
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  <Button
-                    size="icon"
-                    aria-label={timer.status === "running" ? "Pause timer" : "Start timer"}
-                    onClick={timer.status === "running" ? pauseTimer : startTimer}
-                  >
-                    {timer.status === "running" ? <Pause /> : <Play />}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Reset timer"
-                    onClick={resetTimer}
-                  >
-                    <RotateCcw />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    aria-label="Toggle sound"
-                    onClick={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
-                  >
-                    {preferences.soundEnabled ? <Volume2 /> : <VolumeX />}
-                  </Button>
-                  <SettingsPanel
-                    preferences={preferences}
-                    requestNotifications={requestNotifications}
-                    setPreferences={setPreferences}
-                    updatePreference={updatePreference}
-                  />
-                </div>
-
-                <div className="relative flex size-72 items-center justify-center sm:size-80">
-                  <svg
-                    className="absolute inset-0 size-full -rotate-90"
-                    viewBox="0 0 120 120"
-                    aria-hidden="true"
-                  >
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="52"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="10"
-                      className="text-muted"
-                    />
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="52"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeWidth="10"
-                      className="text-primary transition-all duration-500"
-                      strokeDasharray={326.7}
-                      strokeDashoffset={326.7 - (326.7 * progress) / 100}
-                    />
-                  </svg>
-                  <div className="absolute inset-x-2 top-4 h-40">
-                    <TimerScene timer={timer} />
-                  </div>
-                  <div className="relative mt-48 text-center">
-                    <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
-                      {modeLabels[timer.mode]}
-                    </p>
-                    <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl">
-                      {formatTime(remainingSeconds)}
-                    </p>
-                    <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
-                      {timer.status === "running"
-                        ? "Earning beans in real time"
-                        : "Ready when you are"}
-                    </p>
-                  </div>
-                </div>
-
-                <ToggleGroup
-                  type="single"
-                  value={timer.mode}
-                  variant="outline"
-                  spacing={0}
-                  aria-label="Timer mode"
-                  className="grid w-full max-w-md grid-cols-3 p-4"
-                  onValueChange={(value) => {
-                    if (!value) return;
-                    setMode(value as TimerMode);
-                  }}
-                >
-                  <ToggleGroupItem value="pomodoro">Focus</ToggleGroupItem>
-                  <ToggleGroupItem value="shortBreak">Short</ToggleGroupItem>
-                  <ToggleGroupItem value="longBreak">Long</ToggleGroupItem>
-                </ToggleGroup>
-
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
-                      <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
-                        cycle {timer.cycle}
-                      </span>
-                      <div className="flex gap-2">
-                        {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
-                          <span
-                            key={index}
-                            className={cn(
-                              "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
-                              index < timer.completedInCycle
-                                ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
-                                : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
-                            )}
-                          >
-                            <Coffee className="size-4" />
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </TooltipTrigger>
-
-                  <TooltipContent>
-                    {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
-                    {Math.max(0, preferences.pomodorosPerCycle - timer.completedInCycle)} to go
-                  </TooltipContent>
-                </Tooltip>
+        <main>
+          <section className="nb-panel grid gap-6 p-4 md:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:items-center md:gap-8 md:p-6 lg:grid-cols-[minmax(20rem,0.8fr)_minmax(0,1.2fr)]">
+            <div className="flex flex-col items-center gap-5 md:col-start-1 md:row-start-1">
+              <div className="text-center">
+                <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
+                  {modeLabels[timer.mode]}
+                </p>
+                <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl lg:text-8xl">
+                  {formatTime(remainingSeconds)}
+                </p>
+                <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
+                  {timer.status === "running" ? "Earning beans in real time" : "Ready when you are"}
+                </p>
               </div>
 
-              <aside className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Active task</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {activeTask ? (
-                      <>
-                        <p className="font-semibold">{activeTask.title}</p>
-                        <Progress
-                          value={
-                            (activeTask.completedPomodoros /
-                              Math.max(1, activeTask.estimatedPomodoros)) *
-                            100
-                          }
-                        />
-                        <p className="text-muted-foreground text-sm">
-                          {activeTask.completedPomodoros}/{activeTask.estimatedPomodoros} focus
-                          sessions
-                        </p>
-                      </>
-                    ) : (
-                      <p className="text-muted-foreground text-sm">
-                        Pick or create a task to connect focus time to a goal.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Bean stream</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="text-3xl font-black tabular-nums">{beanLabel}</p>
-                    <p className="text-muted-foreground text-sm">
-                      Beans rise while focus and break timers are active. Pausing stops the drip.
-                    </p>
-                  </CardContent>
-                </Card>
-              </aside>
-            </div>
-          </section>
+              <ToggleGroup
+                type="single"
+                value={timer.mode}
+                variant="outline"
+                spacing={0}
+                aria-label="Timer mode"
+                className="grid w-full max-w-md grid-cols-3 p-3"
+                onValueChange={(value) => {
+                  if (!value) return;
+                  setMode(value as TimerMode);
+                }}
+              >
+                <ToggleGroupItem value="pomodoro">Focus</ToggleGroupItem>
+                <ToggleGroupItem value="shortBreak">Short</ToggleGroupItem>
+                <ToggleGroupItem value="longBreak">Long</ToggleGroupItem>
+              </ToggleGroup>
 
-          <section className="nb-panel p-4 md:p-6">
-            {/*<Suspense fallback={<VoxelFallback />}>
-              <VoxelPlaceholder />
-            </Suspense>*/}
-            <div className="mt-5 space-y-3">
-              <Badge variant="secondary">Voxel art placeholder</Badge>
-              <h2 className="text-2xl font-bold tracking-normal">Future cozy desk scene</h2>
-              <p className="text-muted-foreground text-sm leading-6">
-                This canvas marks where Affogato's original 3D voxel assets will live. For now it
-                uses simple cube beans, lighting, and motion so the layout and island boundary are
-                real.
-              </p>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
+                    <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
+                      cycle {timer.cycle}
+                    </span>
+                    <div className="flex gap-2">
+                      {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
+                        <span
+                          key={index}
+                          className={cn(
+                            "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
+                            index < timer.completedInCycle
+                              ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
+                              : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
+                          )}
+                        >
+                          <Coffee className="size-4" />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
+                  {Math.max(0, preferences.pomodorosPerCycle - timer.completedInCycle)} to go
+                </TooltipContent>
+              </Tooltip>
+            </div>
+
+            <div
+              className="relative h-80 w-full overflow-hidden sm:h-96 md:col-start-2 md:row-span-2 md:row-start-1 md:h-[30rem] lg:h-[34rem]"
+              aria-label="Animated timer character"
+            >
+              <TimerScene timer={timer} />
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 md:col-start-1 md:row-start-2 md:self-start">
+              <Button
+                size="icon"
+                aria-label={timer.status === "running" ? "Pause timer" : "Start timer"}
+                onClick={timer.status === "running" ? pauseTimer : startTimer}
+              >
+                {timer.status === "running" ? <Pause /> : <Play />}
+              </Button>
+              <Button variant="outline" size="icon" aria-label="Reset timer" onClick={resetTimer}>
+                <RotateCcw />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="Toggle sound"
+                onClick={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
+              >
+                {preferences.soundEnabled ? <Volume2 /> : <VolumeX />}
+              </Button>
+              <SettingsPanel
+                preferences={preferences}
+                requestNotifications={requestNotifications}
+                setPreferences={setPreferences}
+                updatePreference={updatePreference}
+              />
             </div>
           </section>
         </main>
@@ -946,11 +821,11 @@ function TasksPanel({
                           items.map((item) =>
                             item.id === task.id
                               ? {
-                                ...item,
-                                status: "completed",
-                                completedAt: Date.now(),
-                                updatedAt: Date.now(),
-                              }
+                                  ...item,
+                                  status: "completed",
+                                  completedAt: Date.now(),
+                                  updatedAt: Date.now(),
+                                }
                               : item,
                           ),
                         )

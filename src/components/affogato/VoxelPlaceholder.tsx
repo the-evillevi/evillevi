@@ -30,9 +30,7 @@ const MODEL_PATHS = [
 function ModelLogger({ path }: { path: string }) {
   const { animations } = useGLTF(path);
   const modelName = path.replace("/models/", "").replace(".glb", "");
-  console.log(
-    `Model: ${modelName}, Animations: [${animations.map((a) => a.name).join(", ")}]`
-  );
+  console.log(`Model: ${modelName}, Animations: [${animations.map((a) => a.name).join(", ")}]`);
   return null;
 }
 
