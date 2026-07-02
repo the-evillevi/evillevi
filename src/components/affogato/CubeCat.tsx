@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 
+import { getFriend, STARTER_FRIEND_ID } from "@/lib/affogato/friends";
 import type { TimerMode, TimerStatus } from "@/lib/affogato/types";
 
-const MODEL_PATH = "/models/animal-cat.glb";
-
 /* All 24 Kenney animal GLBs in public/models/ share this clip set
- * (static/idle/walk/run/eat/dance/gesture-positive/gesture-negative). */
+ * (static/idle/walk/run/eat/dance/gesture-positive/gesture-negative);
+ * the ?? fallback chain below covers any model that diverges. */
 enum Animation {
   Static = "static",
   Idle = "idle",
@@ -24,6 +24,7 @@ interface CubeCatProps {
   status: TimerStatus;
   mode: TimerMode;
   reducedMotion: boolean;
+  modelPath: string;
 }
 
 export default function CubeCat({
@@ -32,11 +33,12 @@ export default function CubeCat({
   status,
   mode,
   reducedMotion,
+  modelPath,
 }: CubeCatProps) {
   // NOTE: the cached scene is rendered un-cloned — fine while a single
   // instance is mounted; switch to scene.clone() if a preview carousel
   // ever mounts several at once.
-  const { scene, animations } = useGLTF(MODEL_PATH);
+  const { scene, animations } = useGLTF(modelPath);
   const { actions } = useAnimations(animations, scene);
 
   const currentAction = useRef<(typeof actions)[string] | null>(null);
@@ -58,7 +60,8 @@ export default function CubeCat({
 
     const key =
       status === "running" ? (mode === "pomodoro" ? Animation.Run : Animation.Dance) : Animation.Idle;
-    const next = actions[key] ?? actions[Animation.Idle];
+    const next =
+      actions[key] ?? actions[Animation.Idle] ?? Object.values(actions).find(Boolean) ?? null;
     if (!next || next === currentAction.current) return;
 
     currentAction.current?.fadeOut(0.3);
@@ -69,6 +72,6 @@ export default function CubeCat({
   return <primitive object={scene} position={position} scale={scale} />;
 }
 
-// Module-level preload: fires when the lazy scene chunk loads — the earlier
-// in-effect preload ran after useGLTF had already suspended, a no-op.
-useGLTF.preload(MODEL_PATH);
+// Module-level preload of the starter model: fires when the lazy scene chunk
+// loads. Other friends stream on selection via the in-Canvas Suspense.
+useGLTF.preload(getFriend(STARTER_FRIEND_ID).modelPath);

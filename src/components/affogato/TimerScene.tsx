@@ -11,11 +11,18 @@ interface TimerSceneProps {
   mode: TimerMode;
   /** The app's stored preference; OS-level prefers-reduced-motion is OR-ed in. */
   reducedMotion: boolean;
+  /** GLB path of the selected cube friend. */
+  modelPath: string;
 }
 
 /* Primitive props on purpose: the timer object changes identity every tick,
  * which made the previous memo(TimerScene) never skip a render. */
-const TimerScene = memo(function TimerScene({ status, mode, reducedMotion }: TimerSceneProps) {
+const TimerScene = memo(function TimerScene({
+  status,
+  mode,
+  reducedMotion,
+  modelPath,
+}: TimerSceneProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
@@ -51,7 +58,7 @@ const TimerScene = memo(function TimerScene({ status, mode, reducedMotion }: Tim
         <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={Math.PI / 2} />
         {/* Suspense inside the Canvas: lights render while the model streams. */}
         <Suspense fallback={null}>
-          <CubeCat status={status} mode={mode} reducedMotion={reduced} />
+          <CubeCat status={status} mode={mode} reducedMotion={reduced} modelPath={modelPath} />
         </Suspense>
       </Canvas>
     </div>

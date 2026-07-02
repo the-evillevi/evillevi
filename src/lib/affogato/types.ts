@@ -67,4 +67,6 @@ export type PersistedAffogatoState = {
   tasks: Task[];
   sessions: Session[];
   beans: number;
+  unlockedFriendIds: string[];
+  selectedFriendId: string;
 };

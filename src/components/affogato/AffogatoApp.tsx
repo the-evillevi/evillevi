@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AffogatoHeader } from "@/components/affogato/AffogatoHeader";
+import { FriendsPanel } from "@/components/affogato/FriendsPanel";
 import { StatsPanel } from "@/components/affogato/StatsPanel";
 import { TasksPanel } from "@/components/affogato/TasksPanel";
 import { TimerWorkspace } from "@/components/affogato/TimerWorkspace";
@@ -10,6 +11,7 @@ import { TooltipProvider } from "@/components/shadcn/tooltip";
 
 import { playBeep, primeAudio } from "@/lib/affogato/audio";
 import { computeStop, computeTick, type SessionDraft, type StopOutcome } from "@/lib/affogato/engine";
+import { getFriend, STARTER_FRIEND_ID } from "@/lib/affogato/friends";
 import { clampInt } from "@/lib/affogato/numbers";
 import {
   MAX_SESSIONS,
@@ -76,6 +78,8 @@ export function AffogatoApp() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [beans, setBeans] = useState(0);
+  const [unlockedFriendIds, setUnlockedFriendIds] = useState<string[]>([STARTER_FRIEND_ID]);
+  const [selectedFriendId, setSelectedFriendId] = useState(STARTER_FRIEND_ID);
   const [beanPulse, setBeanPulse] = useState(false);
   const [loaded, setLoaded] = useState(false);
   // Resolved in effects (never during render — matchMedia would break SSR).
@@ -112,6 +116,8 @@ export function AffogatoApp() {
       setTasks(state.tasks);
       setSessions(state.sessions);
       setBeans(state.beans);
+      setUnlockedFriendIds(state.unlockedFriendIds);
+      setSelectedFriendId(state.selectedFriendId);
     } else {
       setPreferences(
         normalizePreferences({
@@ -140,14 +146,22 @@ export function AffogatoApp() {
 
   useEffect(() => {
     if (!loaded) return;
-    persistSnapshot.current = { preferences, timer, tasks, sessions, beans };
+    persistSnapshot.current = {
+      preferences,
+      timer,
+      tasks,
+      sessions,
+      beans,
+      unlockedFriendIds,
+      selectedFriendId,
+    };
     persistTimeout.current ??= window.setTimeout(() => {
       persistTimeout.current = null;
       if (persistSnapshot.current) {
         localStorage.setItem(STORAGE_KEY, serializePersistedState(persistSnapshot.current));
       }
     }, 2000);
-  }, [beans, loaded, preferences, sessions, tasks, timer]);
+  }, [beans, loaded, preferences, selectedFriendId, sessions, tasks, timer, unlockedFriendIds]);
 
   const prevStatus = useRef(timer.status);
   useEffect(() => {
@@ -412,6 +426,24 @@ export function AffogatoApp() {
     applyPreferences(defaultPreferences);
   }
 
+  function selectFriend(friendId: string) {
+    if (!unlockedFriendIds.includes(friendId)) return;
+    setSelectedFriendId(friendId);
+  }
+
+  function unlockFriend(friendId: string) {
+    const friend = getFriend(friendId);
+    if (friend.id !== friendId) return; // unknown id resolved to starter
+    if (unlockedFriendIds.includes(friendId) || beans < friend.cost) return;
+    setBeans((value) => Math.max(0, value - friend.cost));
+    setUnlockedFriendIds((ids) => (ids.includes(friendId) ? ids : [...ids, friendId]));
+    setSelectedFriendId(friendId);
+    pulseBeans();
+    toast.success(`${friend.name} joined your café!`, {
+      description: `${friend.cost} beans well spent.`,
+    });
+  }
+
   const beanLabel =
     beans >= 10_000
       ? new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(
@@ -438,6 +470,14 @@ export function AffogatoApp() {
             onDeleteTask={deleteTask}
             onSelectTask={selectTask}
           />
+          <FriendsPanel
+            beanLabel={beanLabel}
+            beans={beans}
+            selectedFriendId={selectedFriendId}
+            unlockedFriendIds={unlockedFriendIds}
+            onSelectFriend={selectFriend}
+            onUnlockFriend={unlockFriend}
+          />
           <StatsPanel
             beans={beans}
             completedTasks={completedTasks}
@@ -449,6 +489,7 @@ export function AffogatoApp() {
         </AffogatoHeader>
 
         <TimerWorkspace
+          friendModelPath={getFriend(selectedFriendId).modelPath}
           preferences={preferences}
           remainingSeconds={remainingSeconds}
           timer={timer}

@@ -28,6 +28,7 @@ function SceneFallback() {
 }
 
 interface TimerWorkspaceProps {
+  friendModelPath: string;
   preferences: Preferences;
   remainingSeconds: number;
   timer: TimerState;
@@ -42,6 +43,7 @@ interface TimerWorkspaceProps {
 }
 
 export function TimerWorkspace({
+  friendModelPath,
   preferences,
   remainingSeconds,
   timer,
@@ -136,6 +138,7 @@ export function TimerWorkspace({
                   status={timer.status}
                   mode={timer.mode}
                   reducedMotion={preferences.reducedMotion}
+                  modelPath={friendModelPath}
                 />
               </Suspense>
             ) : (

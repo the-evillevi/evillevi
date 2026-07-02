@@ -1,3 +1,4 @@
+import { isFriendId, STARTER_FRIEND_ID } from "./friends";
 import { boolOr, clampInt, clampNumber, finiteOrNull } from "./numbers";
 import { defaultPreferences, defaultTimer, durationFor } from "./timer";
 import type {
@@ -25,6 +26,8 @@ export function createDefaultState(): PersistedAffogatoState {
     tasks: [],
     sessions: [],
     beans: 0,
+    unlockedFriendIds: [STARTER_FRIEND_ID],
+    selectedFriendId: STARTER_FRIEND_ID,
   };
 }
 
@@ -170,12 +173,23 @@ export function parsePersistedState(value: string | null): PersistedAffogatoStat
         .slice(0, MAX_SESSIONS)
     : [];
 
+  const unlockedFriendIds = Array.isArray(parsed.unlockedFriendIds)
+    ? [...new Set(parsed.unlockedFriendIds.filter(isFriendId))]
+    : [];
+  if (!unlockedFriendIds.includes(STARTER_FRIEND_ID)) unlockedFriendIds.unshift(STARTER_FRIEND_ID);
+  const selectedFriendId =
+    isFriendId(parsed.selectedFriendId) && unlockedFriendIds.includes(parsed.selectedFriendId)
+      ? parsed.selectedFriendId
+      : STARTER_FRIEND_ID;
+
   return {
     preferences,
     timer: sanitizeTimer(parsed.timer, preferences, new Set(tasks.map((task) => task.id))),
     tasks,
     sessions,
     beans: clampNumber(parsed.beans, 0, Number.MAX_SAFE_INTEGER, 0),
+    unlockedFriendIds,
+    selectedFriendId,
   };
 }
 

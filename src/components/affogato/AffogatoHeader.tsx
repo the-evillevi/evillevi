@@ -48,7 +48,7 @@ export function AffogatoHeader({
         <div>
           <p className="text-xl font-black tracking-normal uppercase">Affogato</p>
           <p className="text-sm font-bold text-[var(--nb-muted)]">
-            Focus timer with voxel placeholders
+            Focus timer with cube friends
           </p>
         </div>
       </div>
