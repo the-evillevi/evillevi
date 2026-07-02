@@ -14,19 +14,7 @@ import { Input } from "@/components/affogato/ui/input";
 import { Slider } from "@/components/affogato/ui/slider";
 import { Switch } from "@/components/affogato/ui/switch";
 import { clampInt } from "@/lib/affogato/numbers";
-import type { Preferences } from "@/lib/affogato/types";
-
-export type PreferenceChangeHandler = <K extends keyof Preferences>(
-  key: K,
-  value: Preferences[K],
-) => void;
-
-interface SettingsPanelProps {
-  preferences: Preferences;
-  onPreferenceChange: PreferenceChangeHandler;
-  onRequestNotifications: (enabled: boolean) => void;
-  onRestoreDefaults: () => void;
-}
+import { useAffogatoStore } from "@/lib/affogato/store";
 
 const durationKeys = [
   ["pomodoroMinutes", "Focus minutes"],
@@ -35,12 +23,14 @@ const durationKeys = [
   ["pomodorosPerCycle", "Sessions per cycle"],
 ] as const;
 
-export function SettingsPanel({
-  preferences,
-  onPreferenceChange,
-  onRequestNotifications,
-  onRestoreDefaults,
-}: SettingsPanelProps) {
+export function SettingsPanel() {
+  // Whole-object subscription is fine here: preferences only change on edits.
+  const preferences = useAffogatoStore((state) => state.preferences);
+  const actions = useAffogatoStore((state) => state.actions);
+  const onPreferenceChange = actions.updatePreference;
+  const onRequestNotifications = actions.requestNotifications;
+  const onRestoreDefaults = actions.restoreDefaultPreferences;
+
   return (
     <Dialog>
       <DialogTrigger asChild>

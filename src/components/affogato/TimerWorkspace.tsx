@@ -1,14 +1,15 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Coffee, Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 
 import { SceneErrorBoundary } from "@/components/affogato/SceneErrorBoundary";
-import { SettingsPanel, type PreferenceChangeHandler } from "@/components/affogato/SettingsPanel";
+import { SettingsPanel } from "@/components/affogato/SettingsPanel";
 import { Button } from "@/components/affogato/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/affogato/ui/toggle-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/affogato/ui/tooltip";
-import { formatTime, modeLabels } from "@/lib/affogato/timer";
-import type { Preferences, TimerMode, TimerState } from "@/lib/affogato/types";
 import { cn } from "@/lib/affogato/cn";
+import { useAffogatoStore } from "@/lib/affogato/store";
+import { formatTime, modeLabels } from "@/lib/affogato/timer";
+import type { TimerMode } from "@/lib/affogato/types";
 
 /* The 3D scene (three + drei + fiber) loads as its own chunk, and only in
  * the browser — this component is SSR'd, so the lazy import sits behind a
@@ -27,37 +28,33 @@ function SceneFallback() {
   );
 }
 
-interface TimerWorkspaceProps {
-  friendModelPath: string;
-  preferences: Preferences;
-  remainingSeconds: number;
-  timer: TimerState;
-  onModeChange: (mode: TimerMode) => void;
-  onPause: () => void;
-  onPreferenceChange: PreferenceChangeHandler;
-  onRequestNotifications: (enabled: boolean) => void;
-  onReset: () => void;
-  onRestoreDefaults: () => void;
-  onStart: () => void;
-  onToggleSound: () => void;
-}
+export function TimerWorkspace() {
+  const remainingSeconds = useAffogatoStore((state) => state.remainingSeconds);
+  const status = useAffogatoStore((state) => state.timer.status);
+  const mode = useAffogatoStore((state) => state.timer.mode);
+  const cycle = useAffogatoStore((state) => state.timer.cycle);
+  const completedInCycle = useAffogatoStore((state) => state.timer.completedInCycle);
+  const pomodorosPerCycle = useAffogatoStore((state) => state.preferences.pomodorosPerCycle);
+  const soundEnabled = useAffogatoStore((state) => state.preferences.soundEnabled);
+  const actions = useAffogatoStore((state) => state.actions);
 
-export function TimerWorkspace({
-  friendModelPath,
-  preferences,
-  remainingSeconds,
-  timer,
-  onModeChange,
-  onPause,
-  onPreferenceChange,
-  onRequestNotifications,
-  onReset,
-  onRestoreDefaults,
-  onStart,
-  onToggleSound,
-}: TimerWorkspaceProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Document title mirrors the countdown. It lives here — not in the root
+  // shell — so only this already-ticking component subscribes to the clock.
+  const initialDocumentTitle = useRef<string | null>(null);
+  useEffect(() => {
+    initialDocumentTitle.current = document.title;
+    return () => {
+      if (initialDocumentTitle.current) document.title = initialDocumentTitle.current;
+    };
+  }, []);
+  useEffect(() => {
+    const baseTitle = initialDocumentTitle.current ?? document.title;
+    document.title =
+      status === "running" ? `${formatTime(remainingSeconds)} - ${baseTitle}` : baseTitle;
+  }, [remainingSeconds, status]);
 
   return (
     // SiteLayout already provides the page's <main> landmark.
@@ -66,26 +63,26 @@ export function TimerWorkspace({
         <div className="flex flex-col items-center gap-5 md:col-start-1 md:row-start-1">
           <div className="text-center">
             <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
-              {modeLabels[timer.mode]}
+              {modeLabels[mode]}
             </p>
             <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl lg:text-8xl">
               {formatTime(remainingSeconds)}
             </p>
             <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
-              {timer.status === "running" ? "Earning beans in real time" : "Ready when you are"}
+              {status === "running" ? "Earning beans in real time" : "Ready when you are"}
             </p>
           </div>
 
           <ToggleGroup
             type="single"
-            value={timer.mode}
+            value={mode}
             variant="outline"
             spacing={0}
             aria-label="Timer mode"
             className="grid w-full max-w-md grid-cols-3 p-3"
             onValueChange={(value) => {
               if (!value) return;
-              onModeChange(value as TimerMode);
+              actions.setMode(value as TimerMode);
             }}
           >
             <ToggleGroupItem value="pomodoro">Focus</ToggleGroupItem>
@@ -97,19 +94,19 @@ export function TimerWorkspace({
             {/* TooltipTrigger renders a <button>: inner nodes must be spans,
                 not divs, and the button needs its own accessible name. */}
             <TooltipTrigger
-              aria-label={`Cycle ${timer.cycle}: ${Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} of ${preferences.pomodorosPerCycle} focus sessions complete`}
+              aria-label={`Cycle ${cycle}: ${Math.min(completedInCycle, pomodorosPerCycle)} of ${pomodorosPerCycle} focus sessions complete`}
             >
               <span className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
                 <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
-                  cycle {timer.cycle}
+                  cycle {cycle}
                 </span>
                 <span className="flex gap-2">
-                  {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
+                  {Array.from({ length: pomodorosPerCycle }, (_, index) => (
                     <span
                       key={index}
                       className={cn(
                         "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
-                        index < timer.completedInCycle
+                        index < completedInCycle
                           ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
                           : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
                       )}
@@ -121,8 +118,8 @@ export function TimerWorkspace({
               </span>
             </TooltipTrigger>
             <TooltipContent>
-              {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
-              {Math.max(0, preferences.pomodorosPerCycle - timer.completedInCycle)} to go
+              {Math.min(completedInCycle, pomodorosPerCycle)} done,{" "}
+              {Math.max(0, pomodorosPerCycle - completedInCycle)} to go
             </TooltipContent>
           </Tooltip>
         </div>
@@ -134,12 +131,7 @@ export function TimerWorkspace({
           <SceneErrorBoundary>
             {mounted ? (
               <Suspense fallback={<SceneFallback />}>
-                <TimerScene
-                  status={timer.status}
-                  mode={timer.mode}
-                  reducedMotion={preferences.reducedMotion}
-                  modelPath={friendModelPath}
-                />
+                <TimerScene />
               </Suspense>
             ) : (
               <SceneFallback />
@@ -150,23 +142,28 @@ export function TimerWorkspace({
         <div className="flex flex-wrap items-center justify-center gap-3 md:col-start-1 md:row-start-2 md:self-start">
           <Button
             size="icon"
-            aria-label={timer.status === "running" ? "Pause timer" : "Start timer"}
-            onClick={timer.status === "running" ? onPause : onStart}
+            aria-label={status === "running" ? "Pause timer" : "Start timer"}
+            onClick={status === "running" ? actions.pauseTimer : actions.startTimer}
           >
-            {timer.status === "running" ? <Pause /> : <Play />}
+            {status === "running" ? <Pause /> : <Play />}
           </Button>
-          <Button variant="outline" size="icon" aria-label="Reset timer" onClick={onReset}>
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Reset timer"
+            onClick={actions.resetTimer}
+          >
             <RotateCcw />
           </Button>
-          <Button variant="outline" size="icon" aria-label="Toggle sound" onClick={onToggleSound}>
-            {preferences.soundEnabled ? <Volume2 /> : <VolumeX />}
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Toggle sound"
+            onClick={() => actions.updatePreference("soundEnabled", !soundEnabled)}
+          >
+            {soundEnabled ? <Volume2 /> : <VolumeX />}
           </Button>
-          <SettingsPanel
-            preferences={preferences}
-            onPreferenceChange={onPreferenceChange}
-            onRequestNotifications={onRequestNotifications}
-            onRestoreDefaults={onRestoreDefaults}
-          />
+          <SettingsPanel />
         </div>
       </section>
     </div>

@@ -13,8 +13,9 @@ import {
   SheetTrigger,
 } from "@/components/affogato/ui/sheet";
 import { Textarea } from "@/components/affogato/ui/textarea";
-import type { Task, TaskDraft } from "@/lib/affogato/types";
 import { cn } from "@/lib/affogato/cn";
+import { useAffogatoStore } from "@/lib/affogato/store";
+import type { TaskDraft } from "@/lib/affogato/types";
 
 const defaultTaskDraft: TaskDraft = {
   title: "",
@@ -22,28 +23,20 @@ const defaultTaskDraft: TaskDraft = {
   notes: "",
 };
 
-interface TasksPanelProps {
-  activeTaskId: string | null;
-  tasks: Task[];
-  onAddTask: (draft: TaskDraft) => void;
-  onCompleteTask: (taskId: string) => void;
-  onDeleteTask: (taskId: string) => void;
-  onSelectTask: (taskId: string) => void;
-}
+export function TasksPanel() {
+  const tasks = useAffogatoStore((state) => state.tasks);
+  const activeTaskId = useAffogatoStore((state) => state.timer.selectedTaskId);
+  const actions = useAffogatoStore((state) => state.actions);
+  const onCompleteTask = actions.completeTask;
+  const onDeleteTask = actions.deleteTask;
+  const onSelectTask = actions.selectTask;
 
-export function TasksPanel({
-  activeTaskId,
-  tasks,
-  onAddTask,
-  onCompleteTask,
-  onDeleteTask,
-  onSelectTask,
-}: TasksPanelProps) {
+  // Ephemeral form state stays local — it never leaves this panel.
   const [draft, setDraft] = useState<TaskDraft>(defaultTaskDraft);
 
   function addTask() {
     if (!draft.title.trim()) return;
-    onAddTask(draft);
+    actions.addTask(draft);
     setDraft(defaultTaskDraft);
   }
 

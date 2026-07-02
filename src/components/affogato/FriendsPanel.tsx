@@ -10,26 +10,20 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/affogato/ui/sheet";
-import { FRIENDS } from "@/lib/affogato/friends";
+import { formatBeanLabel } from "@/lib/affogato/beans";
 import { cn } from "@/lib/affogato/cn";
+import { FRIENDS } from "@/lib/affogato/friends";
+import { useAffogatoStore } from "@/lib/affogato/store";
 
-interface FriendsPanelProps {
-  beanLabel: string;
-  beans: number;
-  selectedFriendId: string;
-  unlockedFriendIds: string[];
-  onSelectFriend: (friendId: string) => void;
-  onUnlockFriend: (friendId: string) => void;
-}
+export function FriendsPanel() {
+  const beans = useAffogatoStore((state) => state.beans);
+  const selectedFriendId = useAffogatoStore((state) => state.selectedFriendId);
+  const unlockedFriendIds = useAffogatoStore((state) => state.unlockedFriendIds);
+  const actions = useAffogatoStore((state) => state.actions);
+  const onSelectFriend = actions.selectFriend;
+  const onUnlockFriend = actions.unlockFriend;
+  const beanLabel = formatBeanLabel(beans);
 
-export function FriendsPanel({
-  beanLabel,
-  beans,
-  selectedFriendId,
-  unlockedFriendIds,
-  onSelectFriend,
-  onUnlockFriend,
-}: FriendsPanelProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>

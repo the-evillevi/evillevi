@@ -5,24 +5,15 @@ import { toast } from "sonner";
 import { Badge } from "@/components/affogato/ui/badge";
 import { Button } from "@/components/affogato/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/affogato/ui/tooltip";
+import { formatBeanLabel } from "@/lib/affogato/beans";
 import { cn } from "@/lib/affogato/cn";
+import { useAffogatoStore } from "@/lib/affogato/store";
 
-interface AffogatoHeaderProps {
-  beanLabel: string;
-  beanPulse: boolean;
-  children: ReactNode;
-  /** Effective theme (system already resolved) so the icon is always right. */
-  theme: "light" | "dark";
-  onToggleTheme: () => void;
-}
-
-export function AffogatoHeader({
-  beanLabel,
-  beanPulse,
-  children,
-  theme,
-  onToggleTheme,
-}: AffogatoHeaderProps) {
+export function AffogatoHeader({ children }: { children: ReactNode }) {
+  const beans = useAffogatoStore((state) => state.beans);
+  const beanPulse = useAffogatoStore((state) => state.beanPulse);
+  const theme = useAffogatoStore((state) => state.effectiveTheme);
+  const actions = useAffogatoStore((state) => state.actions);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -59,11 +50,16 @@ export function AffogatoHeader({
           )}
         >
           <Coffee className="size-4" />
-          {beanLabel} beans
+          {formatBeanLabel(beans)} beans
         </Badge>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={onToggleTheme}>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Toggle theme"
+              onClick={() => actions.updatePreference("theme", theme === "dark" ? "light" : "dark")}
+            >
               {theme === "dark" ? <Sun /> : <Moon />}
             </Button>
           </TooltipTrigger>

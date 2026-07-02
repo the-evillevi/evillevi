@@ -3,31 +3,23 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
 import CubeCat from "@/components/affogato/CubeCat";
+import { selectFriendModelPath, useAffogatoStore } from "@/lib/affogato/store";
 import { useReducedMotion } from "@/lib/affogato/useReducedMotion";
-import type { TimerMode, TimerStatus } from "@/lib/affogato/types";
 
-interface TimerSceneProps {
-  status: TimerStatus;
-  mode: TimerMode;
-  /** The app's stored preference; OS-level prefers-reduced-motion is OR-ed in. */
-  reducedMotion: boolean;
-  /** GLB path of the selected cube friend. */
-  modelPath: string;
-}
+/* Subscribes to the store directly (all primitive selections) and takes no
+ * props — with memo, the parent's per-second re-render never reaches the
+ * Canvas; only status/mode/friend/preference changes do. */
+const TimerScene = memo(function TimerScene() {
+  const status = useAffogatoStore((state) => state.timer.status);
+  const mode = useAffogatoStore((state) => state.timer.mode);
+  const reducedMotionPreference = useAffogatoStore((state) => state.preferences.reducedMotion);
+  const modelPath = useAffogatoStore(selectFriendModelPath);
 
-/* Primitive props on purpose: the timer object changes identity every tick,
- * which made the previous memo(TimerScene) never skip a render. */
-const TimerScene = memo(function TimerScene({
-  status,
-  mode,
-  reducedMotion,
-  modelPath,
-}: TimerSceneProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
   const systemReducedMotion = useReducedMotion();
-  const reduced = reducedMotion || systemReducedMotion;
+  const reduced = reducedMotionPreference || systemReducedMotion;
 
   useEffect(() => {
     const wrapper = wrapperRef.current;

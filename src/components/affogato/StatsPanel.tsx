@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { BarChart3 } from "lucide-react";
 
 import { Button } from "@/components/affogato/ui/button";
@@ -9,24 +10,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/affogato/ui/dialog";
+import { focusMinutesForSessions, sessionsForDay, sevenDayFocusStats } from "@/lib/affogato/stats";
+import { useAffogatoStore } from "@/lib/affogato/store";
 
-interface StatsPanelProps {
-  beans: number;
-  completedTasks: number;
-  currentCycle: number;
-  focusMinutesToday: number;
-  sessionsToday: number;
-  sevenDayStats: { label: string; count: number }[];
-}
+export function StatsPanel() {
+  const beans = useAffogatoStore((state) => state.beans);
+  const sessions = useAffogatoStore((state) => state.sessions);
+  const tasks = useAffogatoStore((state) => state.tasks);
+  const currentCycle = useAffogatoStore((state) => state.timer.cycle);
 
-export function StatsPanel({
-  beans,
-  completedTasks,
-  currentCycle,
-  focusMinutesToday,
-  sessionsToday,
-  sevenDayStats,
-}: StatsPanelProps) {
+  const completedTasks = useMemo(
+    () => tasks.filter((task) => task.status === "completed").length,
+    [tasks],
+  );
+  const todaySessions = useMemo(() => sessionsForDay(sessions), [sessions]);
+  const sessionsToday = todaySessions.length;
+  const focusMinutesToday = useMemo(() => focusMinutesForSessions(todaySessions), [todaySessions]);
+  const sevenDayStats = useMemo(() => sevenDayFocusStats(sessions), [sessions]);
+
   const max = Math.max(1, ...sevenDayStats.map((day) => day.count));
 
   return (
