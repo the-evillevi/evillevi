@@ -1,6 +1,7 @@
 ---
 import PostCard from "@/components/blog/PostCard.astro";
 import SearchDialog from "@/components/blog/SearchDialog.astro";
+import Accent3D from "@/components/three/Accent3D.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { siteConfig } from "@/site.config";
 import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
@@ -32,20 +33,25 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
           <a class="nb-action bg-[var(--nb-blue)] px-5 py-4" href="/docs">Open docs</a>
         </div>
       </div>
-      <div class="nb-shadow grid gap-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5">
-        <p class="text-sm font-black text-[var(--nb-peach)] uppercase">Garden stats</p>
-        <div class="grid grid-cols-3 gap-3">
-          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
-            <p class="text-4xl font-black">{posts.length}</p>
-            <p class="text-xs font-black uppercase">Posts</p>
-          </div>
-          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
-            <p class="text-4xl font-black">{docs.length}</p>
-            <p class="text-xs font-black uppercase">Docs</p>
-          </div>
-          <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
-            <p class="text-4xl font-black">{tags.length}</p>
-            <p class="text-xs font-black uppercase">Tags</p>
+      <div class="grid gap-2">
+        <Accent3D shape="torus" color="peach" size="9rem" class="justify-self-end max-lg:hidden" />
+        <div
+          class="nb-shadow grid gap-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-5"
+        >
+          <p class="text-sm font-black text-[var(--nb-peach)] uppercase">Garden stats</p>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+              <p class="text-4xl font-black">{posts.length}</p>
+              <p class="text-xs font-black uppercase">Posts</p>
+            </div>
+            <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+              <p class="text-4xl font-black">{docs.length}</p>
+              <p class="text-xs font-black uppercase">Docs</p>
+            </div>
+            <div class="border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3 text-center">
+              <p class="text-4xl font-black">{tags.length}</p>
+              <p class="text-xs font-black uppercase">Tags</p>
+            </div>
           </div>
         </div>
       </div>

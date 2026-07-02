@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer.astro";
 import ShowcaseCard from "@/components/layout/ShowcaseCard.astro";
 import Metric from "@/components/layout/Metric.astro";
 import DocBlock from "@/components/layout/DocBlock.astro";
+import Accent3D from "@/components/three/Accent3D.astro";
 
 import {
   Accordion,
@@ -114,9 +115,18 @@ const componentGroups = [
       "spinner",
       "toggle",
       "tooltip",
+      "three-decor",
     ],
   },
 ];
+
+const accentShapes = [
+  ["box", "blue"],
+  ["torus", "pink"],
+  ["cone", "green"],
+  ["sphere", "yellow"],
+  ["coin", "peach"],
+] as const;
 
 const tokens = [
   ["Base", "var(--nb-base)", "#eff1f5 / #1e1e2e"],
@@ -422,6 +432,26 @@ const tokens = [
               >
               <TooltipContent>Sharp pointer, strong contrast, quick reveal.</TooltipContent>
             </Tooltip>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="three-decor" title="3D Decor">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {
+                accentShapes.map(([shape, color]) => (
+                  <div class="flex flex-col items-center gap-2 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-3">
+                    <Accent3D {shape} {color} size="6.5rem" />
+                    <span class="text-xs font-black uppercase">{shape}</span>
+                  </div>
+                ))
+              }
+            </div>
+            <p class="text-sm leading-6 font-bold text-[var(--nb-muted)]">
+              React-three-fiber islands in a flat 2.5D sticker style: two-band cel fills with a hard
+              terminator, cream highlight glints, and thick ink outlines under an orthographic
+              camera. `Accent3D shape="coin" color="peach" size="9rem"` drops one anywhere; colors
+              track the theme toggle live and motion pauses under reduced-motion. Keep it to a few
+              per page — browsers cap WebGL contexts.
+            </p>
           </ShowcaseCard>
         </div>
       </section>
