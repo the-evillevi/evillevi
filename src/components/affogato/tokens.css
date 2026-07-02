@@ -1,0 +1,54 @@
+/*
+ * Affogato portability shim — NOT imported in the site build, where
+ * src/styles/starwind.css owns these tokens. When Affogato is extracted
+ * into a standalone Vite app, import this file from AffogatoApp to get
+ * the design tokens and utility classes it depends on.
+ *
+ * Values mirror starwind.css (Catppuccin Latte / Mocha). Keep in sync.
+ */
+
+:root,
+html[data-theme="light"] {
+  --nb-base: #eff1f5;
+  --nb-surface: #ccd0da;
+  --nb-text: #4c4f69;
+  --nb-muted: #6c6f85;
+  --nb-peach: #fe640b;
+  --nb-green: #40a02b;
+  --nb-red: #d20f39;
+  --nb-yellow: #df8e1d;
+  --nb-blue: #1e66f5;
+  --nb-ink: #11111b;
+  --nb-button-text: #11111b;
+}
+
+html[data-theme="dark"] {
+  --nb-base: #1e1e2e;
+  --nb-surface: #313244;
+  --nb-text: #cdd6f4;
+  --nb-muted: #a6adc8;
+  --nb-peach: #fab387;
+  --nb-green: #a6e3a1;
+  --nb-red: #f38ba8;
+  --nb-yellow: #f9e2af;
+  --nb-blue: #89b4fa;
+  --nb-ink: #11111b;
+  --nb-button-text: #11111b;
+}
+
+.nb-page {
+  min-height: 100vh;
+  background: var(--nb-base);
+  color: var(--nb-text);
+  color-scheme: light dark;
+}
+
+.nb-panel {
+  border: 4px solid var(--nb-ink);
+  background: var(--nb-surface);
+  box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+.nb-shadow-sm {
+  box-shadow: 4px 4px 0 0 var(--nb-ink);
+}

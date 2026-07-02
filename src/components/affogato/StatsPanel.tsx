@@ -1,6 +1,6 @@
 import { BarChart3 } from "lucide-react";
 
-import { Button } from "@/components/shadcn/button";
+import { Button } from "@/components/affogato/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/shadcn/dialog";
+} from "@/components/affogato/ui/dialog";
 
 interface StatsPanelProps {
   beans: number;

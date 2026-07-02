@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Check, ListTodo, Target, X } from "lucide-react";
 
-import { Button } from "@/components/shadcn/button";
-import { Input } from "@/components/shadcn/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
+import { Button } from "@/components/affogato/ui/button";
+import { Input } from "@/components/affogato/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/affogato/ui/tooltip";
 import {
   Sheet,
   SheetContent,
@@ -11,8 +11,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/shadcn/sheet";
-import { Textarea } from "@/components/shadcn/textarea";
+} from "@/components/affogato/ui/sheet";
+import { Textarea } from "@/components/affogato/ui/textarea";
 import type { Task, TaskDraft } from "@/lib/affogato/types";
 import { cn } from "@/lib/affogato/cn";
 

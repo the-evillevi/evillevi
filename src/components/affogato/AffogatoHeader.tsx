@@ -2,9 +2,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Cat, Coffee, Expand, Moon, Shrink, Sun, User } from "lucide-react";
 import { toast } from "sonner";
 
-import { Badge } from "@/components/shadcn/badge";
-import { Button } from "@/components/shadcn/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
+import { Badge } from "@/components/affogato/ui/badge";
+import { Button } from "@/components/affogato/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/affogato/ui/tooltip";
 import { cn } from "@/lib/affogato/cn";
 
 interface AffogatoHeaderProps {

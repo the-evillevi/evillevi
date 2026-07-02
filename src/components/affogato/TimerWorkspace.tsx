@@ -3,9 +3,9 @@ import { Coffee, Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 
 import { SceneErrorBoundary } from "@/components/affogato/SceneErrorBoundary";
 import { SettingsPanel, type PreferenceChangeHandler } from "@/components/affogato/SettingsPanel";
-import { Button } from "@/components/shadcn/button";
-import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
+import { Button } from "@/components/affogato/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/affogato/ui/toggle-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/affogato/ui/tooltip";
 import { formatTime, modeLabels } from "@/lib/affogato/timer";
 import type { Preferences, TimerMode, TimerState } from "@/lib/affogato/types";
 import { cn } from "@/lib/affogato/cn";

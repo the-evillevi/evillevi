@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from "react";
 import { Bell, Settings } from "lucide-react";
 
-import { Button } from "@/components/shadcn/button";
+import { Button } from "@/components/affogato/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,10 +9,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/shadcn/dialog";
-import { Input } from "@/components/shadcn/input";
-import { Slider } from "@/components/shadcn/slider";
-import { Switch } from "@/components/shadcn/switch";
+} from "@/components/affogato/ui/dialog";
+import { Input } from "@/components/affogato/ui/input";
+import { Slider } from "@/components/affogato/ui/slider";
+import { Switch } from "@/components/affogato/ui/switch";
 import { clampInt } from "@/lib/affogato/numbers";
 import type { Preferences } from "@/lib/affogato/types";
 

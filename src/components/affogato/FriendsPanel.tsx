@@ -1,7 +1,7 @@
 import { Coffee, PawPrint } from "lucide-react";
 
-import { Badge } from "@/components/shadcn/badge";
-import { Button } from "@/components/shadcn/button";
+import { Badge } from "@/components/affogato/ui/badge";
+import { Button } from "@/components/affogato/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/shadcn/sheet";
+} from "@/components/affogato/ui/sheet";
 import { FRIENDS } from "@/lib/affogato/friends";
 import { cn } from "@/lib/affogato/cn";
 

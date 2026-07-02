@@ -6,8 +6,8 @@ import { FriendsPanel } from "@/components/affogato/FriendsPanel";
 import { StatsPanel } from "@/components/affogato/StatsPanel";
 import { TasksPanel } from "@/components/affogato/TasksPanel";
 import { TimerWorkspace } from "@/components/affogato/TimerWorkspace";
-import { Toaster } from "@/components/shadcn/sonner";
-import { TooltipProvider } from "@/components/shadcn/tooltip";
+import { Toaster } from "@/components/affogato/ui/sonner";
+import { TooltipProvider } from "@/components/affogato/ui/tooltip";
 
 import { playBeep, primeAudio } from "@/lib/affogato/audio";
 import {
