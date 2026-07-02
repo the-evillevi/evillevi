@@ -1,0 +1,143 @@
+import { useId, type ReactNode } from "react";
+import { Bell, Settings } from "lucide-react";
+
+import { Button } from "@/components/affogato/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/affogato/ui/dialog";
+import { Input } from "@/components/affogato/ui/input";
+import { Slider } from "@/components/affogato/ui/slider";
+import { Switch } from "@/components/affogato/ui/switch";
+import { clampInt } from "@/lib/affogato/numbers";
+import { useAffogatoStore } from "@/lib/affogato/store";
+
+const durationKeys = [
+  ["pomodoroMinutes", "Focus minutes"],
+  ["shortBreakMinutes", "Short break"],
+  ["longBreakMinutes", "Long break"],
+  ["pomodorosPerCycle", "Sessions per cycle"],
+] as const;
+
+export function SettingsPanel() {
+  // Whole-object subscription is fine here: preferences only change on edits.
+  const preferences = useAffogatoStore((state) => state.preferences);
+  const actions = useAffogatoStore((state) => state.actions);
+  const onPreferenceChange = actions.updatePreference;
+  const onRequestNotifications = actions.requestNotifications;
+  const onRestoreDefaults = actions.restoreDefaultPreferences;
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Open settings">
+          <Settings />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>Adjust local timer behavior and preferences.</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {durationKeys.map(([key, label]) => (
+              <label key={key} className="grid gap-1 text-sm">
+                {label}
+                <Input
+                  type="number"
+                  min={1}
+                  max={key === "pomodorosPerCycle" ? 8 : 90}
+                  value={preferences[key]}
+                  onChange={(event) =>
+                    onPreferenceChange(
+                      key,
+                      clampInt(Number(event.target.value), 1, key === "pomodorosPerCycle" ? 8 : 90),
+                    )
+                  }
+                />
+              </label>
+            ))}
+          </div>
+          <SettingRow
+            label="Auto-start breaks"
+            checked={preferences.autoStartBreaks}
+            onCheckedChange={(checked) => onPreferenceChange("autoStartBreaks", checked)}
+          />
+          <SettingRow
+            label="Auto-start focus"
+            checked={preferences.autoStartPomodoros}
+            onCheckedChange={(checked) => onPreferenceChange("autoStartPomodoros", checked)}
+          />
+          <SettingRow
+            label="Notifications"
+            checked={preferences.notificationsEnabled}
+            onCheckedChange={onRequestNotifications}
+            icon={<Bell className="size-4" />}
+          />
+          <SettingRow
+            label="Sound"
+            checked={preferences.soundEnabled}
+            onCheckedChange={(checked) => onPreferenceChange("soundEnabled", checked)}
+          />
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Volume</p>
+            <Slider
+              aria-label="Volume"
+              value={[preferences.volume]}
+              max={100}
+              step={1}
+              onValueChange={([value]) => onPreferenceChange("volume", value)}
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {(["light", "dark", "system"] as const).map((theme) => (
+              <Button
+                key={theme}
+                variant={preferences.theme === theme ? "default" : "outline"}
+                onClick={() => onPreferenceChange("theme", theme)}
+              >
+                {theme}
+              </Button>
+            ))}
+          </div>
+          <SettingRow
+            label="Reduced motion"
+            checked={preferences.reducedMotion}
+            onCheckedChange={(checked) => onPreferenceChange("reducedMotion", checked)}
+          />
+          <Button variant="secondary" onClick={onRestoreDefaults}>
+            Restore defaults
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SettingRow({
+  checked,
+  icon,
+  label,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  icon?: ReactNode;
+  label: string;
+  onCheckedChange: (checked: boolean) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="flex items-center justify-between rounded-none border-2 border-[var(--nb-ink)] p-3">
+      <label htmlFor={id} className="flex items-center gap-2 text-sm font-medium">
+        {icon}
+        {label}
+      </label>
+      <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
+    </div>
+  );
+}

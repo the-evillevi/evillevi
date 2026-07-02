@@ -1,0 +1,49 @@
+---
+import { Sheet, SheetContent, SheetTrigger } from "@/components/starwind/sheet";
+---
+
+<Sheet>
+  <SheetTrigger asChild>
+    <button
+      type="button"
+      class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black text-[var(--nb-text)] uppercase transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
+      aria-label="Open search"
+    >
+      Search
+    </button>
+  </SheetTrigger>
+  <SheetContent
+    side="right"
+    class="w-full border-l-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-0 text-[var(--nb-text)] shadow-[-8px_0_0_0_var(--nb-ink)] sm:max-w-md"
+  >
+    <div class="flex h-full min-h-0 flex-col gap-4 p-5" data-search-root>
+      <h2 class="text-sm font-black uppercase">Search the garden</h2>
+      <div class="flex gap-2">
+        <input
+          class="min-h-12 w-full min-w-0 flex-1 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 font-black text-[var(--nb-text)]"
+          type="search"
+          data-search-input
+          autofocus
+          placeholder="Search notes, docs, and tags"
+          aria-label="Search"
+        />
+        <select
+          class="min-h-12 border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 font-black text-[var(--nb-button-text)]"
+          data-search-type
+          aria-label="Filter by type"
+        >
+          <option value="all">All</option>
+          <option value="blog">Blog</option>
+          <option value="docs">Docs</option>
+        </select>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        <div class="grid gap-3" data-search-results></div>
+      </div>
+    </div>
+  </SheetContent>
+</Sheet>
+
+<script>
+  import("@/components/scripts/search").then(({ initSearch }) => initSearch());
+</script>

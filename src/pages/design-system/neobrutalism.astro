@@ -6,6 +6,8 @@ import Footer from "@/components/layout/footer.astro";
 import ShowcaseCard from "@/components/layout/ShowcaseCard.astro";
 import Metric from "@/components/layout/Metric.astro";
 import DocBlock from "@/components/layout/DocBlock.astro";
+import ReactOverlaysDemo from "@/components/showcase/ReactOverlaysDemo";
+import Accent3D from "@/components/three/Accent3D.astro";
 
 import {
   Accordion,
@@ -114,9 +116,19 @@ const componentGroups = [
       "spinner",
       "toggle",
       "tooltip",
+      "three-decor",
+      "react-overlays",
     ],
   },
 ];
+
+const accentShapes = [
+  ["box", "blue"],
+  ["torus", "pink"],
+  ["cone", "green"],
+  ["sphere", "yellow"],
+  ["coin", "peach"],
+] as const;
 
 const tokens = [
   ["Base", "var(--nb-base)", "#eff1f5 / #1e1e2e"],
@@ -423,6 +435,36 @@ const tokens = [
               <TooltipContent>Sharp pointer, strong contrast, quick reveal.</TooltipContent>
             </Tooltip>
           </ShowcaseCard>
+
+          <ShowcaseCard id="three-decor" title="3D Decor">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {
+                accentShapes.map(([shape, color]) => (
+                  <div class="flex flex-col items-center gap-2 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-3">
+                    <Accent3D {shape} {color} size="6.5rem" />
+                    <span class="text-xs font-black uppercase">{shape}</span>
+                  </div>
+                ))
+              }
+            </div>
+            <p class="text-sm leading-6 font-bold text-[var(--nb-muted)]">
+              React-three-fiber islands in a flat 2.5D sticker style: two-band cel fills with a hard
+              terminator, cream highlight glints, and thick ink outlines under an orthographic
+              camera. `Accent3D shape="coin" color="peach" size="9rem"` drops one anywhere; colors
+              track the theme toggle live and motion pauses under reduced-motion. Keep it to a few
+              per page — browsers cap WebGL contexts.
+            </p>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="react-overlays" title="React Dialog + Toast">
+            <ReactOverlaysDemo client:load />
+            <p class="text-sm leading-6 font-bold text-[var(--nb-muted)]">
+              The shadcn/Radix dialog and sonner toaster used inside React islands (like Affogato)
+              wear the same tokens: 4px ink frames, hard offset shadows, sharp corners, and
+              type-colored toasts (`toast.success` → green, `toast.error` → red) with ink text.
+              Import from `@/components/shadcn/dialog` and `@/components/shadcn/sonner`.
+            </p>
+          </ShowcaseCard>
         </div>
       </section>
 
@@ -552,54 +594,8 @@ const tokens = [
 </Layout>
 
 <style is:global>
-  :root,
-  html[data-theme="light"] {
-    --nb-base: #eff1f5;
-    --nb-surface: #ccd0da;
-    --nb-text: #4c4f69;
-    --nb-muted: #6c6f85;
-    --nb-peach: #fe640b;
-    --nb-pink: #ea76cb;
-    --nb-red: #d20f39;
-    --nb-yellow: #df8e1d;
-    --nb-green: #40a02b;
-    --nb-teal: #179299;
-    --nb-blue: #1e66f5;
-    --nb-lavender: #7287fd;
-    --nb-ink: #11111b;
-    --nb-button-text: #11111b;
-    --nb-ease: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  html[data-theme="dark"] {
-    --nb-base: #1e1e2e;
-    --nb-surface: #313244;
-    --nb-text: #cdd6f4;
-    --nb-muted: #a6adc8;
-    --nb-peach: #fab387;
-    --nb-pink: #f5c2e7;
-    --nb-red: #f38ba8;
-    --nb-yellow: #f9e2af;
-    --nb-green: #a6e3a1;
-    --nb-teal: #94e2d5;
-    --nb-blue: #89b4fa;
-    --nb-lavender: #b4befe;
-    --nb-ink: #11111b;
-    --nb-button-text: #11111b;
-  }
-
-  .nb-page {
-    color-scheme: light dark;
-  }
-
-  .nb-shadow {
-    box-shadow: 8px 8px 0 0 var(--nb-ink);
-  }
-
-  .nb-shadow-sm {
-    box-shadow: 4px 4px 0 0 var(--nb-ink);
-  }
-
+  /* Tokens and shared nb-* utilities live in src/styles/starwind.css
+   * (imported by Layout.astro). Only page-specific rules belong here. */
   .nb-enter {
     animation: nb-slide-in 700ms var(--nb-ease) both;
   }
@@ -710,16 +706,6 @@ const tokens = [
     to {
       opacity: 1;
       transform: translateX(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nb-page *,
-    .nb-page *::before,
-    .nb-page *::after {
-      animation-duration: 1ms !important;
-      scroll-behavior: auto !important;
-      transition-duration: 1ms !important;
     }
   }
 </style>

@@ -88,9 +88,11 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
       d3
         .forceLink<GraphNode, GraphLink>(links)
         .id((node) => node.id)
-        .distance(55),
+        .distance(70),
     )
     .force("charge", d3.forceManyBody().strength(-180))
+    // In local mode the radius reserves room for the label row under each node.
+    .force("collide", d3.forceCollide<GraphNode>().radius(global ? 12 : 26))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   const link = svg
@@ -137,9 +139,37 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
     .attr("stroke", "var(--nb-ink)")
     .attr("stroke-width", 3);
 
+  // Labels only in local mode — the global graph is too dense for a 288px
+  // panel; its native <title> tooltips still expose every title on hover.
+  if (!global) {
+    node
+      .append("text")
+      .text((datum) => {
+        const label = datum.title.toUpperCase();
+        return label.length > 18 ? `${label.slice(0, 17)}…` : label;
+      })
+      .attr("dy", (datum) => (datum.id === currentSlug ? 21 : 18))
+      .attr("text-anchor", "middle")
+      .attr("fill", "var(--nb-text)")
+      .attr("font-size", 9)
+      .attr("font-weight", 900)
+      .attr("paint-order", "stroke")
+      .attr("stroke", "var(--nb-base)")
+      .attr("stroke-width", 3)
+      .attr("stroke-linejoin", "round")
+      .style("pointer-events", "none");
+  }
+
   node.append("title").text((datum) => datum.title);
 
   simulation.on("tick", () => {
+    // Keep nodes (and dragged nodes) inside the viewBox; the larger bottom
+    // inset in local mode reserves space for the label row.
+    for (const datum of nodes) {
+      datum.x = Math.max(14, Math.min(width - 14, datum.x ?? 0));
+      datum.y = Math.max(14, Math.min(height - (global ? 14 : 28), datum.y ?? 0));
+    }
+
     link
       .attr("x1", (datum) => (datum.source as GraphNode).x ?? 0)
       .attr("y1", (datum) => (datum.source as GraphNode).y ?? 0)
