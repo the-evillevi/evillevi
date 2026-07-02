@@ -1,8 +1,29 @@
 ---
 const columns = [
-  { title: "System", links: ["Foundations", "Components", "Patterns"] },
-  { title: "Tokens", links: ["Color", "Shadow", "Motion"] },
-  { title: "Astro", links: ["Starwind", "Tailwind", "Accessibility"] },
+  {
+    title: "System",
+    links: [
+      { label: "Components", href: "#components" },
+      { label: "Playground", href: "#playground" },
+      { label: "Docs", href: "#docs" },
+    ],
+  },
+  {
+    title: "Tokens",
+    links: [
+      { label: "Color", href: "#tokens" },
+      { label: "3D Decor", href: "#three-decor" },
+      { label: "Back to top", href: "#top" },
+    ],
+  },
+  {
+    title: "Garden",
+    links: [
+      { label: "Blog", href: "/blog" },
+      { label: "Docs", href: "/docs" },
+      { label: "Tags", href: "/tags" },
+    ],
+  },
 ];
 ---
 
@@ -27,9 +48,9 @@ const columns = [
                 <li>
                   <a
                     class="text-sm font-bold text-[var(--nb-muted)] underline decoration-4 underline-offset-4 transition-all duration-200 ease-[var(--nb-ease)] hover:text-[var(--nb-peach)] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-[var(--nb-blue)]"
-                    href="#docs"
+                    href={link.href}
                   >
-                    {link}
+                    {link.label}
                   </a>
                 </li>
               ))}
