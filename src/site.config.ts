@@ -9,7 +9,6 @@ export const siteConfig = {
     { title: "Docs", href: "/docs" },
     { title: "Tags", href: "/tags" },
     { title: "Archives", href: "/archives" },
-    { title: "Search", href: "/search" },
   ],
   social: {
     github: "https://github.com/evillevi",

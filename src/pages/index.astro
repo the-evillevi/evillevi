@@ -1,6 +1,5 @@
 ---
 import PostCard from "@/components/blog/PostCard.astro";
-import SearchDialog from "@/components/blog/SearchDialog.astro";
 import Accent3D from "@/components/three/Accent3D.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { siteConfig } from "@/site.config";
@@ -72,7 +71,6 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
     </div>
 
     <aside class="grid h-fit gap-5">
-      <SearchDialog />
       <section class="nb-panel p-4">
         <h2 class="mb-3 text-sm font-black uppercase">Tags</h2>
         <div class="flex flex-wrap gap-2">

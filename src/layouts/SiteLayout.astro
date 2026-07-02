@@ -1,5 +1,6 @@
 ---
 import "@/styles/starwind.css";
+import SearchSheet from "@/components/blog/SearchSheet.astro";
 import { siteConfig } from "@/site.config";
 
 interface Props {
@@ -70,6 +71,7 @@ const description = Astro.props.description ?? siteConfig.description;
                 </a>
               ))
             }
+            <SearchSheet />
             <button
               class="nb-action bg-[var(--nb-peach)] px-3 py-2 text-xs"
               type="button"
