@@ -1,13 +1,31 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Coffee, Pause, Play, RotateCcw, Volume2, VolumeX } from "lucide-react";
 
+import { SceneErrorBoundary } from "@/components/affogato/SceneErrorBoundary";
 import { SettingsPanel, type PreferenceChangeHandler } from "@/components/affogato/SettingsPanel";
-import TimerScene from "@/components/affogato/TimerScene";
 import { Button } from "@/components/shadcn/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
 import { formatTime, modeLabels } from "@/lib/affogato/timer";
 import type { Preferences, TimerMode, TimerState } from "@/lib/affogato/types";
 import { cn } from "@/lib/utils";
+
+/* The 3D scene (three + drei + fiber) loads as its own chunk, and only in
+ * the browser — this component is SSR'd, so the lazy import sits behind a
+ * mounted guard instead of rendering during server output. */
+const TimerScene = lazy(() => import("@/components/affogato/TimerScene"));
+
+function SceneFallback() {
+  return (
+    <div className="grid h-full w-full place-items-center" aria-hidden="true">
+      <div className="grid grid-cols-3 gap-1">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="bg-primary block size-2 border" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 interface TimerWorkspaceProps {
   preferences: Preferences;
@@ -36,6 +54,9 @@ export function TimerWorkspace({
   onStart,
   onToggleSound,
 }: TimerWorkspaceProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     // SiteLayout already provides the page's <main> landmark.
     <div>
@@ -108,7 +129,19 @@ export function TimerWorkspace({
           className="relative h-80 w-full overflow-hidden sm:h-96 md:col-start-2 md:row-span-2 md:row-start-1 md:h-[30rem] lg:h-[34rem]"
           aria-hidden="true"
         >
-          <TimerScene timer={timer} />
+          <SceneErrorBoundary>
+            {mounted ? (
+              <Suspense fallback={<SceneFallback />}>
+                <TimerScene
+                  status={timer.status}
+                  mode={timer.mode}
+                  reducedMotion={preferences.reducedMotion}
+                />
+              </Suspense>
+            ) : (
+              <SceneFallback />
+            )}
+          </SceneErrorBoundary>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-3 md:col-start-1 md:row-start-2 md:self-start">
