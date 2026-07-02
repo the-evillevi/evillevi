@@ -12,7 +12,13 @@ import {
   serializePersistedState,
   STORAGE_KEY,
 } from "./storage";
-import { defaultPreferences, defaultTimer, durationFor, getRemainingSeconds, modeLabels } from "./timer";
+import {
+  defaultPreferences,
+  defaultTimer,
+  durationFor,
+  getRemainingSeconds,
+  modeLabels,
+} from "./timer";
 import type { PersistedAffogatoState, Preferences, TaskDraft, TimerMode } from "./types";
 
 /* Affogato's single source of truth. One store, not several: the slices are
