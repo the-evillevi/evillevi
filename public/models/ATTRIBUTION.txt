@@ -1,0 +1,2 @@
+Voxel animal models (animal-*.glb) and colormap texture from the
+Kenney Animal Pack — https://kenney.nl — licensed CC0 1.0 Universal.

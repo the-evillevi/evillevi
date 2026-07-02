@@ -5,6 +5,8 @@ import type { TimerMode, TimerStatus } from "@/lib/affogato/types";
 
 const MODEL_PATH = "/models/animal-cat.glb";
 
+/* All 24 Kenney animal GLBs in public/models/ share this clip set
+ * (static/idle/walk/run/eat/dance/gesture-positive/gesture-negative). */
 enum Animation {
   Static = "static",
   Idle = "idle",
