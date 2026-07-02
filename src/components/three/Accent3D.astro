@@ -1,0 +1,15 @@
+---
+import Accent3DIsland from "./Accent3D";
+
+/**
+ * Drop-in decorative 3D accent for any Astro page:
+ * <Accent3D shape="torus" color="peach" size="9rem" />
+ * Shapes: box | sphere | torus | cone | coin. Colors: any --nb-* token name.
+ * Keep it to a few per page — browsers cap WebGL contexts at ~8-16.
+ */
+const { shape = "torus", color = "peach", size = "9rem", class: className } = Astro.props;
+---
+
+<div class:list={[className]} style={`width: ${size}; height: ${size};`} aria-hidden="true">
+  <Accent3DIsland client:visible {shape} {color} />
+</div>
