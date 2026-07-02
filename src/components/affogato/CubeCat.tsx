@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
+import * as THREE from "three";
 
 import { getFriend, STARTER_FRIEND_ID } from "@/lib/affogato/friends";
 import type { TimerMode, TimerStatus } from "@/lib/affogato/types";
@@ -20,7 +21,8 @@ enum Animation {
 
 interface CubeCatProps {
   position?: [number, number, number];
-  scale?: number;
+  /** Final size of the model's largest dimension in world units. */
+  fitSize?: number;
   status: TimerStatus;
   mode: TimerMode;
   reducedMotion: boolean;
@@ -29,7 +31,7 @@ interface CubeCatProps {
 
 export default function CubeCat({
   position = [0, 0, 0],
-  scale = 1.5,
+  fitSize = 2.6,
   status,
   mode,
   reducedMotion,
@@ -40,6 +42,17 @@ export default function CubeCat({
   // ever mounts several at once.
   const { scene, animations } = useGLTF(modelPath);
   const { actions } = useAnimations(animations, scene);
+
+  /* Kenney models pivot at their feet and vary in native size; normalize so
+   * every friend renders centered on the origin at the same apparent size. */
+  const fit = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(scene);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+    const fitScale = fitSize / maxDimension;
+    return { scale: fitScale, offset: center.multiplyScalar(-fitScale) };
+  }, [scene, fitSize]);
 
   const currentAction = useRef<(typeof actions)[string] | null>(null);
 
@@ -73,7 +86,15 @@ export default function CubeCat({
     currentAction.current = next;
   }, [actions, mode, status, reducedMotion]);
 
-  return <primitive object={scene} position={position} scale={scale} />;
+  return (
+    <group position={position}>
+      <primitive
+        object={scene}
+        position={[fit.offset.x, fit.offset.y, fit.offset.z]}
+        scale={fit.scale}
+      />
+    </group>
+  );
 }
 
 // Module-level preload of the starter model: fires when the lazy scene chunk
