@@ -59,7 +59,11 @@ export default function CubeCat({
     }
 
     const key =
-      status === "running" ? (mode === "pomodoro" ? Animation.Run : Animation.Dance) : Animation.Idle;
+      status === "running"
+        ? mode === "pomodoro"
+          ? Animation.Run
+          : Animation.Dance
+        : Animation.Idle;
     const next =
       actions[key] ?? actions[Animation.Idle] ?? Object.values(actions).find(Boolean) ?? null;
     if (!next || next === currentAction.current) return;

@@ -10,7 +10,12 @@ import { Toaster } from "@/components/shadcn/sonner";
 import { TooltipProvider } from "@/components/shadcn/tooltip";
 
 import { playBeep, primeAudio } from "@/lib/affogato/audio";
-import { computeStop, computeTick, type SessionDraft, type StopOutcome } from "@/lib/affogato/engine";
+import {
+  computeStop,
+  computeTick,
+  type SessionDraft,
+  type StopOutcome,
+} from "@/lib/affogato/engine";
 import { getFriend, STARTER_FRIEND_ID } from "@/lib/affogato/friends";
 import { clampInt } from "@/lib/affogato/numbers";
 import {

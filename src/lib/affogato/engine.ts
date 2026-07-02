@@ -26,7 +26,10 @@ export type TickResult = {
   } | null;
 };
 
-export type StopOutcome = { kind: "pause" } | { kind: "reset" } | { kind: "setMode"; mode: TimerMode };
+export type StopOutcome =
+  | { kind: "pause" }
+  | { kind: "reset" }
+  | { kind: "setMode"; mode: TimerMode };
 
 export type StopResult = {
   timer: TimerState;
