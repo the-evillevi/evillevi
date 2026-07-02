@@ -216,6 +216,9 @@ html[data-theme="light"] {
   --nb-lavender: #7287fd;
   --nb-ink: #11111b;
   --nb-button-text: #11111b;
+  /* Hero/display heading stamp shadow: peach pops on the light base, but in
+   * dark mode it halos around light text, so the dark theme flips it to ink. */
+  --nb-title-shadow: #fe640b;
   --nb-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -234,6 +237,7 @@ html[data-theme="dark"] {
   --nb-lavender: #b4befe;
   --nb-ink: #11111b;
   --nb-button-text: #11111b;
+  --nb-title-shadow: #11111b;
 }
 
 .nb-page {
@@ -349,6 +353,13 @@ html[data-theme="dark"] {
   color: #cdd6f4;
   padding: 1rem;
   box-shadow: 6px 6px 0 0 var(--nb-ink);
+}
+
+/* Ink-on-ink camouflages against the dark base; a surface-toned frame keeps
+ * the code block visibly bounded in dark mode. */
+html[data-theme="dark"] .nb-prose :where(pre) {
+  border-color: var(--nb-surface);
+  box-shadow: 6px 6px 0 0 var(--nb-surface);
 }
 
 .nb-prose :where(pre code) {
