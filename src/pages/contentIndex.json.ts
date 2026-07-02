@@ -3,6 +3,7 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import type { Root } from "mdast";
+import { stripWikilinks } from "@/plugins/remark-wikilinks";
 import { getBlogPosts, getDocsEntries, type ContentEntry } from "@/utils/content";
 import { extractInternalLinks } from "@/utils/links";
 
@@ -26,7 +27,7 @@ function toIndexEntry(entry: ContentEntry) {
     {
       slug,
       title: entry.data.title,
-      content: extractText(tree),
+      content: stripWikilinks(extractText(tree)),
       tags: entry.data.tags,
       links: extractInternalLinks(entry.body, entry.collection),
       collection: entry.collection,

@@ -29,6 +29,11 @@ function parseWikilink(value: string) {
   return { slug: slug.replace(/\.(md|mdx)$/, ""), displayText };
 }
 
+/** Replace `[[target|display]]` tokens with their display text (plain-text contexts). */
+export function stripWikilinks(value: string): string {
+  return value.replace(WIKILINK_REGEX, (match) => parseWikilink(match)?.displayText ?? match);
+}
+
 const remarkWikilinks: Plugin<[WikilinkOptions?], Root> = function (options = {}) {
   const { basePath = "/blog", validSlugs } = options;
 
