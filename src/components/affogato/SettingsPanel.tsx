@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/shadcn/input";
 import { Slider } from "@/components/shadcn/slider";
 import { Switch } from "@/components/shadcn/switch";
+import { clampInt } from "@/lib/affogato/numbers";
 import type { Preferences } from "@/lib/affogato/types";
 
 export type PreferenceChangeHandler = <K extends keyof Preferences>(
@@ -33,10 +34,6 @@ const durationKeys = [
   ["longBreakMinutes", "Long break"],
   ["pomodorosPerCycle", "Sessions per cycle"],
 ] as const;
-
-function clampNumber(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
-}
 
 export function SettingsPanel({
   preferences,
@@ -69,11 +66,7 @@ export function SettingsPanel({
                   onChange={(event) =>
                     onPreferenceChange(
                       key,
-                      clampNumber(
-                        Number(event.target.value),
-                        1,
-                        key === "pomodorosPerCycle" ? 8 : 90,
-                      ),
+                      clampInt(Number(event.target.value), 1, key === "pomodorosPerCycle" ? 8 : 90),
                     )
                   }
                 />

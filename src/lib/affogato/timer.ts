@@ -57,6 +57,7 @@ export function clampProgress(value: number) {
 }
 
 export function formatTime(totalSeconds: number) {
+  if (!Number.isFinite(totalSeconds) || totalSeconds < 0) totalSeconds = 0;
   const minutes = Math.floor(totalSeconds / 60)
     .toString()
     .padStart(2, "0");
