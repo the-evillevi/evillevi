@@ -1,4 +1,6 @@
 ---
+import Hero3D from "@/components/three/Hero3D";
+
 const {
   eyebrow = "Design System",
   title = "Neobrutalism + Catppuccin",
@@ -43,37 +45,27 @@ const {
       </div>
     </div>
 
-    <div class="relative min-h-[340px] md:min-h-[440px]" aria-hidden="true">
+    <div class="nb-hero-3d relative min-h-[340px] md:min-h-[440px]" aria-hidden="true">
       <div
+        data-nb-3d-fallback
         class="absolute top-6 left-8 h-32 w-32 rotate-6 border-4 border-[var(--nb-ink)] bg-[var(--nb-blue)] shadow-[8px_8px_0_0_var(--nb-ink)]"
       >
       </div>
       <div
+        data-nb-3d-fallback
         class="absolute top-16 right-4 h-44 w-44 -rotate-6 border-4 border-[var(--nb-ink)] bg-[var(--nb-pink)] shadow-[8px_8px_0_0_var(--nb-ink)]"
       >
       </div>
-      <div
-        class="absolute bottom-10 left-2 grid h-48 w-56 -rotate-3 grid-cols-4 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] shadow-[10px_10px_0_0_var(--nb-ink)]"
-      >
-        {
-          Array.from({ length: 16 }).map((_, index) => (
-            <span
-              class:list={[
-                "border-r-4 border-b-4 border-[var(--nb-ink)]",
-                index % 3 === 0
-                  ? "bg-[var(--nb-yellow)]"
-                  : index % 4 === 0
-                    ? "bg-[var(--nb-teal)]"
-                    : "bg-transparent",
-              ]}
-            />
-          ))
-        }
-      </div>
-      <div
-        class="absolute right-10 bottom-24 h-24 w-40 rotate-12 border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] shadow-[8px_8px_0_0_var(--nb-ink)]"
-      >
-      </div>
+      <Hero3D client:only="react" />
     </div>
   </div>
 </section>
+
+<style is:global>
+  [data-nb-3d-fallback] {
+    transition: opacity 180ms var(--nb-ease);
+  }
+  .nb-hero-3d:has(canvas) [data-nb-3d-fallback] {
+    opacity: 0;
+  }
+</style>
