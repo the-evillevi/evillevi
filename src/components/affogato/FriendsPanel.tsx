@@ -54,13 +54,13 @@ export function FriendsPanel({
               <div
                 key={friend.id}
                 className={cn(
-                  "flex items-center justify-between gap-3 rounded-lg border p-3",
-                  selected && "border-primary bg-primary/5",
+                  "flex items-center justify-between gap-3 rounded-none border-2 border-[var(--nb-ink)] p-3",
+                  selected && "bg-[var(--nb-surface)] shadow-[3px_3px_0_0_var(--nb-ink)]",
                 )}
               >
                 <div>
-                  <p className="font-medium">{friend.name}</p>
-                  <p className="text-muted-foreground flex items-center gap-1 text-xs">
+                  <p className="font-black uppercase">{friend.name}</p>
+                  <p className="flex items-center gap-1 text-xs font-bold text-[var(--nb-muted)]">
                     {unlocked ? (
                       selected ? (
                         "In the scene"
@@ -77,11 +77,14 @@ export function FriendsPanel({
                   </p>
                 </div>
                 {selected ? (
-                  <Badge>Selected</Badge>
+                  <Badge className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] font-black text-[var(--nb-button-text)] uppercase">
+                    Selected
+                  </Badge>
                 ) : unlocked ? (
                   <Button
                     variant="outline"
                     size="sm"
+                    className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] font-black text-[var(--nb-text)] uppercase shadow-[2px_2px_0_0_var(--nb-ink)]"
                     aria-label={`Select ${friend.name}`}
                     onClick={() => onSelectFriend(friend.id)}
                   >
@@ -91,6 +94,7 @@ export function FriendsPanel({
                   <Button
                     size="sm"
                     disabled={!affordable}
+                    className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-peach)] font-black text-[var(--nb-button-text)] uppercase shadow-[2px_2px_0_0_var(--nb-ink)]"
                     aria-label={`Unlock ${friend.name} for ${friend.cost} beans`}
                     onClick={() => onUnlockFriend(friend.id)}
                   >

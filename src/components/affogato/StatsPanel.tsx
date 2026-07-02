@@ -51,8 +51,8 @@ export function StatsPanel({
           />
           <Stat label="Completed tasks" value={completedTasks.toString()} />
         </div>
-        <div className="rounded-lg border p-4">
-          <p className="mb-3 text-sm font-medium">Last seven days</p>
+        <div className="rounded-none border-2 border-[var(--nb-ink)] p-4">
+          <p className="mb-3 text-sm font-black uppercase">Last seven days</p>
           <div
             role="img"
             aria-label={`Focus sessions, last seven days: ${sevenDayStats
@@ -78,9 +78,9 @@ export function StatsPanel({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border p-4">
-      <p className="text-muted-foreground text-sm">{label}</p>
-      <p className="text-2xl font-bold tabular-nums">{value}</p>
+    <div className="rounded-none border-2 border-[var(--nb-ink)] p-4">
+      <p className="text-sm font-bold text-[var(--nb-muted)] uppercase">{label}</p>
+      <p className="text-2xl font-black tabular-nums">{value}</p>
     </div>
   );
 }

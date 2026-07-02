@@ -508,7 +508,7 @@ export function AffogatoApp() {
           onToggleSound={() => updatePreference("soundEnabled", !preferences.soundEnabled)}
         />
 
-        <Toaster richColors position="bottom-right" />
+        <Toaster position="bottom-right" />
       </div>
     </TooltipProvider>
   );
