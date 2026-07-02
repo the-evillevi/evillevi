@@ -347,7 +347,15 @@ export function AffogatoApp() {
   }
 
   function selectTask(taskId: string) {
+    const task = tasks.find((item) => item.id === taskId);
+    if (!task || task.status === "completed") return;
     setTimer((current) => ({ ...current, selectedTaskId: taskId }));
+  }
+
+  function clearSelectedTask(taskId: string) {
+    setTimer((current) =>
+      current.selectedTaskId === taskId ? { ...current, selectedTaskId: null } : current,
+    );
   }
 
   function completeTask(taskId: string) {
@@ -359,10 +367,13 @@ export function AffogatoApp() {
           : task,
       ),
     );
+    // Completed tasks stop receiving session attribution.
+    clearSelectedTask(taskId);
   }
 
   function deleteTask(taskId: string) {
     setTasks((items) => items.filter((task) => task.id !== taskId));
+    clearSelectedTask(taskId);
   }
 
   function applyPreferences(next: Preferences) {

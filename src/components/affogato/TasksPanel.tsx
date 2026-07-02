@@ -115,14 +115,16 @@ export function TasksPanel({
                     </p>
                   </div>
                   <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Select task"
-                      onClick={() => onSelectTask(task.id)}
-                    >
-                      Select Task Placeholder
-                    </Button>
+                    {task.status !== "completed" ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Select task"
+                        onClick={() => onSelectTask(task.id)}
+                      >
+                        Select Task Placeholder
+                      </Button>
+                    ) : null}
                     <Button
                       variant="ghost"
                       size="icon"
