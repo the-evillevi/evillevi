@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Check, Coffee, ListTodo, X } from "lucide-react";
+import { Check, ListTodo, Target, X } from "lucide-react";
 
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
 import {
   Sheet,
   SheetContent,
@@ -67,18 +68,21 @@ export function TasksPanel({
                 setDraft((current) => ({ ...current, title: event.target.value }))
               }
             />
-            <Input
-              min={1}
-              max={24}
-              type="number"
-              value={draft.estimatedPomodoros}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  estimatedPomodoros: Number(event.target.value),
-                }))
-              }
-            />
+            <label className="grid gap-1 text-sm">
+              Estimated pomodoros
+              <Input
+                min={1}
+                max={24}
+                type="number"
+                value={draft.estimatedPomodoros}
+                onChange={(event) =>
+                  setDraft((current) => ({
+                    ...current,
+                    estimatedPomodoros: Number(event.target.value),
+                  }))
+                }
+              />
+            </label>
             <Textarea
               placeholder="Notes"
               value={draft.notes}
@@ -116,14 +120,21 @@ export function TasksPanel({
                   </div>
                   <div className="flex gap-1">
                     {task.status !== "completed" ? (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Select task"
-                        onClick={() => onSelectTask(task.id)}
-                      >
-                        Select Task Placeholder
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant={activeTaskId === task.id ? "default" : "ghost"}
+                            size="icon"
+                            aria-label="Select task"
+                            onClick={() => onSelectTask(task.id)}
+                          >
+                            <Target />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {activeTaskId === task.id ? "Selected task" : "Select task"}
+                        </TooltipContent>
+                      </Tooltip>
                     ) : null}
                     <Button
                       variant="ghost"

@@ -7,6 +7,11 @@ const description =
 ---
 
 <SiteLayout title="Affogato - Voxel Pomodoro Timer" description={description}>
+  <noscript>
+    <p class="nb-panel mx-auto my-8 max-w-3xl p-5 text-center font-bold">
+      Affogato needs JavaScript to run the timer and track your beans.
+    </p>
+  </noscript>
   <AffogatoApp client:load />
   <section class="mx-auto grid max-w-5xl gap-8 px-4 pt-4 pb-16 sm:px-6 lg:grid-cols-3 lg:px-8">
     <article class="nb-panel p-5">

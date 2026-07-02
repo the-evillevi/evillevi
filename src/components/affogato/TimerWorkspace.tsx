@@ -37,7 +37,8 @@ export function TimerWorkspace({
   onToggleSound,
 }: TimerWorkspaceProps) {
   return (
-    <main>
+    // SiteLayout already provides the page's <main> landmark.
+    <div>
       <section className="nb-panel grid gap-6 p-4 md:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:items-center md:gap-8 md:p-6 lg:grid-cols-[minmax(20rem,0.8fr)_minmax(0,1.2fr)]">
         <div className="flex flex-col items-center gap-5 md:col-start-1 md:row-start-1">
           <div className="text-center">
@@ -70,12 +71,16 @@ export function TimerWorkspace({
           </ToggleGroup>
 
           <Tooltip>
-            <TooltipTrigger>
-              <div className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
+            {/* TooltipTrigger renders a <button>: inner nodes must be spans,
+                not divs, and the button needs its own accessible name. */}
+            <TooltipTrigger
+              aria-label={`Cycle ${timer.cycle}: ${Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} of ${preferences.pomodorosPerCycle} focus sessions complete`}
+            >
+              <span className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
                 <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
                   cycle {timer.cycle}
                 </span>
-                <div className="flex gap-2">
+                <span className="flex gap-2">
                   {Array.from({ length: preferences.pomodorosPerCycle }, (_, index) => (
                     <span
                       key={index}
@@ -89,8 +94,8 @@ export function TimerWorkspace({
                       <Coffee className="size-4" />
                     </span>
                   ))}
-                </div>
-              </div>
+                </span>
+              </span>
             </TooltipTrigger>
             <TooltipContent>
               {Math.min(timer.completedInCycle, preferences.pomodorosPerCycle)} done,{" "}
@@ -101,7 +106,7 @@ export function TimerWorkspace({
 
         <div
           className="relative h-80 w-full overflow-hidden sm:h-96 md:col-start-2 md:row-span-2 md:row-start-1 md:h-[30rem] lg:h-[34rem]"
-          aria-label="Animated timer character"
+          aria-hidden="true"
         >
           <TimerScene timer={timer} />
         </div>
@@ -128,6 +133,6 @@ export function TimerWorkspace({
           />
         </div>
       </section>
-    </main>
+    </div>
   );
 }

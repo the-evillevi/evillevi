@@ -1,18 +1,18 @@
-import type { ReactNode } from "react";
-import { Cat, Coffee, Expand, Moon, Sun, User } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Cat, Coffee, Expand, Moon, Shrink, Sun, User } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
-import type { Preferences } from "@/lib/affogato/types";
 import { cn } from "@/lib/utils";
 
 interface AffogatoHeaderProps {
   beanLabel: string;
   beanPulse: boolean;
   children: ReactNode;
-  theme: Preferences["theme"];
+  /** Effective theme (system already resolved) so the icon is always right. */
+  theme: "light" | "dark";
   onToggleTheme: () => void;
 }
 
@@ -23,6 +23,22 @@ export function AffogatoHeader({
   theme,
   onToggleTheme,
 }: AffogatoHeaderProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    onChange();
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  function toggleFullscreen() {
+    const request = document.fullscreenElement
+      ? document.exitFullscreen?.()
+      : document.documentElement.requestFullscreen?.();
+    request?.catch(() => toast.error("Fullscreen is unavailable right now."));
+  }
+
   return (
     <header className="nb-panel flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
       <div className="flex items-center gap-3">
@@ -59,10 +75,10 @@ export function AffogatoHeader({
         <Button
           variant="outline"
           size="icon"
-          aria-label="Toggle fullscreen"
-          onClick={() => document.documentElement.requestFullscreen?.()}
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          onClick={toggleFullscreen}
         >
-          <Expand />
+          {isFullscreen ? <Shrink /> : <Expand />}
         </Button>
         <Button
           variant="outline"

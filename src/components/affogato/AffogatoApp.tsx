@@ -78,6 +78,8 @@ export function AffogatoApp() {
   const [beans, setBeans] = useState(0);
   const [beanPulse, setBeanPulse] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  // Resolved in effects (never during render — matchMedia would break SSR).
+  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">("light");
   const initialDocumentTitle = useRef<string | null>(null);
 
   /* The 1s interval is registered once and reads live state through refs, so
@@ -174,7 +176,9 @@ export function AffogatoApp() {
     if (!loaded) return;
 
     const applyPreferenceTheme = () => {
-      applySiteTheme(resolvedTheme(preferences.theme));
+      const resolved = resolvedTheme(preferences.theme);
+      applySiteTheme(resolved);
+      setEffectiveTheme(resolved);
     };
 
     applyPreferenceTheme();
@@ -408,9 +412,12 @@ export function AffogatoApp() {
     applyPreferences(defaultPreferences);
   }
 
-  const beanLabel = beans.toLocaleString(undefined, {
-    maximumFractionDigits: 1,
-  });
+  const beanLabel =
+    beans >= 10_000
+      ? new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 }).format(
+          beans,
+        )
+      : beans.toLocaleString(undefined, { maximumFractionDigits: 1 });
 
   return (
     <TooltipProvider>
@@ -418,9 +425,9 @@ export function AffogatoApp() {
         <AffogatoHeader
           beanLabel={beanLabel}
           beanPulse={beanPulse}
-          theme={preferences.theme}
+          theme={effectiveTheme}
           onToggleTheme={() =>
-            updatePreference("theme", preferences.theme === "dark" ? "light" : "dark")
+            updatePreference("theme", effectiveTheme === "dark" ? "light" : "dark")
           }
         >
           <TasksPanel

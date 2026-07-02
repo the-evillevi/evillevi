@@ -53,7 +53,13 @@ export function StatsPanel({
         </div>
         <div className="rounded-lg border p-4">
           <p className="mb-3 text-sm font-medium">Last seven days</p>
-          <div className="flex h-32 items-end gap-2">
+          <div
+            role="img"
+            aria-label={`Focus sessions, last seven days: ${sevenDayStats
+              .map((day) => `${day.label} ${day.count}`)
+              .join(", ")}`}
+            className="flex h-32 items-end gap-2"
+          >
             {sevenDayStats.map((day) => (
               <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
                 <div

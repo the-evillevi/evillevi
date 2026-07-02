@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { Bell, Settings } from "lucide-react";
 
 import { Button } from "@/components/shadcn/button";
@@ -97,6 +97,7 @@ export function SettingsPanel({
           <div className="space-y-2">
             <p className="text-sm font-medium">Volume</p>
             <Slider
+              aria-label="Volume"
               value={[preferences.volume]}
               max={100}
               step={1}
@@ -139,13 +140,14 @@ function SettingRow({
   label: string;
   onCheckedChange: (checked: boolean) => void;
 }) {
+  const id = useId();
   return (
     <div className="flex items-center justify-between rounded-lg border p-3">
-      <span className="flex items-center gap-2 text-sm font-medium">
+      <label htmlFor={id} className="flex items-center gap-2 text-sm font-medium">
         {icon}
         {label}
-      </span>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      </label>
+      <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   );
 }
