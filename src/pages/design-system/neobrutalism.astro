@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer.astro";
 import ShowcaseCard from "@/components/layout/ShowcaseCard.astro";
 import Metric from "@/components/layout/Metric.astro";
 import DocBlock from "@/components/layout/DocBlock.astro";
+import ReactOverlaysDemo from "@/components/showcase/ReactOverlaysDemo";
 import Accent3D from "@/components/three/Accent3D.astro";
 
 import {
@@ -116,6 +117,7 @@ const componentGroups = [
       "toggle",
       "tooltip",
       "three-decor",
+      "react-overlays",
     ],
   },
 ];
@@ -451,6 +453,16 @@ const tokens = [
               camera. `Accent3D shape="coin" color="peach" size="9rem"` drops one anywhere; colors
               track the theme toggle live and motion pauses under reduced-motion. Keep it to a few
               per page — browsers cap WebGL contexts.
+            </p>
+          </ShowcaseCard>
+
+          <ShowcaseCard id="react-overlays" title="React Dialog + Toast">
+            <ReactOverlaysDemo client:load />
+            <p class="text-sm leading-6 font-bold text-[var(--nb-muted)]">
+              The shadcn/Radix dialog and sonner toaster used inside React islands (like Affogato)
+              wear the same tokens: 4px ink frames, hard offset shadows, sharp corners, and
+              type-colored toasts (`toast.success` → green, `toast.error` → red) with ink text.
+              Import from `@/components/shadcn/dialog` and `@/components/shadcn/sonner`.
             </p>
           </ShowcaseCard>
         </div>
