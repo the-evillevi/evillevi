@@ -14,7 +14,7 @@ import {
 } from "@/components/shadcn/sheet";
 import { Textarea } from "@/components/shadcn/textarea";
 import type { Task, TaskDraft } from "@/lib/affogato/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/affogato/cn";
 
 const defaultTaskDraft: TaskDraft = {
   title: "",

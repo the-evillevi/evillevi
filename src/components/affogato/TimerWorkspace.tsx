@@ -8,7 +8,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/shadcn/toggle-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
 import { formatTime, modeLabels } from "@/lib/affogato/timer";
 import type { Preferences, TimerMode, TimerState } from "@/lib/affogato/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/affogato/cn";
 
 /* The 3D scene (three + drei + fiber) loads as its own chunk, and only in
  * the browser — this component is SSR'd, so the lazy import sits behind a

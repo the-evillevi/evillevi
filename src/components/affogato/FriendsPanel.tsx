@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@/components/shadcn/sheet";
 import { FRIENDS } from "@/lib/affogato/friends";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/affogato/cn";
 
 interface FriendsPanelProps {
   beanLabel: string;

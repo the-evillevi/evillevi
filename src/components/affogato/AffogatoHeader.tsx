@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/shadcn/tooltip";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/affogato/cn";
 
 interface AffogatoHeaderProps {
   beanLabel: string;

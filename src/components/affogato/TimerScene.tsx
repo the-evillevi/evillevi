@@ -3,7 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
 import CubeCat from "@/components/affogato/CubeCat";
-import { useReducedMotion } from "@/components/three/useReducedMotion";
+import { useReducedMotion } from "@/lib/affogato/useReducedMotion";
 import type { TimerMode, TimerStatus } from "@/lib/affogato/types";
 
 interface TimerSceneProps {
