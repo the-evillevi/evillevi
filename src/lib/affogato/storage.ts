@@ -133,6 +133,12 @@ function sanitizeTimer(value: unknown, preferences: Preferences, taskIds: Set<st
         ? value.selectedTaskId
         : null,
     currentSessionStartedAt: finiteOrNull(value.currentSessionStartedAt),
+    currentSessionPlannedSeconds: clampNumber(
+      value.currentSessionPlannedSeconds,
+      1,
+      24 * 3600,
+      maxDuration,
+    ),
     currentSessionBeans: clampNumber(value.currentSessionBeans, 0, Number.MAX_SAFE_INTEGER, 0),
     lastBeanAccruedAt:
       status === "running" ? (finiteOrNull(value.lastBeanAccruedAt) ?? startedAt) : null,

@@ -25,6 +25,9 @@ export type TimerState = {
   cycle: number;
   selectedTaskId: string | null;
   currentSessionStartedAt: number | null;
+  /** Duration the session was started with — sessions record this even if
+   *  the user changes duration preferences mid-run. */
+  currentSessionPlannedSeconds: number;
   currentSessionBeans: number;
   lastBeanAccruedAt: number | null;
 };

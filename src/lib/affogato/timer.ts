@@ -23,6 +23,7 @@ export const defaultTimer: TimerState = {
   cycle: 1,
   selectedTaskId: null,
   currentSessionStartedAt: null,
+  currentSessionPlannedSeconds: defaultPreferences.pomodoroMinutes * 60,
   currentSessionBeans: 0,
   lastBeanAccruedAt: null,
 };

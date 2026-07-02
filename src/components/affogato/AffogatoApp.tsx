@@ -8,8 +8,11 @@ import { TimerWorkspace } from "@/components/affogato/TimerWorkspace";
 import { Toaster } from "@/components/shadcn/sonner";
 import { TooltipProvider } from "@/components/shadcn/tooltip";
 
-import { calculateEarnedBeans, elapsedBeanSeconds } from "@/lib/affogato/beans";
+import { playBeep, primeAudio } from "@/lib/affogato/audio";
+import { computeStop, computeTick, type SessionDraft, type StopOutcome } from "@/lib/affogato/engine";
+import { clampInt } from "@/lib/affogato/numbers";
 import {
+  MAX_SESSIONS,
   normalizePreferences,
   parsePersistedState,
   serializePersistedState,
@@ -23,27 +26,18 @@ import {
   formatTime,
   getRemainingSeconds,
   modeLabels,
-  nextCompletedInCycleAfterCompletion,
-  nextCycleAfterCompletion,
-  nextModeAfterCompletion,
-  shouldAutoStartNextTimer,
 } from "@/lib/affogato/timer";
 import type {
+  PersistedAffogatoState,
   Preferences,
   Session,
   Task,
   TaskDraft,
   TimerMode,
-  TimerState,
-  TimerStatus,
 } from "@/lib/affogato/types";
 
 function newId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function clampNumber(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, Number.isFinite(value) ? value : min));
 }
 
 const SITE_THEME_STORAGE_KEY = "nb-theme";
@@ -86,6 +80,18 @@ export function AffogatoApp() {
   const [loaded, setLoaded] = useState(false);
   const initialDocumentTitle = useRef<string | null>(null);
 
+  /* The 1s interval is registered once and reads live state through refs, so
+   * task/preference edits don't tear the interval down, and every setState it
+   * makes happens at the top level of the callback with pure updaters. */
+  const timerRef = useRef(timer);
+  const preferencesRef = useRef(preferences);
+  useEffect(() => {
+    timerRef.current = timer;
+  }, [timer]);
+  useEffect(() => {
+    preferencesRef.current = preferences;
+  }, [preferences]);
+
   const activeTask = tasks.find((task) => task.id === timer.selectedTaskId) ?? null;
   const completedTasks = tasks.filter((task) => task.status === "completed").length;
   const todaySessions = sessionsForDay(sessions);
@@ -96,19 +102,14 @@ export function AffogatoApp() {
   }, [sessions]);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const state = parsePersistedState(saved);
-        setPreferences(state.preferences);
-        setTimer(state.timer);
-        setRemainingSeconds(getRemainingSeconds(state.timer, state.preferences));
-        setTasks(state.tasks);
-        setSessions(state.sessions);
-        setBeans(state.beans);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
+    const state = parsePersistedState(localStorage.getItem(STORAGE_KEY));
+    if (localStorage.getItem(STORAGE_KEY)) {
+      setPreferences(state.preferences);
+      setTimer(state.timer);
+      setRemainingSeconds(getRemainingSeconds(state.timer, state.preferences));
+      setTasks(state.tasks);
+      setSessions(state.sessions);
+      setBeans(state.beans);
     } else {
       setPreferences(
         normalizePreferences({
@@ -120,13 +121,54 @@ export function AffogatoApp() {
     setLoaded(true);
   }, []);
 
+  /* Persistence: trailing 2s debounce (the timer writes every second
+   * otherwise), flushed when the tab hides/unloads or the run state flips. */
+  const persistSnapshot = useRef<PersistedAffogatoState | null>(null);
+  const persistTimeout = useRef<number | null>(null);
+
+  function flushPersist() {
+    if (persistTimeout.current !== null) {
+      window.clearTimeout(persistTimeout.current);
+      persistTimeout.current = null;
+    }
+    if (persistSnapshot.current) {
+      localStorage.setItem(STORAGE_KEY, serializePersistedState(persistSnapshot.current));
+    }
+  }
+
   useEffect(() => {
     if (!loaded) return;
-    localStorage.setItem(
-      STORAGE_KEY,
-      serializePersistedState({ preferences, timer, tasks, sessions, beans }),
-    );
+    persistSnapshot.current = { preferences, timer, tasks, sessions, beans };
+    persistTimeout.current ??= window.setTimeout(() => {
+      persistTimeout.current = null;
+      if (persistSnapshot.current) {
+        localStorage.setItem(STORAGE_KEY, serializePersistedState(persistSnapshot.current));
+      }
+    }, 2000);
   }, [beans, loaded, preferences, sessions, tasks, timer]);
+
+  const prevStatus = useRef(timer.status);
+  useEffect(() => {
+    if (!loaded) return;
+    if (prevStatus.current !== timer.status) {
+      prevStatus.current = timer.status;
+      flushPersist();
+    }
+  }, [loaded, timer.status]);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flushPersist();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", flushPersist);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", flushPersist);
+      flushPersist();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!loaded) return;
@@ -191,143 +233,64 @@ export function AffogatoApp() {
       timer.status === "running" ? `${formatTime(remainingSeconds)} - ${baseTitle}` : baseTitle;
   }, [remainingSeconds, timer.status]);
 
+  function pulseBeans() {
+    setBeanPulse(true);
+    window.setTimeout(() => setBeanPulse(false), 260);
+  }
+
+  function recordSession(draft: SessionDraft) {
+    setSessions((items) => [{ ...draft, id: newId("session") }, ...items].slice(0, MAX_SESSIONS));
+  }
+
   useEffect(() => {
     const interval = window.setInterval(() => {
-      const now = Date.now();
-      setTimer((current) => {
-        if (current.status !== "running") {
-          setRemainingSeconds(getRemainingSeconds(current, preferences, now));
-          return current;
+      const result = computeTick(timerRef.current, preferencesRef.current, Date.now());
+      if (result.timer !== timerRef.current) setTimer(result.timer);
+      setRemainingSeconds(result.remainingSeconds);
+      if (result.earnedBeans > 0) {
+        setBeans((value) => value + result.earnedBeans);
+        pulseBeans();
+      }
+
+      if (result.completion) {
+        const { session, creditTaskId, completedMode } = result.completion;
+        const prefs = preferencesRef.current;
+        if (session) recordSession(session);
+        if (creditTaskId) {
+          setTasks((items) =>
+            items.map((task) =>
+              task.id === creditTaskId
+                ? {
+                    ...task,
+                    completedPomodoros: task.completedPomodoros + 1,
+                    updatedAt: session?.endedAt ?? Date.now(),
+                  }
+                : task,
+            ),
+          );
         }
-
-        const nextRemaining = getRemainingSeconds(current, preferences, now);
-        const earnedSeconds = Math.min(
-          elapsedBeanSeconds(current.lastBeanAccruedAt, now),
-          getRemainingSeconds(current, preferences, current.lastBeanAccruedAt ?? now),
-        );
-
-        if (earnedSeconds > 0) {
-          const earnedBeans = calculateEarnedBeans(earnedSeconds);
-          setBeans((value) => value + earnedBeans);
-          setBeanPulse(true);
-          window.setTimeout(() => setBeanPulse(false), 260);
-          current = {
-            ...current,
-            currentSessionBeans: current.currentSessionBeans + earnedBeans,
-            lastBeanAccruedAt: now,
-          };
+        if (prefs.soundEnabled) playBeep(prefs.volume);
+        if (
+          prefs.notificationsEnabled &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
+          new Notification("Affogato timer complete", {
+            body: `${modeLabels[completedMode]} is done.`,
+          });
         }
-
-        setRemainingSeconds(nextRemaining);
-
-        if (nextRemaining > 0) {
-          return current;
-        }
-
-        return completeTimer(current, now);
-      });
+        toast.success(`${modeLabels[completedMode]} complete`, {
+          description: "Beans banked. Nice and steady.",
+        });
+      }
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [preferences, tasks]);
-
-  function pendingBeanAccrual(current: TimerState, at: number) {
-    if (current.status !== "running") return 0;
-    return Math.min(
-      elapsedBeanSeconds(current.lastBeanAccruedAt, at),
-      getRemainingSeconds(current, preferences, current.lastBeanAccruedAt ?? at),
-    );
-  }
-
-  function finalizeCurrentSession(
-    current: TimerState,
-    endedAt: number,
-    remaining: number,
-    completed: boolean,
-  ) {
-    if (!current.currentSessionStartedAt) return;
-    const elapsed = completed
-      ? durationFor(current.mode, preferences)
-      : Math.max(0, durationFor(current.mode, preferences) - remaining);
-    if (!completed && elapsed === 0 && current.currentSessionBeans === 0) {
-      return;
-    }
-    setSessions((items) => [
-      {
-        id: newId("session"),
-        mode: current.mode,
-        taskId: current.selectedTaskId,
-        startedAt: current.currentSessionStartedAt ?? endedAt,
-        endedAt,
-        durationSeconds: elapsed,
-        completed,
-        beansEarned: current.currentSessionBeans,
-      },
-      ...items,
-    ]);
-  }
-
-  function completeTimer(current: TimerState, endedAt: number): TimerState {
-    const wasFocus = current.mode === "pomodoro";
-    const nextMode = nextModeAfterCompletion(current, preferences);
-    const nextCycle = nextCycleAfterCompletion(current);
-    const resetCompleted = nextCompletedInCycleAfterCompletion(current, preferences);
-    const shouldAutoStart = shouldAutoStartNextTimer(current.mode, preferences);
-    const nextDuration = durationFor(nextMode, preferences);
-
-    finalizeCurrentSession(current, endedAt, 0, true);
-
-    if (wasFocus && current.selectedTaskId) {
-      setTasks((items) =>
-        items.map((task) =>
-          task.id === current.selectedTaskId
-            ? {
-                ...task,
-                completedPomodoros: task.completedPomodoros + 1,
-                updatedAt: endedAt,
-              }
-            : task,
-        ),
-      );
-    }
-
-    if (preferences.soundEnabled) {
-      const context = new AudioContext();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      gain.gain.value = preferences.volume / 300;
-      oscillator.frequency.value = 660;
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.16);
-    }
-
-    if (preferences.notificationsEnabled && Notification.permission === "granted") {
-      new Notification("Affogato timer complete", {
-        body: `${modeLabels[current.mode]} is done.`,
-      });
-    }
-
-    toast.success(`${modeLabels[current.mode]} complete`, {
-      description: "Beans banked. Nice and steady.",
-    });
-
-    return {
-      ...current,
-      mode: nextMode,
-      status: shouldAutoStart ? "running" : "idle",
-      startedAt: shouldAutoStart ? endedAt : null,
-      pausedRemainingSeconds: nextDuration,
-      completedInCycle: resetCompleted,
-      cycle: nextCycle,
-      currentSessionStartedAt: shouldAutoStart ? endedAt : null,
-      currentSessionBeans: 0,
-      lastBeanAccruedAt: shouldAutoStart ? endedAt : null,
-    };
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function startTimer() {
+    primeAudio();
     const now = Date.now();
     setTimer((current) => ({
       ...current,
@@ -335,86 +298,34 @@ export function AffogatoApp() {
       startedAt: now,
       pausedRemainingSeconds: getRemainingSeconds(current, preferences, now),
       currentSessionStartedAt: current.currentSessionStartedAt ?? now,
+      currentSessionPlannedSeconds: current.currentSessionStartedAt
+        ? current.currentSessionPlannedSeconds
+        : durationFor(current.mode, preferences),
       lastBeanAccruedAt: current.lastBeanAccruedAt ?? now,
     }));
   }
 
+  function applyStop(outcome: StopOutcome) {
+    const result = computeStop(timer, preferences, Date.now(), outcome);
+    setTimer(result.timer);
+    setRemainingSeconds(result.remainingSeconds);
+    if (result.earnedBeans > 0) {
+      setBeans((value) => value + result.earnedBeans);
+      pulseBeans();
+    }
+    if (result.session) recordSession(result.session);
+  }
+
   function pauseTimer() {
-    const now = Date.now();
-    setTimer((current) => {
-      const nextRemaining = getRemainingSeconds(current, preferences, now);
-      const earnedSeconds = pendingBeanAccrual(current, now);
-      const earnedBeans = calculateEarnedBeans(earnedSeconds);
-      if (earnedBeans > 0) {
-        setBeans((value) => value + earnedBeans);
-      }
-      setRemainingSeconds(nextRemaining);
-      return {
-        ...current,
-        status: "paused",
-        startedAt: null,
-        pausedRemainingSeconds: nextRemaining,
-        currentSessionBeans: current.currentSessionBeans + earnedBeans,
-        lastBeanAccruedAt: null,
-      };
-    });
+    applyStop({ kind: "pause" });
   }
 
   function resetTimer() {
-    const now = Date.now();
-    setTimer((current) => {
-      const nextRemaining = getRemainingSeconds(current, preferences, now);
-      const earnedBeans = calculateEarnedBeans(pendingBeanAccrual(current, now));
-      const currentWithAccrual = {
-        ...current,
-        currentSessionBeans: current.currentSessionBeans + earnedBeans,
-      };
-      if (earnedBeans > 0) {
-        setBeans((value) => value + earnedBeans);
-      }
-      finalizeCurrentSession(currentWithAccrual, now, nextRemaining, false);
-      const next = {
-        ...current,
-        status: "idle" as TimerStatus,
-        startedAt: null,
-        pausedRemainingSeconds: durationFor(current.mode, preferences),
-        currentSessionStartedAt: null,
-        currentSessionBeans: 0,
-        lastBeanAccruedAt: null,
-      };
-      setRemainingSeconds(next.pausedRemainingSeconds);
-      return next;
-    });
+    applyStop({ kind: "reset" });
   }
 
   function setMode(mode: TimerMode) {
-    const now = Date.now();
-    const nextDuration = durationFor(mode, preferences);
-    setTimer((current) => {
-      const nextRemaining = getRemainingSeconds(current, preferences, now);
-      const earnedBeans = calculateEarnedBeans(pendingBeanAccrual(current, now));
-      const currentWithAccrual = {
-        ...current,
-        currentSessionBeans: current.currentSessionBeans + earnedBeans,
-      };
-      if (earnedBeans > 0) {
-        setBeans((value) => value + earnedBeans);
-      }
-      if (current.status !== "idle") {
-        finalizeCurrentSession(currentWithAccrual, now, nextRemaining, false);
-      }
-      return {
-        ...current,
-        mode,
-        status: "idle",
-        startedAt: null,
-        pausedRemainingSeconds: nextDuration,
-        currentSessionStartedAt: null,
-        currentSessionBeans: 0,
-        lastBeanAccruedAt: null,
-      };
-    });
-    setRemainingSeconds(nextDuration);
+    applyStop({ kind: "setMode", mode });
   }
 
   function addTask(draft: TaskDraft) {
@@ -423,7 +334,7 @@ export function AffogatoApp() {
     const task: Task = {
       id: newId("task"),
       title: draft.title.trim(),
-      estimatedPomodoros: clampNumber(draft.estimatedPomodoros, 1, 24),
+      estimatedPomodoros: clampInt(draft.estimatedPomodoros, 1, 24, 1),
       completedPomodoros: 0,
       notes: draft.notes.trim(),
       status: "active",
@@ -454,22 +365,25 @@ export function AffogatoApp() {
     setTasks((items) => items.filter((task) => task.id !== taskId));
   }
 
+  function applyPreferences(next: Preferences) {
+    setPreferences(next);
+    if (timer.status === "idle") {
+      const nextDuration = durationFor(timer.mode, next);
+      setTimer((current) =>
+        current.status === "idle"
+          ? {
+              ...current,
+              pausedRemainingSeconds: nextDuration,
+              currentSessionPlannedSeconds: nextDuration,
+            }
+          : current,
+      );
+      setRemainingSeconds(nextDuration);
+    }
+  }
+
   function updatePreference<K extends keyof Preferences>(key: K, value: Preferences[K]) {
-    setPreferences((current) => {
-      const next = normalizePreferences({ ...current, [key]: value });
-      if (key === "pomodoroMinutes" || key === "shortBreakMinutes" || key === "longBreakMinutes") {
-        setTimer((timerState) => {
-          if (timerState.status !== "idle") return timerState;
-          const nextDuration = durationFor(timerState.mode, next);
-          setRemainingSeconds(nextDuration);
-          return {
-            ...timerState,
-            pausedRemainingSeconds: nextDuration,
-          };
-        });
-      }
-      return next;
-    });
+    applyPreferences(normalizePreferences({ ...preferences, [key]: value }));
   }
 
   function requestNotifications(enabled: boolean) {
@@ -480,7 +394,7 @@ export function AffogatoApp() {
   }
 
   function restoreDefaultPreferences() {
-    setPreferences(defaultPreferences);
+    applyPreferences(defaultPreferences);
   }
 
   const beanLabel = beans.toLocaleString(undefined, {
