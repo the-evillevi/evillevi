@@ -177,13 +177,13 @@ When in doubt, build it there first and compare against neighbors.
 
 Token mappings live in the frontmatter `components` block; implementations:
 
-| Piece | Where |
-| --- | --- |
-| `.nb-action`, `.nb-card`, `.nb-panel`, `.nb-shadow(-sm)`, `.nb-prose` | `src/styles/starwind.css` (utility classes) |
-| Astro UI kit (accordion, dialog, sheet, select, …) | `src/components/starwind/*` |
-| React UI kit for islands (nb-skinned shadcn/Radix) | `src/components/shadcn/*` (site) and `src/components/affogato/ui/*` (Affogato boundary) |
-| 3D decor primitives (cel shader, shapes, `Accent3D`) | `src/components/three/*` |
-| Toasts | sonner via `shadcn/sonner` — type-colored nb toasts |
+| Piece                                                                 | Where                                                                                   |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `.nb-action`, `.nb-card`, `.nb-panel`, `.nb-shadow(-sm)`, `.nb-prose` | `src/styles/starwind.css` (utility classes)                                             |
+| Astro UI kit (accordion, dialog, sheet, select, …)                    | `src/components/starwind/*`                                                             |
+| React UI kit for islands (nb-skinned shadcn/Radix)                    | `src/components/shadcn/*` (site) and `src/components/affogato/ui/*` (Affogato boundary) |
+| 3D decor primitives (cel shader, shapes, `Accent3D`)                  | `src/components/three/*`                                                                |
+| Toasts                                                                | sonner via `shadcn/sonner` — type-colored nb toasts                                     |
 
 Component states follow the `-hover` / `-active` convention shown in the
 frontmatter (`button-primary-hover`).
@@ -194,7 +194,7 @@ frontmatter (`button-primary-hover`).
 
 - Use `var(--nb-*)` tokens for every color; test both themes.
 - Give every interactive element a visible focus state: `outline: 4px solid
-  var(--nb-blue); outline-offset: 4px`.
+var(--nb-blue); outline-offset: 4px`.
 - Keep shadows hard and borders thick; let layout do the expressive work.
 - Uppercase + weight 900 for anything that names a thing.
 - Respect `prefers-reduced-motion` (global 1ms overrides exist; 3D scenes
@@ -243,7 +243,7 @@ there whenever you introduce a component.
 - **One-off markup** → compose the `.nb-card` / `.nb-panel` / `.nb-action`
   utilities with Tailwind arbitrary values referencing tokens, e.g.
   `border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)]
-  text-[var(--nb-button-text)] shadow-[4px_4px_0_0_var(--nb-ink)]`.
+text-[var(--nb-button-text)] shadow-[4px_4px_0_0_var(--nb-ink)]`.
 
 ### 3D decor
 

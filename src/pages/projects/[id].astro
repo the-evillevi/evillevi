@@ -24,7 +24,10 @@ const { title, valueProp, repoUrl } = entry.data;
       <div class="flex flex-wrap gap-2">
         {
           repoUrl ? (
-            <a class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]" href={repoUrl}>
+            <a
+              class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
+              href={repoUrl}
+            >
               GitHub Repository
             </a>
           ) : (
