@@ -7,9 +7,11 @@ export const siteConfig = {
   nav: [
     { title: "Blog", href: "/blog" },
     { title: "Docs", href: "/docs" },
+    { title: "Projects", href: "/projects" },
     { title: "Tags", href: "/tags" },
     { title: "Archives", href: "/archives" },
   ],
+  repoUrl: "https://github.com/the-evillevi/evillevi",
   social: {
     github: "https://github.com/evillevi",
   },

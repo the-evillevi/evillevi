@@ -34,4 +34,21 @@ const docs = defineCollection({
     }),
 });
 
-export const collections = { blog, docs };
+const projects = defineCollection({
+  loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
+  schema: (context) =>
+    baseSchema(context).extend({
+      /** One-sentence value proposition shown in deep-dive headers. */
+      valueProp: z.string().max(140),
+      tech: z.array(z.string()).default([]),
+      /** Where [View Live Demo] / [Launch Live App] points. */
+      liveUrl: z.string(),
+      repoUrl: z.string().optional(),
+      featured: z.boolean().default(false),
+      /** Generate a /projects/[id] live-demo host page for this entry. */
+      demoPage: z.boolean().default(false),
+      order: z.number().default(999),
+    }),
+});
+
+export const collections = { blog, docs, projects };
