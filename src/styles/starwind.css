@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @plugin "@tailwindcss/forms";
+@plugin "tailwindcss-motion";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
