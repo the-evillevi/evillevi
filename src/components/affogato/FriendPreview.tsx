@@ -44,7 +44,13 @@ function FriendPreviewModel({ modelPath, fitSize = 1.4 }: { modelPath: string; f
   );
 }
 
-export default function FriendPreviewCanvas({ modelPath }: { modelPath: string }) {
+export default function FriendPreviewCanvas({
+  modelPath,
+  className = "size-24",
+}: {
+  modelPath: string;
+  className?: string;
+}) {
   const reducedMotion = useReducedMotion();
   const [pageVisible, setPageVisible] = useState(true);
 
@@ -55,7 +61,7 @@ export default function FriendPreviewCanvas({ modelPath }: { modelPath: string }
   }, []);
 
   return (
-    <div className="size-24" aria-hidden="true">
+    <div className={className} aria-hidden="true">
       <Canvas
         camera={{ position: [0, 1.2, 3.2], fov: 45 }}
         dpr={[1, 1.5]}

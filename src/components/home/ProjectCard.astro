@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { siteConfig } from "@/site.config";
+import VoxelPetVisual from "./VoxelPetVisual";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
+
+const { entry } = Astro.props;
+const { title, description, tech, liveUrl, repoUrl } = entry.data;
+const codeUrl = repoUrl ?? null;
+---
+
+<article class="nb-card flex w-[19rem] shrink-0 snap-start flex-col p-5 sm:w-[23rem]">
+  <div
+    class="mb-4 h-40 overflow-hidden border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)]"
+    aria-hidden="true"
+  >
+    {
+      entry.id === "affogato" ? (
+        <VoxelPetVisual client:visible modelPath="/models/animal-cat.glb" />
+      ) : entry.id === "evillevi-garden" ? (
+        <div class="grid h-full grid-rows-[auto_1fr] p-3">
+          {/* CSS-only mini mockup of the garden UI */}
+          <div class="flex items-center gap-1 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-2 py-1">
+            <span class="size-2 border-2 border-[var(--nb-ink)] bg-[var(--nb-peach)]" />
+            <span class="size-2 border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)]" />
+            <span class="size-2 border-2 border-[var(--nb-ink)] bg-[var(--nb-green)]" />
+            <span class="ml-2 h-2 w-16 bg-[var(--nb-muted)]" />
+          </div>
+          <div class="grid grid-cols-[1.4fr_1fr] gap-2 border-x-4 border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-2">
+            <div class="space-y-1.5">
+              <div class="h-3 w-4/5 bg-[var(--nb-text)]" />
+              <div class="h-2 w-full bg-[var(--nb-muted)]" />
+              <div class="h-2 w-3/4 bg-[var(--nb-muted)]" />
+              <div class="mt-2 flex gap-1">
+                <span class="h-3 w-8 border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)]" />
+                <span class="h-3 w-8 border-2 border-[var(--nb-ink)] bg-[var(--nb-pink)]" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-1 border-2 border-[var(--nb-ink)] p-1">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <span
+                  class:list={[
+                    "block",
+                    index % 2 === 0 ? "bg-[var(--nb-teal)]" : "bg-[var(--nb-surface)]",
+                  ]}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="grid h-full place-items-center bg-[repeating-linear-gradient(45deg,var(--nb-surface)_0_12px,var(--nb-base)_12px_24px)]">
+          <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black uppercase">
+            [PROJECT_VISUAL]
+          </span>
+        </div>
+      )
+    }
+  </div>
+
+  <h3 class="text-2xl font-black uppercase">{title}</h3>
+  <p class="mt-2 flex-1 text-sm leading-6 font-bold text-[var(--nb-muted)]">{description}</p>
+
+  <div class="mt-3 flex flex-wrap gap-1.5">
+    {
+      tech.map((item) => (
+        <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
+          {item}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a class="nb-action px-3 py-2 text-xs" href={liveUrl}>View Live Demo</a>
+    {
+      codeUrl ? (
+        <a
+          class="nb-action bg-[var(--nb-base)] px-3 py-2 text-xs text-[var(--nb-text)]"
+          href={codeUrl}
+        >
+          View Code
+        </a>
+      ) : (
+        <span
+          class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-3 py-2 text-xs font-black text-[var(--nb-muted)] uppercase opacity-70"
+          title="Repository link pending"
+        >
+          [GITHUB_REPO_URL]
+        </span>
+      )
+    }
+  </div>
+</article>

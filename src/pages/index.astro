@@ -1,5 +1,7 @@
 ---
+import { getCollection } from "astro:content";
 import PostCard from "@/components/blog/PostCard.astro";
+import ProjectCard from "@/components/home/ProjectCard.astro";
 import Accent3D from "@/components/three/Accent3D.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { siteConfig } from "@/site.config";
@@ -8,6 +10,9 @@ import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
 const posts = await getBlogPosts();
 const docs = await getDocsEntries();
 const tags = getAllTags([...posts, ...docs]).slice(0, 10);
+const featuredProjects = (await getCollection("projects", ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <SiteLayout>
@@ -54,6 +59,22 @@ const tags = getAllTags([...posts, ...docs]).slice(0, 10);
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] py-10 md:py-14">
+    <div class="mx-auto max-w-7xl px-4 md:px-6">
+      <div class="mb-5 flex items-end justify-between gap-4">
+        <h2 class="text-4xl font-black uppercase">Featured Projects</h2>
+      </div>
+    </div>
+    <div class="mx-auto max-w-7xl px-4 md:px-6">
+      <div class="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4">
+        {featuredProjects.map((entry) => <ProjectCard {entry} />)}
+      </div>
+      <a class="mt-4 inline-block font-black uppercase underline" href="/projects">
+        View all experiments &amp; archived projects &rarr;
+      </a>
     </div>
   </section>
 
