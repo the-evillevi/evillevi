@@ -8,12 +8,6 @@ const rendered = await Promise.all(
 );
 const description =
   "Deep dives into every project: the challenge, the architecture, and the optimizations.";
-
-/* The band renders COPIES sets of the panels so the scroll-driven loop can
- * wrap seamlessly (last project followed by the first). 3 sets ≈ 7k px of
- * track, enough for (copies-1)·setWidth ≥ viewport up to ultrawide. */
-const COPIES = 3;
-const copies = Array.from({ length: COPIES }, (_, index) => index);
 ---
 
 <SiteLayout title="Projects" description={description}>
@@ -27,12 +21,12 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
       <h1 class="text-5xl font-black uppercase md:text-7xl">Projects</h1>
       <p class="mt-4 max-w-3xl text-lg font-bold text-[var(--nb-muted)]">
         Every experiment with its rationale: the challenge, the engineering decisions, and the
-        optimizations. Keep scrolling &mdash; the shelf loops forever.
+        optimizations. Keep scrolling &mdash; the shelf slides sideways.
       </p>
     </div>
   </section>
 
-  <section data-hscroll class="h-[400vh] bg-[var(--nb-surface)]">
+  <section data-hscroll class="h-[250vh] bg-[var(--nb-surface)]">
     <div
       data-hscroll-frame
       class="sticky top-0 flex h-screen flex-col justify-center overflow-hidden py-6"
@@ -51,54 +45,45 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
           class="flex w-max items-start gap-6 px-4 will-change-transform md:px-6"
         >
           {
-            copies.map((copy) => (
-              <div
-                class="flex shrink-0 items-start gap-6"
-                data-hscroll-copy
-                aria-hidden={copy > 0 ? "true" : undefined}
-                inert={copy > 0 ? true : undefined}
-              >
-                {rendered.map(({ entry, Content }) => (
-                  <article class="nb-card max-h-[78vh] w-[min(88vw,46rem)] shrink-0 snap-center overflow-y-auto p-6 md:p-8">
-                    <header class="border-b-4 border-[var(--nb-ink)] pb-5">
-                      <h3 class="text-3xl font-black uppercase md:text-4xl">{entry.data.title}</h3>
-                      <p class="mt-2 text-base leading-7 font-bold text-[var(--nb-muted)]">
-                        {entry.data.valueProp}
-                      </p>
-                      <div class="mt-4 flex flex-wrap gap-2">
-                        <a class="nb-action px-4 py-3 text-sm" href={entry.data.liveUrl}>
-                          Launch Live App
-                        </a>
-                        {entry.data.repoUrl ? (
-                          <a
-                            class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
-                            href={entry.data.repoUrl}
-                          >
-                            GitHub Repository
-                          </a>
-                        ) : (
-                          <span
-                            class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 text-sm font-black text-[var(--nb-muted)] uppercase opacity-70"
-                            title="Repository link pending"
-                          >
-                            [GITHUB_REPO_URL]
-                          </span>
-                        )}
-                      </div>
-                      <div class="mt-4 flex flex-wrap gap-1.5">
-                        {entry.data.tech.map((item) => (
-                          <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </header>
-                    <div class="nb-prose mt-2 text-sm">
-                      <Content />
-                    </div>
-                  </article>
-                ))}
-              </div>
+            rendered.map(({ entry, Content }) => (
+              <article class="nb-card max-h-[78vh] w-[min(88vw,46rem)] shrink-0 snap-center overflow-y-auto p-6 md:p-8">
+                <header class="border-b-4 border-[var(--nb-ink)] pb-5">
+                  <h3 class="text-3xl font-black uppercase md:text-4xl">{entry.data.title}</h3>
+                  <p class="mt-2 text-base leading-7 font-bold text-[var(--nb-muted)]">
+                    {entry.data.valueProp}
+                  </p>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    <a class="nb-action px-4 py-3 text-sm" href={entry.data.liveUrl}>
+                      Launch Live App
+                    </a>
+                    {entry.data.repoUrl ? (
+                      <a
+                        class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
+                        href={entry.data.repoUrl}
+                      >
+                        GitHub Repository
+                      </a>
+                    ) : (
+                      <span
+                        class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 text-sm font-black text-[var(--nb-muted)] uppercase opacity-70"
+                        title="Repository link pending"
+                      >
+                        [GITHUB_REPO_URL]
+                      </span>
+                    )}
+                  </div>
+                  <div class="mt-4 flex flex-wrap gap-1.5">
+                    {entry.data.tech.map((item) => (
+                      <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </header>
+                <div class="nb-prose mt-2 text-sm">
+                  <Content />
+                </div>
+              </article>
             ))
           }
         </div>
@@ -120,9 +105,6 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
     [data-hscroll-viewport] {
       overflow-x: auto;
     }
-    [data-hscroll-copy][inert] {
-      display: none;
-    }
   </style>
 </noscript>
 
@@ -140,15 +122,9 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
     scroll-snap-type: x mandatory;
     padding-bottom: 1rem;
   }
-  [data-hscroll][data-mode="static"] [data-hscroll-copy][inert] {
-    display: none;
-  }
 </style>
 
 <script>
-  const COPIES = 3;
-  const LOOPS = 2;
-
   function initHscroll() {
     const section = document.querySelector<HTMLElement>("[data-hscroll]");
     const track = section?.querySelector<HTMLElement>("[data-hscroll-track]");
@@ -160,9 +136,10 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
       return;
     }
 
-    let setWidth = track.scrollWidth / COPIES;
+    // Single pass: scroll progress maps to [0, trackWidth - viewport].
+    let maxTravel = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
     const observer = new ResizeObserver(() => {
-      setWidth = track.scrollWidth / COPIES;
+      maxTravel = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
       update();
     });
     observer.observe(track);
@@ -172,10 +149,9 @@ const copies = Array.from({ length: COPIES }, (_, index) => index);
       ticking = false;
       if (!section || !track) return;
       const scrollable = section.offsetHeight - window.innerHeight;
-      if (scrollable <= 0 || setWidth <= 0) return;
+      if (scrollable <= 0) return;
       const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollable));
-      const distance = progress * setWidth * LOOPS;
-      track.style.transform = `translateX(${-(distance % setWidth)}px)`;
+      track.style.transform = `translateX(${-progress * maxTravel}px)`;
     }
 
     function onScroll() {
