@@ -8,6 +8,12 @@ const rendered = await Promise.all(
 );
 const description =
   "Deep dives into every project: the challenge, the architecture, and the optimizations.";
+
+/* The band renders COPIES sets of the panels so the scroll-driven loop can
+ * wrap seamlessly (last project followed by the first). 3 sets ≈ 7k px of
+ * track, enough for (copies-1)·setWidth ≥ viewport up to ultrawide. */
+const COPIES = 3;
+const copies = Array.from({ length: COPIES }, (_, index) => index);
 ---
 
 <SiteLayout title="Projects" description={description}>
@@ -21,65 +27,167 @@ const description =
       <h1 class="text-5xl font-black uppercase md:text-7xl">Projects</h1>
       <p class="mt-4 max-w-3xl text-lg font-bold text-[var(--nb-muted)]">
         Every experiment with its rationale: the challenge, the engineering decisions, and the
-        optimizations. Scroll sideways to browse &mdash; launch buttons open the live apps.
+        optimizations. Keep scrolling &mdash; the shelf loops forever.
       </p>
     </div>
   </section>
 
-  <section class="bg-[var(--nb-surface)] py-10 md:py-14">
-    <div class="mx-auto mb-4 flex max-w-7xl items-center justify-between px-4 md:px-6">
-      <h2 class="text-sm font-black text-[var(--nb-muted)] uppercase">
-        {projects.length} projects
-      </h2>
-      <p class="text-sm font-black text-[var(--nb-muted)] uppercase" aria-hidden="true">
-        scroll &rarr;
-      </p>
-    </div>
-    <div class="mx-auto max-w-7xl px-4 md:px-6">
-      <div class="flex snap-x snap-mandatory items-start gap-6 overflow-x-auto pb-6">
-        {
-          rendered.map(({ entry, Content }) => (
-            <article class="nb-card w-[min(88vw,46rem)] shrink-0 snap-center p-6 md:p-8">
-              <header class="border-b-4 border-[var(--nb-ink)] pb-5">
-                <h3 class="text-3xl font-black uppercase md:text-4xl">{entry.data.title}</h3>
-                <p class="mt-2 text-base leading-7 font-bold text-[var(--nb-muted)]">
-                  {entry.data.valueProp}
-                </p>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  <a class="nb-action px-4 py-3 text-sm" href={entry.data.liveUrl}>
-                    Launch Live App
-                  </a>
-                  {entry.data.repoUrl ? (
-                    <a
-                      class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
-                      href={entry.data.repoUrl}
-                    >
-                      GitHub Repository
-                    </a>
-                  ) : (
-                    <span
-                      class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 text-sm font-black text-[var(--nb-muted)] uppercase opacity-70"
-                      title="Repository link pending"
-                    >
-                      [GITHUB_REPO_URL]
-                    </span>
-                  )}
-                </div>
-                <div class="mt-4 flex flex-wrap gap-1.5">
-                  {entry.data.tech.map((item) => (
-                    <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </header>
-              <div class="nb-prose mt-2 text-sm">
-                <Content />
+  <section data-hscroll class="h-[400vh] bg-[var(--nb-surface)]">
+    <div
+      data-hscroll-frame
+      class="sticky top-0 flex h-screen flex-col justify-center overflow-hidden py-6"
+    >
+      <div class="mx-auto mb-4 flex w-full max-w-7xl items-center justify-between px-4 md:px-6">
+        <h2 class="text-sm font-black text-[var(--nb-muted)] uppercase">
+          {projects.length} projects
+        </h2>
+        <p class="text-sm font-black text-[var(--nb-muted)] uppercase" aria-hidden="true">
+          keep scrolling &darr;
+        </p>
+      </div>
+      <div data-hscroll-viewport>
+        <div
+          data-hscroll-track
+          class="flex w-max items-start gap-6 px-4 will-change-transform md:px-6"
+        >
+          {
+            copies.map((copy) => (
+              <div
+                class="flex shrink-0 items-start gap-6"
+                data-hscroll-copy
+                aria-hidden={copy > 0 ? "true" : undefined}
+                inert={copy > 0 ? true : undefined}
+              >
+                {rendered.map(({ entry, Content }) => (
+                  <article class="nb-card max-h-[78vh] w-[min(88vw,46rem)] shrink-0 snap-center overflow-y-auto p-6 md:p-8">
+                    <header class="border-b-4 border-[var(--nb-ink)] pb-5">
+                      <h3 class="text-3xl font-black uppercase md:text-4xl">{entry.data.title}</h3>
+                      <p class="mt-2 text-base leading-7 font-bold text-[var(--nb-muted)]">
+                        {entry.data.valueProp}
+                      </p>
+                      <div class="mt-4 flex flex-wrap gap-2">
+                        <a class="nb-action px-4 py-3 text-sm" href={entry.data.liveUrl}>
+                          Launch Live App
+                        </a>
+                        {entry.data.repoUrl ? (
+                          <a
+                            class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
+                            href={entry.data.repoUrl}
+                          >
+                            GitHub Repository
+                          </a>
+                        ) : (
+                          <span
+                            class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 text-sm font-black text-[var(--nb-muted)] uppercase opacity-70"
+                            title="Repository link pending"
+                          >
+                            [GITHUB_REPO_URL]
+                          </span>
+                        )}
+                      </div>
+                      <div class="mt-4 flex flex-wrap gap-1.5">
+                        {entry.data.tech.map((item) => (
+                          <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </header>
+                    <div class="nb-prose mt-2 text-sm">
+                      <Content />
+                    </div>
+                  </article>
+                ))}
               </div>
-            </article>
-          ))
-        }
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
 </SiteLayout>
+
+<noscript>
+  <style>
+    /* Without JS the band cannot be scroll-driven: collapse to a native strip. */
+    [data-hscroll] {
+      height: auto;
+    }
+    [data-hscroll-frame] {
+      position: static;
+      height: auto;
+    }
+    [data-hscroll-viewport] {
+      overflow-x: auto;
+    }
+    [data-hscroll-copy][inert] {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<style>
+  /* Static mode (reduced motion / fallback): today's native snap strip. */
+  [data-hscroll][data-mode="static"] {
+    height: auto;
+  }
+  [data-hscroll][data-mode="static"] [data-hscroll-frame] {
+    position: static;
+    height: auto;
+  }
+  [data-hscroll][data-mode="static"] [data-hscroll-viewport] {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+  }
+  [data-hscroll][data-mode="static"] [data-hscroll-copy][inert] {
+    display: none;
+  }
+</style>
+
+<script>
+  const COPIES = 3;
+  const LOOPS = 2;
+
+  function initHscroll() {
+    const section = document.querySelector<HTMLElement>("[data-hscroll]");
+    const track = section?.querySelector<HTMLElement>("[data-hscroll-track]");
+    if (!section || !track || section.dataset.bound === "true") return;
+    section.dataset.bound = "true";
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      section.dataset.mode = "static";
+      return;
+    }
+
+    let setWidth = track.scrollWidth / COPIES;
+    const observer = new ResizeObserver(() => {
+      setWidth = track.scrollWidth / COPIES;
+      update();
+    });
+    observer.observe(track);
+
+    let ticking = false;
+    function update() {
+      ticking = false;
+      if (!section || !track) return;
+      const scrollable = section.offsetHeight - window.innerHeight;
+      if (scrollable <= 0 || setWidth <= 0) return;
+      const progress = Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollable));
+      const distance = progress * setWidth * LOOPS;
+      track.style.transform = `translateX(${-(distance % setWidth)}px)`;
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update();
+  }
+
+  initHscroll();
+  document.addEventListener("astro:after-swap", initHscroll);
+</script>
