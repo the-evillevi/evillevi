@@ -1,4 +1,5 @@
 ---
+import "reveal.js/reveal.css";
 import { getCollection, render } from "astro:content";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 
@@ -6,105 +7,109 @@ const projects = (await getCollection("projects")).sort((a, b) => a.data.order -
 const rendered = await Promise.all(
   projects.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
 );
-const description =
-  "Deep dives into every project: the challenge, the architecture, and the optimizations.";
 const padded = (value: number) => String(value).padStart(2, "0");
+
+const description =
+  "A 2D presentation of selected work: navigate left/right to explore projects, down to inspect the technical deep dives.";
+
+// Deck chrome, expressed with the site's --nb-* tokens as Tailwind arbitrary
+// values so the markup stays the single source of truth (no bespoke CSS).
+const chip =
+  "inline-block border-2 border-[var(--nb-ink)] px-3 py-1.5 text-xs font-black tracking-wide uppercase text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)]";
+const techColors = [
+  "bg-[var(--nb-yellow)]",
+  "bg-[var(--nb-teal)]",
+  "bg-[var(--nb-pink)]",
+  "bg-[var(--nb-green)]",
+  "bg-[var(--nb-lavender)]",
+];
 ---
 
 <SiteLayout title="Projects" description={description}>
-  <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-10 md:px-6">
-    <div class="mx-auto max-w-7xl">
-      <p
-        class="mb-4 inline-flex border-4 border-[var(--nb-ink)] bg-[var(--nb-teal)] px-3 py-2 text-sm font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
-      >
-        The deep dive
-      </p>
-      <h1 class="text-5xl font-black uppercase md:text-7xl">Projects</h1>
-      <p class="mt-4 max-w-3xl text-lg font-bold text-[var(--nb-muted)]">
-        Every experiment with its rationale: the challenge, the engineering decisions, and the
-        optimizations. One project per screen &mdash; scroll to flip through the gallery.
-      </p>
-    </div>
-  </section>
+  <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)]">
+    <div id="projects-deck" class="reveal" tabindex="0" aria-label="Projects presentation">
+      <div class="slides">
+        <!-- ============================================================
+             SLIDE 1 — INTRO (no vertical children)
+             ============================================================ -->
+        <section>
+          <span class={`${chip} mb-4 bg-[var(--nb-pink)]`}>Portfolio · 2026</span>
+          <h1>Selected Work</h1>
+          <p class="tagline">A guided tour of things I've designed, built, and shipped.</p>
+          <div class="my-6 flex flex-wrap justify-center gap-3">
+            <span class={`${chip} bg-[var(--nb-teal)]`}>→ Left / Right · Explore projects</span>
+            <span class={`${chip} bg-[var(--nb-green)]`}>↓ Down · Inspect the deep dive</span>
+            <span class={`${chip} bg-[var(--nb-pink)]`}>ESC · Bird's-eye overview</span>
+          </div>
+          <p class="font-bold text-[var(--nb-muted)]">Use the arrows, your keyboard, or swipe.</p>
+        </section>
 
-  <section class="relative border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)]">
-    <div data-gallery class="h-svh snap-y snap-mandatory overflow-y-auto">
-      {
-        rendered.map(({ entry, Content }, index) => (
-          <div
-            data-gallery-card
-            data-index={index}
-            class="flex h-svh snap-start items-center justify-center px-4 py-6 md:px-6"
-          >
-            <article
-              data-gallery-content
-              class="nb-card max-h-[86svh] w-full max-w-3xl overflow-y-auto p-6 md:p-8"
-            >
-              <header class="border-b-4 border-[var(--nb-ink)] pb-5">
-                <p class="text-xs font-black text-[var(--nb-muted)] uppercase">
-                  Project {padded(index + 1)}
-                </p>
-                <h3 class="mt-1 text-3xl font-black uppercase md:text-4xl">{entry.data.title}</h3>
-                <p class="mt-2 text-base leading-7 font-bold text-[var(--nb-muted)]">
-                  {entry.data.valueProp}
-                </p>
-                <div class="mt-4 flex flex-wrap gap-2">
-                  <a class="nb-action px-4 py-3 text-sm" href={entry.data.liveUrl}>
-                    Launch Live App
+        <!-- ============================================================
+             ONE COLUMN PER PROJECT — overview card (↓ deep dive renders
+             the project's MDX body). Driven by the content collection.
+             ============================================================ -->
+        {
+          rendered.map(({ entry, Content }, index) => (
+            <section>
+              {/* Overview card */}
+              <section class="relative">
+                <span class={`${chip} mb-4 bg-[var(--nb-pink)]`}>Project {padded(index + 1)}</span>
+                <h2>{entry.data.title}</h2>
+                <p class="tagline">{entry.data.valueProp}</p>
+                <div class="my-6 flex flex-wrap justify-center gap-2">
+                  {entry.data.tech.map((item, techIndex) => (
+                    <span class={`${chip} ${techColors[techIndex % techColors.length]}`}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+                <div class="my-6 flex flex-wrap justify-center gap-3">
+                  <a
+                    class="nb-action px-6 py-3 text-base"
+                    href={entry.data.liveUrl}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Live App
                   </a>
                   {entry.data.repoUrl ? (
                     <a
-                      class="nb-action bg-[var(--nb-base)] px-4 py-3 text-sm text-[var(--nb-text)]"
+                      class="nb-action bg-[var(--nb-base)] px-6 py-3 text-base text-[var(--nb-text)]"
                       href={entry.data.repoUrl}
+                      target="_blank"
+                      rel="noopener"
                     >
-                      GitHub Repository
+                      GitHub
                     </a>
                   ) : (
                     <span
-                      class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 text-sm font-black text-[var(--nb-muted)] uppercase opacity-70"
+                      class="cursor-not-allowed border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-6 py-3 text-base font-black text-[var(--nb-muted)] uppercase opacity-70"
                       title="Repository link pending"
                     >
                       [GITHUB_REPO_URL]
                     </span>
                   )}
                 </div>
-                <div class="mt-4 flex flex-wrap gap-1.5">
-                  {entry.data.tech.map((item) => (
-                    <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-1.5 py-0.5 text-[10px] font-black text-[var(--nb-button-text)] uppercase">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </header>
-              <div class="nb-prose mt-2 text-sm">
-                <Content />
-              </div>
-            </article>
-          </div>
-        ))
-      }
-    </div>
+                <span
+                  class="absolute bottom-[-130px] left-1/2 inline-flex -translate-x-1/2 animate-bounce items-center gap-2.5 border-4 border-[var(--nb-ink)] bg-[var(--nb-green)] px-4 py-2.5 text-[15px] font-black tracking-wide whitespace-nowrap text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)] motion-reduce:animate-none"
+                  aria-hidden="true"
+                >
+                  <span class="text-[22px] leading-none">↓</span> Deep dive available
+                </span>
+              </section>
 
-    <div
-      data-gallery-indicator
-      class="absolute top-1/2 right-3 z-10 flex -translate-y-1/2 flex-col items-center gap-3 md:right-6"
-    >
-      <p
-        data-gallery-counter
-        class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-2 py-1 text-xs font-black tabular-nums shadow-[3px_3px_0_0_var(--nb-ink)]"
-      >
-        01&thinsp;/&thinsp;{padded(projects.length)}
-      </p>
-      <div class="flex flex-col gap-2">
-        {
-          rendered.map(({ entry }, index) => (
-            <button
-              type="button"
-              data-gallery-dot
-              data-index={index}
-              aria-label={`Go to project ${index + 1}: ${entry.data.title}`}
-              class="size-4 border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] transition-colors"
-            />
+              {/* Deep dive — the project's MDX body, scrollable inside the slide */}
+              <section>
+                <div class="nb-card mx-auto max-h-[640px] w-full max-w-3xl overflow-y-auto p-6 text-left md:p-8">
+                  <p class="text-sm font-black tracking-wider text-[var(--nb-muted)] uppercase">
+                    {entry.data.title} · Deep dive
+                  </p>
+                  <div class="nb-prose mt-3 text-base">
+                    <Content />
+                  </div>
+                </div>
+              </section>
+            </section>
           ))
         }
       </div>
@@ -113,57 +118,125 @@ const padded = (value: number) => String(value).padStart(2, "0");
 </SiteLayout>
 
 <script>
-  function initGallery() {
-    const gallery = document.querySelector<HTMLElement>("[data-gallery]");
-    if (!gallery || gallery.dataset.bound === "true") return;
-    gallery.dataset.bound = "true";
+  import Reveal from "reveal.js";
 
-    const cards = [...gallery.querySelectorAll<HTMLElement>("[data-gallery-card]")];
-    const counter = document.querySelector<HTMLElement>("[data-gallery-counter]");
-    const dots = [...document.querySelectorAll<HTMLElement>("[data-gallery-dot]")];
-    const total = String(cards.length).padStart(2, "0");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function initDeck() {
+    const element = document.querySelector<HTMLElement>("#projects-deck");
+    if (!element || element.dataset.bound === "true") return;
+    element.dataset.bound = "true";
 
-    function activate(index: number) {
-      if (counter) {
-        counter.textContent = `${String(index + 1).padStart(2, "0")} / ${total}`;
-      }
-      dots.forEach((dot, dotIndex) => {
-        dot.classList.toggle("bg-[var(--nb-peach)]", dotIndex === index);
-        dot.classList.toggle("bg-[var(--nb-base)]", dotIndex !== index);
-      });
-      cards.forEach((card, cardIndex) => {
-        const content = card.querySelector<HTMLElement>("[data-gallery-content]");
-        if (!content || reducedMotion) return;
-        // Re-adding the rombo preset replays the entrance when a card
-        // becomes the active gallery slide.
-        if (cardIndex === index) content.classList.add("motion-preset-slide-down");
-        else content.classList.remove("motion-preset-slide-down");
-      });
-    }
-
-    const observer = new IntersectionObserver(
-      (observed) => {
-        for (const entry of observed) {
-          if (!entry.isIntersecting) continue;
-          activate(Number((entry.target as HTMLElement).dataset.index));
-        }
-      },
-      { root: gallery, threshold: 0.6 },
-    );
-    cards.forEach((card) => observer.observe(card));
-
-    dots.forEach((dot) => {
-      dot.addEventListener("click", () => {
-        cards[Number(dot.dataset.index)]?.scrollIntoView({
-          behavior: reducedMotion ? "auto" : "smooth",
-        });
-      });
+    const deck = new Reveal(element, {
+      embedded: true,
+      // Keyboard binds once the deck has focus (click/tab into it); the
+      // native arrows and touch always work.
+      keyboardCondition: "focused",
+      hash: false,
+      // Navigation & UI indicators
+      controls: true,
+      controlsTutorial: true, // pulses the ↓ arrow when a slide has children
+      controlsLayout: "bottom-right",
+      controlsBackArrows: "visible",
+      progress: true,
+      slideNumber: "h/v",
+      overview: true,
+      touch: true,
+      // 2D grid: left/right = projects, down = that project's case study
+      navigationMode: "grid",
+      transition: "slide",
+      backgroundTransition: "none",
+      width: 1280,
+      height: 800,
+      margin: 0.08,
     });
-
-    activate(0);
+    deck.initialize();
   }
 
-  initGallery();
-  document.addEventListener("astro:after-swap", initGallery);
+  initDeck();
+  document.addEventListener("astro:after-swap", initDeck);
 </script>
+
+<style is:global>
+  /* ------------------------------------------------------------------
+     Minimal reveal.js theming. Only targets DOM that reveal.js *generates*
+     (and therefore can't carry Tailwind classes): the .reveal root, the
+     progress bar, the arrow controls, and the slide-number badge — plus the
+     shared heading typography. Everything else is Tailwind in the markup.
+     Colors come from the --nb-* tokens in starwind.css.
+     ------------------------------------------------------------------ */
+  #projects-deck.reveal {
+    /* Height must live here, not in a Tailwind utility: reveal adds the
+       reveal-viewport class on init, and reveal.css's unlayered
+       .reveal-viewport { height: 100% } beats anything in @layer utilities.
+       The ID selector out-specifies it. */
+    height: 100svh;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1.75;
+    color: var(--nb-text);
+    background: var(--nb-base);
+  }
+  #projects-deck h1,
+  #projects-deck h2,
+  #projects-deck h3 {
+    color: var(--nb-text);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
+  }
+  #projects-deck h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 0.95;
+    text-shadow: 6px 6px 0 var(--nb-title-shadow);
+  }
+  #projects-deck h2 {
+    font-size: 48px;
+    line-height: 1.05;
+  }
+  #projects-deck .tagline {
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  #projects-deck :focus-visible {
+    outline: 4px solid var(--nb-blue);
+    outline-offset: 4px;
+  }
+
+  /* Progress bar: thick ink track, peach fill, hard edge */
+  #projects-deck .progress {
+    height: 12px;
+    background: var(--nb-surface);
+    border-top: 4px solid var(--nb-ink);
+    color: var(--nb-peach);
+  }
+  #projects-deck .progress span {
+    background: var(--nb-peach);
+    border-right: 4px solid var(--nb-ink);
+  }
+
+  /* Native arrows: ink on Latte, peach on Mocha */
+  #projects-deck .controls {
+    color: var(--nb-ink);
+    bottom: 32px;
+    right: 32px;
+  }
+  html[data-theme="dark"] #projects-deck .controls {
+    color: var(--nb-peach);
+  }
+
+  #projects-deck .slide-number {
+    right: auto;
+    left: 16px;
+    bottom: 24px;
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: var(--nb-button-text);
+    background: var(--nb-yellow);
+    border: 2px solid var(--nb-ink);
+    box-shadow: 3px 3px 0 0 var(--nb-ink);
+  }
+</style>
