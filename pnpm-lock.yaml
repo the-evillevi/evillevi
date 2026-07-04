@@ -115,6 +115,9 @@ importers:
       remark-parse:
         specifier: ^11.0.0
         version: 11.0.0
+      reveal.js:
+        specifier: ^6.0.1
+        version: 6.0.1
       shadcn:
         specifier: ^4.6.0
         version: 4.10.0(@types/node@25.9.1)(typescript@5.9.3)
@@ -7168,6 +7171,12 @@ packages:
       }
     engines: { iojs: ">=1.0.0", node: ">=0.10.0" }
 
+  reveal.js@6.0.1:
+    resolution:
+      {
+        integrity: sha512-9eacArNIgqO2HGWOK+93gJNn+gvdGDVbSq+i2u3Ja9kjiHps0XNLpgYTZTYjKRH91uXy3clGimeGiw4umHG/tg==,
+      }
+
   robust-predicates@3.0.3:
     resolution:
       {
@@ -13355,6 +13364,8 @@ snapshots:
   rettime@0.11.11: {}
 
   reusify@1.1.0: {}
+
+  reveal.js@6.0.1: {}
 
   robust-predicates@3.0.3: {}
 
