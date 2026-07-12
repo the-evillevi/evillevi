@@ -1,0 +1,75 @@
+---
+import { AlphaDropDashboard } from "@/components/alphadrop/AlphaDropDashboard";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+const description =
+  "AlphaDrop is a multi-factor stock screener (Value + Growth + Quality + Momentum) hunting quality companies trading 15-45% below their 52-week highs.";
+---
+
+<SiteLayout title="AlphaDrop - Drop-Opportunity Stock Screener" description={description}>
+  <div class="mx-auto flex max-w-[1400px] flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+    <header class="flex flex-col gap-3">
+      <span
+        class="w-fit border-2 border-[var(--nb-ink)] bg-[var(--nb-pink)] px-3 py-1 text-xs font-black tracking-wide text-[var(--nb-button-text)] uppercase shadow-[2px_2px_0_0_var(--nb-ink)]"
+      >
+        Equity Research Lab
+      </span>
+      <h1
+        class="text-4xl font-black tracking-tight uppercase sm:text-6xl"
+        style="text-shadow: 4px 4px 0 var(--nb-title-shadow);"
+      >
+        AlphaDrop 📉
+      </h1>
+      <p class="max-w-3xl text-base leading-7 font-bold text-[var(--nb-muted)]">
+        A first-pass multi-factor screener that hunts for one specific setup:
+        <span class="text-[var(--nb-text)]"
+          >quality businesses knocked 15–45% below their 52-week high</span
+        > while their fundamentals — growth, returns, balance sheet — stay intact. S&amp;P 500 liquid
+        names plus Mexican ADRs (AMX, CX, KOF, FMX, VIST…), ranked by a transparent 0–100 composite score.
+      </p>
+    </header>
+
+    <noscript>
+      <p class="nb-panel p-5 text-center font-bold">
+        AlphaDrop needs JavaScript to render the opportunity table.
+      </p>
+    </noscript>
+
+    <AlphaDropDashboard client:load />
+
+    <section class="grid gap-8 lg:grid-cols-3">
+      <article class="nb-panel p-5">
+        <h2 class="text-xl font-black tracking-normal uppercase">The Setup It Hunts</h2>
+        <p class="mt-3 text-sm leading-6 font-bold text-[var(--nb-muted)]">
+          Great businesses get repriced violently for temporary reasons — a guidance trim, a sector
+          rotation, a macro scare. AlphaDrop screens for the aftermath: a significant drawdown <em
+            >plus</em
+          > intact fundamentals, the classic setup for a re-rating. Drops beyond ~60% usually mean a broken
+          thesis, so they score near zero on purpose.
+        </p>
+      </article>
+      <article class="nb-panel p-5">
+        <h2 class="text-xl font-black tracking-normal uppercase">The Composite Score</h2>
+        <p class="mt-3 text-sm leading-6 font-bold text-[var(--nb-muted)]">
+          Four pillars of 25 points each — Value (Fwd P/E, PEG &lt; 1.5, EV/EBITDA, FCF yield),
+          Growth (revenue YoY, 3–5y EPS CAGR, margin trend), Quality (ROE &gt; 12%, Debt/EBITDA &lt;
+          3x, positive FCF) and Momentum (drawdown window, stabilization, analyst signal) — plus a
+          bonus of up to 10 points reserved for “significant drop + excellent fundamentals”. Every
+          point traces to one rule; click any row to see the breakdown.
+        </p>
+      </article>
+      <article class="nb-panel p-5">
+        <h2 class="text-xl font-black tracking-normal uppercase">Data &amp; Limitations</h2>
+        <p class="mt-3 text-sm leading-6 font-bold text-[var(--nb-muted)]">
+          Data comes from Yahoo Finance via a FastAPI service on Render — free, best-effort, and
+          occasionally patchy. Forward estimates cover a small analyst consensus; true
+          estimate-revision history isn’t available, so analyst ratings and target upside act as a
+          proxy. ADR financials are FX-adjusted (statements in MXN, market cap in USD). This is a
+          research and education tool — <span class="text-[var(--nb-text)]"
+            >not investment advice</span
+          >.
+        </p>
+      </article>
+    </section>
+  </div>
+</SiteLayout>
