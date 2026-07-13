@@ -13,11 +13,19 @@ import type { ScoredStock, ScreenResponse } from "@/lib/alphadrop/types";
  * In dev the API defaults to the local FastAPI server; set
  * PUBLIC_ALPHADROP_API to point anywhere else (both modes respect it). */
 
+// `||` (not `??`) so an empty-string env value also falls back to a real URL.
 const API_BASE =
-  import.meta.env.PUBLIC_ALPHADROP_API ??
+  import.meta.env.PUBLIC_ALPHADROP_API ||
   (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://alphadrop-api.onrender.com");
 const FETCH_TIMEOUT_MS = 12_000;
 const STORAGE_KEY = "alphadrop-screen-v1";
+
+/** Drop-opportunity window — mirrors Thresholds.drawdown_min/max on the backend. */
+const DROP_WINDOW_MIN = 0.15;
+const DROP_WINDOW_MAX = 0.45;
+const inDropWindow = (dd: number | null | undefined): boolean =>
+  dd != null && dd >= DROP_WINDOW_MIN && dd <= DROP_WINDOW_MAX;
+const DROP_WINDOW_LABEL = `${DROP_WINDOW_MIN * 100}–${DROP_WINDOW_MAX * 100}%`;
 
 const snapshot = snapshotData as ScreenResponse;
 
@@ -168,13 +176,17 @@ function ScoreCell({ stock }: { stock: ScoredStock }) {
 
 function DrawdownBadge({ value }: { value: number | null }) {
   if (value == null) return <span>—</span>;
-  const inWindow = value >= 0.15 && value <= 0.45;
+  const inWindow = inDropWindow(value);
   return (
     <span
       className={`inline-block border-2 border-[var(--nb-ink)] px-2 py-0.5 font-black whitespace-nowrap ${
         inWindow ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]" : "bg-[var(--nb-base)]"
       }`}
-      title={inWindow ? "Inside the 15-45% drop-opportunity window" : "Outside the 15-45% window"}
+      title={
+        inWindow
+          ? `Inside the ${DROP_WINDOW_LABEL} drop-opportunity window`
+          : `Outside the ${DROP_WINDOW_LABEL} window`
+      }
     >
       −{fmtPct(value)}
     </span>
@@ -275,10 +287,7 @@ export function AlphaDropDashboard() {
   const rows = useMemo(() => {
     let list = [...data.results];
     if (dropWindowOnly) {
-      list = list.filter((s) => {
-        const dd = s.metrics.pct_from_high;
-        return dd != null && dd >= 0.15 && dd <= 0.45;
-      });
+      list = list.filter((s) => inDropWindow(s.metrics.pct_from_high));
     }
     const column = METRIC_COLUMNS.find((c) => c.key === sortKey);
     const get = sortKey === "composite" ? (s: ScoredStock) => s.composite : column!.get;
@@ -306,21 +315,20 @@ export function AlphaDropDashboard() {
   const headerButton =
     "w-full cursor-pointer px-3 py-2 text-left text-[11px] font-black tracking-wider uppercase whitespace-nowrap hover:bg-[var(--nb-yellow)] hover:text-[var(--nb-button-text)]";
 
+  const chip =
+    "border-2 border-[var(--nb-ink)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)]";
+
   return (
     <div className="flex flex-col gap-4">
       {/* Status strip */}
       <div className="flex flex-wrap items-center gap-2 text-xs font-black uppercase">
-        <span className="border-2 border-[var(--nb-ink)] bg-[var(--nb-teal)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)]">
-          As of {fmtDate(data.as_of)}
-        </span>
-        <span className="border-2 border-[var(--nb-ink)] bg-[var(--nb-lavender)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)]">
+        <span className={`${chip} bg-[var(--nb-teal)]`}>As of {fmtDate(data.as_of)}</span>
+        <span className={`${chip} bg-[var(--nb-lavender)]`}>
           Universe: {data.universe_size} stocks
         </span>
-        <span className="border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)]">
-          {data.passed_filters} passed filters
-        </span>
+        <span className={`${chip} bg-[var(--nb-green)]`}>{data.passed_filters} passed filters</span>
         <span
-          className={`border-2 border-[var(--nb-ink)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)] ${
+          className={`${chip} ${
             source === "live"
               ? "bg-[var(--nb-pink)]"
               : source === "cached"
@@ -351,7 +359,7 @@ export function AlphaDropDashboard() {
             onChange={(e) => setDropWindowOnly(e.target.checked)}
             className="h-4 w-4 rounded-none border-2 border-[var(--nb-ink)] text-[var(--nb-peach)] focus:ring-0"
           />
-          Drop window only (15–45%)
+          Drop window only ({DROP_WINDOW_LABEL})
         </label>
       </div>
 
