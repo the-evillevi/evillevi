@@ -5,14 +5,41 @@ import type { ScoredStock, ScreenResponse } from "@/lib/alphadrop/types";
 
 /* AlphaDrop opportunity dashboard.
  *
- * Tries the live FastAPI service on Render first (PUBLIC_ALPHADROP_API);
- * if it's asleep or unreachable it falls back to the bundled snapshot so
- * the page always renders a real, dated screen instead of a spinner. */
+ * Data source waterfall: live API → localStorage copy of the last
+ * successful fetch → bundled snapshot. The page always renders a real,
+ * dated screen instead of a spinner, and repeat visitors see their most
+ * recent live data even while the Render free tier is waking up.
+ *
+ * In dev the API defaults to the local FastAPI server; set
+ * PUBLIC_ALPHADROP_API to point anywhere else (both modes respect it). */
 
-const API_BASE = import.meta.env.PUBLIC_ALPHADROP_API ?? "https://alphadrop-api.onrender.com";
+const API_BASE =
+  import.meta.env.PUBLIC_ALPHADROP_API ??
+  (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://alphadrop-api.onrender.com");
 const FETCH_TIMEOUT_MS = 12_000;
+const STORAGE_KEY = "alphadrop-screen-v1";
 
 const snapshot = snapshotData as ScreenResponse;
+
+/** Last successful live payload, if this browser has one. */
+function readStoredScreen(): ScreenResponse | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as ScreenResponse;
+    return Array.isArray(parsed.results) && parsed.results.length > 0 ? parsed : null;
+  } catch {
+    return null; // corrupt JSON or storage disabled — fall through
+  }
+}
+
+function writeStoredScreen(payload: ScreenResponse): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    // Quota exceeded / private mode — caching is best-effort only.
+  }
+}
 
 /* ----------------------------- formatting ------------------------------ */
 
@@ -209,7 +236,7 @@ function PillarBreakdown({ stock }: { stock: ScoredStock }) {
 
 export function AlphaDropDashboard() {
   const [data, setData] = useState<ScreenResponse>(snapshot);
-  const [source, setSource] = useState<"live" | "snapshot" | "loading">("loading");
+  const [source, setSource] = useState<"live" | "cached" | "snapshot" | "loading">("loading");
   const [sortKey, setSortKey] = useState<SortKey>("composite");
   const [sortAsc, setSortAsc] = useState(false);
   const [dropWindowOnly, setDropWindowOnly] = useState(false);
@@ -224,8 +251,19 @@ export function AlphaDropDashboard() {
       .then((payload: ScreenResponse) => {
         setData(payload);
         setSource("live");
+        writeStoredScreen(payload);
       })
-      .catch(() => setSource("snapshot"))
+      .catch(() => {
+        // API unreachable — prefer this browser's last live payload over
+        // the (older) snapshot that shipped with the site build.
+        const stored = readStoredScreen();
+        if (stored) {
+          setData(stored);
+          setSource("cached");
+        } else {
+          setSource("snapshot");
+        }
+      })
       .finally(() => clearTimeout(timer));
 
     return () => {
@@ -283,19 +321,27 @@ export function AlphaDropDashboard() {
         </span>
         <span
           className={`border-2 border-[var(--nb-ink)] px-2.5 py-1 text-[var(--nb-button-text)] shadow-[2px_2px_0_0_var(--nb-ink)] ${
-            source === "live" ? "bg-[var(--nb-pink)]" : "bg-[var(--nb-yellow)]"
+            source === "live"
+              ? "bg-[var(--nb-pink)]"
+              : source === "cached"
+                ? "bg-[var(--nb-teal)]"
+                : "bg-[var(--nb-yellow)]"
           }`}
           title={
             source === "live"
               ? "Fresh data from the AlphaDrop API"
-              : "The API is waking up or offline — showing the bundled snapshot"
+              : source === "cached"
+                ? "API unreachable — showing this browser's last live screen (localStorage)"
+                : "The API is waking up or offline — showing the bundled snapshot"
           }
         >
           {source === "loading"
             ? "Contacting API…"
             : source === "live"
               ? "● Live data"
-              : "◍ Snapshot data"}
+              : source === "cached"
+                ? "◔ Cached (last visit)"
+                : "◍ Snapshot data"}
         </span>
 
         <label className="ml-auto flex cursor-pointer items-center gap-2 border-2 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-2.5 py-1 shadow-[2px_2px_0_0_var(--nb-ink)] select-none">
