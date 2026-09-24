@@ -1,0 +1,16 @@
+---
+import { KarmaComandaIsland } from "@/components/karma/KarmaDemoShell";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+const description =
+  "Karma Comanda is the kitchen and bar station paired with the Karma café point-of-sale demo.";
+---
+
+<SiteLayout title="Karma Comanda" description={description}>
+  <noscript>
+    <p class="nb-panel mx-auto my-8 max-w-3xl p-5 text-center font-bold">
+      Karma needs JavaScript to run the interactive kitchen display.
+    </p>
+  </noscript>
+  <KarmaComandaIsland client:load />
+</SiteLayout>

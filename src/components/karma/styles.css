@@ -1,0 +1,102 @@
+/* Global CSS ported from the two <helmet><style> blocks of the DC artifacts.
+   Shared resets + keyframes here; body background differs per page and is set
+   via the body class (.pos / .comanda) so the two entries don't collide. */
+.karma-app,
+.karma-app * {
+  box-sizing: border-box;
+}
+
+.karma-app {
+  color: #141413;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f0eee6;
+  isolation: isolate;
+}
+.karma-app--comanda {
+  background: #141413;
+}
+
+.karma-app a {
+  color: #836953;
+  text-decoration: none;
+}
+.karma-app a:hover {
+  color: #141413;
+}
+
+.karma-app button {
+  font-family: inherit;
+}
+.karma-app input,
+.karma-app select,
+.karma-app textarea {
+  font-family: inherit;
+  color: #141413;
+}
+.karma-app ::placeholder {
+  color: #a8a69c;
+}
+
+@keyframes karma-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes karma-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.karma-demo-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: #141413;
+  background: #faf9f5;
+  border-bottom: 1px solid #e2e0d6;
+}
+.karma-demo-toolbar__title {
+  margin-right: auto;
+  font-size: 13px;
+  font-weight: 700;
+}
+.karma-demo-toolbar__pins {
+  font-size: 12px;
+  color: #6b6a63;
+}
+.karma-demo-toolbar a,
+.karma-demo-toolbar button {
+  min-height: 36px;
+  padding: 8px 11px;
+  border: 1px solid #836953;
+  border-radius: 8px;
+  color: #141413;
+  background: #faf9f5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.karma-demo-toolbar a[aria-current="page"] {
+  color: #faf9f5;
+  background: #836953;
+}
+.karma-demo-toolbar__reset {
+  color: #9f2d20 !important;
+  border-color: #9f2d20 !important;
+}
+
+@media (max-width: 720px) {
+  .karma-demo-toolbar__pins {
+    flex-basis: 100%;
+    order: 3;
+  }
+}

@@ -1,0 +1,16 @@
+---
+import { KarmaPosIsland } from "@/components/karma/KarmaDemoShell";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+const description =
+  "Karma is a local-first café point-of-sale proof of concept with role-aware checkout, operations, reporting, and a synchronized kitchen station.";
+---
+
+<SiteLayout title="Karma POS" description={description}>
+  <noscript>
+    <p class="nb-panel mx-auto my-8 max-w-3xl p-5 text-center font-bold">
+      Karma needs JavaScript to run the interactive point-of-sale demo.
+    </p>
+  </noscript>
+  <KarmaPosIsland client:load />
+</SiteLayout>

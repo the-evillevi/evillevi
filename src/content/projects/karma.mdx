@@ -1,0 +1,34 @@
+---
+title: "Karma POS"
+description: "A local-first café point-of-sale proof of concept spanning checkout, operations, inventory, reporting, and a synchronized kitchen display."
+valueProp: "A complete café workflow where the register and kitchen stay useful—even when the network does not."
+tech: ["Astro 6", "React 19", "LocalStorage", "Vite", "Multi-station UX"]
+liveUrl: "/projects/karma"
+repoUrl: "https://github.com/the-evillevi/karma"
+featured: true
+order: 5
+tags: ["projects", "react", "pos", "local-first", "operations"]
+---
+
+### The Challenge
+
+A café POS has to serve several people at once: baristas need a fast catalog and checkout, managers need inventory and reporting, and the kitchen needs an uncluttered queue. Those workflows cannot simply disappear when connectivity becomes unreliable. Karma explores how a compact product can make order state, permissions, payment status, and synchronization visible without slowing down the counter.
+
+### Product & Architecture
+
+- **Two-station workflow:** the register creates and edits orders while a focused Comanda view moves tickets through queued, preparing, ready, and delivered states.
+- **Role-aware operations:** owner, manager, cashier, and kitchen roles expose different navigation and approval boundaries. The demo includes realistic PIN-based sessions rather than a single all-powerful user.
+- **Local-first state:** both stations share one versioned browser document. Storage events keep separate tabs aligned, while explicit online, pending, and conflict states make connectivity part of the interface.
+- **Operational breadth:** the POC covers modifiers, open checks, split payment, tips, cancellations, inventory movements, recipes, sales history, reports, users, and configuration.
+
+### Prototype Evolution
+
+Karma began as a declarative Datacosm design prototype. Its templates were mechanically translated into native JSX, the CDN/Babel runtime was removed, and React became a normal bundled dependency in a multi-page Vite application. For this portfolio version, the same product logic is hosted as isolated Astro React islands: data is imported as an SSR-safe module, styling is scoped to the demo boundary, and the register and Comanda remain distinct routes with shared browser-local state.
+
+### Resilience & Tradeoffs
+
+Offline mode keeps cash and transfer workflows moving and records pending operations for a later sync. Card payment deliberately fails while disconnected, demonstrating a product-level failure path instead of pretending every dependency is available. The current synchronization model is intentionally a POC: `localStorage` stands in for a durable local database and backend conflict resolution, authentication is demonstrative, and no real payment or printer integration is present.
+
+### Portfolio Integration
+
+The embedded version preserves the original Spanish café interface and seeded menu while adding portfolio navigation, visible demo credentials, and a reset-to-seed action. The integration is a maintained copy rather than a shared package, leaving the standalone repository as the historical source and allowing the portfolio boundary to remain deployment-independent.
