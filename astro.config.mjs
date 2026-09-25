@@ -14,6 +14,7 @@ import remarkWikilinks from "./src/plugins/remark-wikilinks.ts";
 
 // https://astro.build/config
 export default defineConfig({
+  devToolbar: { enabled: process.env.CHESS_BROWSER_TEST !== "1" },
   vite: {
     plugins: [tailwindcss()],
   },

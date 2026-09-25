@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:chess:integration": "node scripts/chess-integration.mjs",
     "chess:sync": "node scripts/sync-chess.mjs",
     "chess:sync:check": "node scripts/sync-chess.mjs --check"
