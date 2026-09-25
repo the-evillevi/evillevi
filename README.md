@@ -1,5 +1,7 @@
 # Astro Starter Kit: Basics
 
+The garden includes **3D Chess** at `/projects/3d-chess/`: Strato Chess and Chess³, local practice and private Supabase matches. See [rules and conventions](docs/chess-rules.md) and [development, testing and deployment](docs/chess-deployment.md).
+
 ```sh
 pnpm create astro@latest -- --template basics
 ```
