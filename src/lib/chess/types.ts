@@ -1,0 +1,36 @@
+export type Color = "white" | "black";
+export type Ruleset = "strato" | "chess3";
+export type PieceType = "pawn" | "knight" | "bishop" | "rook" | "queen" | "king";
+export type Promotion = Exclude<PieceType, "pawn" | "king">;
+export type Square = string;
+export type Coordinate = [file: number, rank: number, level: number];
+export interface Piece {
+  id: string;
+  color: Color;
+  type: PieceType;
+  square: Square;
+  moved: boolean;
+}
+export interface Move {
+  from: Square;
+  to: Square;
+  promotion?: Promotion;
+  castle?: "king" | "queen";
+}
+export interface Outcome {
+  reason: "checkmate" | "stalemate" | "resignation" | "agreement";
+  winner: Color | null;
+}
+export interface State {
+  schemaVersion: 1;
+  ruleset: Ruleset;
+  rulesVersion: string;
+  pieces: Piece[];
+  turn: Color;
+  ply: number;
+  enPassant: { target: Square; pawnId: string } | null;
+  outcome: Outcome | null;
+}
+export const VERSIONS = { strato: "strato-v1", chess3: "chess3-v1" } as const;
+export const PROMOTIONS: Promotion[] = ["queen", "rook", "bishop", "knight"];
+export const opposite = (color: Color): Color => (color === "white" ? "black" : "white");

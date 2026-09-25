@@ -1,0 +1,93 @@
+import type { Color } from "./types.ts";
+export type TimeControl =
+  | { version: "clock-v1"; mode: "untimed" }
+  | { version: "clock-v1"; mode: "rapid"; initialSeconds: number; incrementSeconds: number }
+  | { version: "clock-v1"; mode: "correspondence"; days: number };
+export const RAPID = [
+  [10, 0],
+  [10, 5],
+  [15, 10],
+  [20, 0],
+  [30, 0],
+  [60, 0],
+] as const;
+export const DAYS = [1, 2, 3, 5, 7, 14] as const;
+export const rapid = (minutes: number, incrementSeconds = 0): TimeControl => ({
+  version: "clock-v1",
+  mode: "rapid",
+  initialSeconds: minutes * 60,
+  incrementSeconds,
+});
+export function guestName(value: unknown): string {
+  if (typeof value !== "string") throw new Error("Enter a guest name (1–32 characters).");
+  const name = value.trim();
+  if (!name || [...name].length > 32 || /[\u0000-\u001f\u007f]/.test(name))
+    throw new Error("Enter a guest name (1–32 characters).");
+  return name;
+}
+export function timeControl(value: unknown): TimeControl {
+  if (!value || typeof value !== "object") throw new Error("Choose a time control.");
+  const t = value as Record<string, unknown>;
+  const keys =
+    t.mode === "rapid"
+      ? ["version", "mode", "initialSeconds", "incrementSeconds"]
+      : t.mode === "correspondence"
+        ? ["version", "mode", "days"]
+        : ["version", "mode"];
+  if (t.version !== "clock-v1" || Object.keys(t).some((k) => !keys.includes(k)))
+    throw new Error("Invalid time control.");
+  if (t.mode === "untimed") return { version: "clock-v1", mode: "untimed" };
+  if (
+    t.mode === "rapid" &&
+    Number.isInteger(t.initialSeconds) &&
+    Number(t.initialSeconds) >= 60 &&
+    Number(t.initialSeconds) <= 7200 &&
+    Number(t.initialSeconds) % 60 === 0 &&
+    Number.isInteger(t.incrementSeconds) &&
+    Number(t.incrementSeconds) >= 0 &&
+    Number(t.incrementSeconds) <= 60
+  )
+    return {
+      version: "clock-v1",
+      mode: "rapid",
+      initialSeconds: Number(t.initialSeconds),
+      incrementSeconds: Number(t.incrementSeconds),
+    };
+  if (t.mode === "correspondence" && DAYS.includes(t.days as (typeof DAYS)[number]))
+    return { version: "clock-v1", mode: "correspondence", days: Number(t.days) };
+  throw new Error("Invalid time control.");
+}
+export function timeLabel(t: TimeControl) {
+  return t.mode === "untimed"
+    ? "Untimed"
+    : t.mode === "correspondence"
+      ? `${t.days} ${t.days === 1 ? "day" : "days"} per move`
+      : t.incrementSeconds
+        ? `${t.initialSeconds / 60}+${t.incrementSeconds}`
+        : `${t.initialSeconds / 60} min`;
+}
+export interface ClockState {
+  time_control: TimeControl;
+  white_ms: number | null;
+  black_ms: number | null;
+  deadline: string | null;
+  started_at: string | null;
+  turn: Color;
+  status: string;
+}
+export function remaining(g: ClockState, side: Color, now: number) {
+  if (g.status === "active" && g.turn === side && g.deadline)
+    return Math.max(0, Date.parse(g.deadline) - now);
+  if (g.time_control.mode === "correspondence") return g.time_control.days * 86400000;
+  return g[side === "white" ? "white_ms" : "black_ms"] ?? 0;
+}
+export function clockText(ms: number) {
+  const s = Math.ceil(Math.max(0, ms) / 1000);
+  if (s >= 86400) return `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h`;
+  if (s >= 3600)
+    return `${Math.floor(s / 3600)}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+// Anchor to a monotonic browser clock, never the user's wall clock.
+export const synchronizedNow = (serverTime: string, receivedAt: number, monotonicNow: number) =>
+  Date.parse(serverTime) + Math.max(0, monotonicNow - receivedAt);

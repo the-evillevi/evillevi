@@ -1,0 +1,16 @@
+import type { Color } from "./types.ts";
+export type ColorPreference = Color | "random";
+export function resolveColor(preference: ColorPreference, randomByte: number): Color {
+  if (!["white", "black", "random"].includes(preference))
+    throw new Error("Invalid color preference");
+  if (preference !== "random") return preference;
+  if (!Number.isInteger(randomByte) || randomByte < 0 || randomByte > 255)
+    throw new Error("Invalid random byte");
+  return randomByte % 2 === 0 ? "white" : "black";
+}
+export function isGameId(id: unknown): id is string {
+  return (
+    typeof id === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+  );
+}

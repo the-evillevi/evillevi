@@ -26,3 +26,9 @@ pnpm-debug.log*
 
 # vs code shit
 .vscode
+
+# Local chess configuration and test artifacts
+.env.local
+.env.*.local
+playwright-report/
+test-results/
