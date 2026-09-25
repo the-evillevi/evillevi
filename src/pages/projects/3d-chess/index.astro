@@ -1,0 +1,19 @@
+---
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { ChessApp } from "@/components/chess/ChessApp";
+---
+
+<SiteLayout
+  appearance="chess"
+  title="3D Chess — Strato & Chess³"
+  description="Play Strato Chess and Chess³ across three levels. Practice locally or invite a friend to a private match."
+>
+  <ChessApp client:only="react"
+    ><div slot="fallback" class="chess-canvas-fallback">Loading the chess table…</div></ChessApp
+  >
+  <noscript
+    ><p class="chess-rules">
+      The game needs JavaScript. <a href="/projects/3d-chess/rules/">Read the rules</a> without it.
+    </p></noscript
+  >
+</SiteLayout>

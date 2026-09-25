@@ -2,14 +2,17 @@
 import "@/styles/starwind.css";
 import SearchSheet from "@/components/blog/SearchSheet.astro";
 import { siteConfig } from "@/site.config";
+import "@/components/chess/chess.css";
 
 interface Props {
   title?: string;
   description?: string;
+  appearance?: "garden" | "chess";
 }
 
 const title = Astro.props.title ? `${Astro.props.title} • ${siteConfig.title}` : siteConfig.title;
 const description = Astro.props.description ?? siteConfig.description;
+const chess = Astro.props.appearance === "chess";
 ---
 
 <!doctype html>
@@ -42,63 +45,88 @@ const description = Astro.props.description ?? siteConfig.description;
     </script>
   </head>
   <body>
-    <div class="nb-page flex min-h-screen flex-col">
+    <div class:list={[chess ? "chess-shell" : "nb-page", "flex min-h-screen flex-col"]}>
       <a
         href="#main-content"
         class="sr-only z-50 focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:border-4 focus:border-[var(--nb-ink)] focus:bg-[var(--nb-yellow)] focus:px-4 focus:py-3 focus:font-black focus:text-[var(--nb-button-text)] focus:uppercase"
       >
         Skip to content
       </a>
-      <header class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-4 md:px-6">
-        <nav
-          aria-label="Primary navigation"
-          class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between"
-        >
-          <a
-            href="/"
-            class="inline-flex w-fit border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-3 py-2 text-lg font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
-          >
-            {siteConfig.title}
-          </a>
-          <div class="flex flex-wrap items-center gap-2">
-            {
-              siteConfig.nav.map((item) => (
-                <a
-                  href={item.href}
-                  class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black text-[var(--nb-text)] uppercase transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
-                >
-                  {item.title}
-                </a>
-              ))
-            }
-            <SearchSheet />
-            <button
-              class="nb-action bg-[var(--nb-peach)] px-3 py-2 text-xs"
-              type="button"
-              data-theme-toggle
-              aria-label="Toggle theme"
+      {
+        chess ? (
+          <header class="chess-site-header">
+            <nav aria-label="Primary navigation">
+              <>
+                <a href="/">evillevi / garden</a>
+                <div>
+                  <>
+                    <a href="/projects">Projects</a>
+                    <a href="/projects/3d-chess/rules/">Rules</a>
+                    <button type="button" data-theme-toggle aria-label="Toggle theme">
+                      <span data-theme-icon>☀</span>
+                    </button>
+                  </>
+                </div>
+              </>
+            </nav>
+          </header>
+        ) : (
+          <header class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-4 md:px-6">
+            <nav
+              aria-label="Primary navigation"
+              class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between"
             >
-              <span data-theme-icon>☀</span>
-            </button>
-          </div>
-        </nav>
-      </header>
+              <a
+                href="/"
+                class="inline-flex w-fit border-4 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-3 py-2 text-lg font-black text-[var(--nb-button-text)] uppercase shadow-[4px_4px_0_0_var(--nb-ink)]"
+              >
+                {siteConfig.title}
+              </a>
+              <div class="flex flex-wrap items-center gap-2">
+                {siteConfig.nav.map((item) => (
+                  <a
+                    href={item.href}
+                    class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black text-[var(--nb-text)] uppercase transition hover:-translate-y-0.5 hover:bg-[var(--nb-blue)] hover:text-[var(--nb-button-text)]"
+                  >
+                    {item.title}
+                  </a>
+                ))}
+                <SearchSheet />
+                <button
+                  class="nb-action bg-[var(--nb-peach)] px-3 py-2 text-xs"
+                  type="button"
+                  data-theme-toggle
+                  aria-label="Toggle theme"
+                >
+                  <span data-theme-icon>☀</span>
+                </button>
+              </div>
+            </nav>
+          </header>
+        )
+      }
 
       <main id="main-content" class="flex-1">
         <slot />
       </main>
 
-      <footer class="border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-8 md:px-6">
-        <div
-          class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between"
-        >
-          <div>
-            <p class="text-xl font-black uppercase">{siteConfig.author}</p>
-            <p class="max-w-2xl font-bold text-[var(--nb-muted)]">{siteConfig.description}</p>
-          </div>
-          <p class="text-sm font-black uppercase">Built with Astro + Tailwind</p>
-        </div>
-      </footer>
+      {
+        chess ? (
+          <footer class="chess-site-footer">
+            <a href="/projects">Part of the garden</a> · Three levels, two distinct rulesets.
+          </footer>
+        ) : (
+          <footer class="border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-8 md:px-6">
+            <div class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p class="text-xl font-black uppercase">{siteConfig.author}</p>
+                <p class="max-w-2xl font-bold text-[var(--nb-muted)]">{siteConfig.description}</p>
+              </div>
+              <p class="text-sm font-black uppercase">Built with Astro + Tailwind</p>
+            </div>
+          </footer>
+        )
+      }
     </div>
     <script is:inline>
       const applyTheme = (theme) => {
