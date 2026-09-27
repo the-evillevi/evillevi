@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { piece, position } from "../../src/lib/chess/fixtures";
 import type { Ruleset } from "../../src/lib/chess/engine";
-test("garden links, metadata, dark theme and existing Affogato route", async ({ page }, info) => {
+test("chess discovery, metadata and persistent theme", async ({ page }, info) => {
   await page.goto("/");
   const card = page
     .locator("article")
@@ -24,13 +24,22 @@ test("garden links, metadata, dark theme and existing Affogato route", async ({ 
   await page.getByRole("button", { name: "Start local practice" }).click();
   await expect(page.locator(".chess-level-label")).toHaveCount(3);
   await page.screenshot({ path: info.outputPath("dark-board.png"), fullPage: true });
-  await page.goto("/projects/affogato/");
-  await expect(page).toHaveTitle(/Affogato/);
-  await expect(page.locator("body > .nb-page")).toHaveCount(1);
-  await expect(page.locator(".chess-shell")).toHaveCount(0);
-  await page.getByRole("button", { name: "Start timer", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Pause timer", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Pause timer", exact: true }).click();
+  await page.getByRole("link", { name: "Rules", exact: true }).click();
+  await expect(page).toHaveTitle(/3D Chess rules/);
+  await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
+    "href",
+    /\/projects\/3d-chess\/rules\/?$/,
+  );
+  await expect(page.locator("body > .chess-shell")).toHaveCount(1);
+  await expect(page.getByRole("main")).toHaveAttribute("id", "main-content");
+  await expect(page.getByRole("link", { name: "Skip to content" })).toHaveAttribute(
+    "href",
+    "#main-content",
+  );
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("link", { name: "Back to games" }).click();
+  await expect(page.getByRole("button", { name: "Start local practice" })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 async function move(page: Page, from: string, to: string) {
   await page.getByLabel("Piece", { exact: true }).selectOption(from);

@@ -2,6 +2,8 @@
 
 The static garden hosts `/projects/3d-chess/`; Supabase runs authentication, private game storage, Realtime and four authoritative Edge Functions. Local practice works without configuration. Local development and production release steps are documented separately below.
 
+Chess pages use their own `ChessLayout.astro` for the shell, metadata and theme controls. They share the `nb-theme` preference with the garden without modifying its `SiteLayout.astro`. The chess browser suite covers chess discovery and routes only.
+
 ## Configuration to supply
 
 | Where                              | Setting                           | Value                                                                                                      |
@@ -84,7 +86,7 @@ supabase gen types typescript --local > src/lib/supabase/database.types.ts
    Do not deploy `chess-fixtures` or set `CHESS_TEST_MODE` remotely. Do not use a blanket function deployment. Keep JWT verification enabled. The fixture endpoint returns 404 without its local-only test flag.
 
 4. Build/deploy the garden through the existing Cloudflare Pages project: build command `pnpm build`, output `dist`, Node 24+, pnpm 11.7.0. No Astro server adapter or per-game route rewrite is needed: invitations use `?game=<uuid>`.
-5. Verify the featured homepage card, projects deck, game/rules pages and existing Affogato page. In two separate browser profiles/devices, create and join **both** variants, move as each side, refresh, reconnect and finish with resignation or agreement. Confirm the recorded result persists. A third profile must not read a full game.
+5. Verify the featured homepage card, projects deck and game/rules pages. In two separate browser profiles/devices, create and join **both** variants, move as each side, refresh, reconnect and finish with resignation or agreement. Confirm the recorded result persists. A third profile must not read a full game.
 
 An optional remote browser smoke run is available **after** the intended deployment is ready. It creates real anonymous test matches:
 
