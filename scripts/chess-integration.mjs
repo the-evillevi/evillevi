@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 import { localSupabase } from "./local-supabase.mjs";
+import { readJson, waitForFixtures } from "./chess-test-http.mjs";
 import { RAPID, DAYS, rapid } from "../src/lib/chess/timing.ts";
 import { applyMove, initialState, legalMoves } from "../src/lib/chess/engine.ts";
 const cfg = localSupabase(),
@@ -17,11 +18,12 @@ for (let i = 0; i < 3; i++) {
   clients.push(client);
   identities.push(data.user.id);
 }
-async function call(index, name, body) {
+async function call(index, name, body, signal = AbortSignal.timeout(15_000)) {
   const {
     data: { session },
   } = await clients[index].auth.getSession();
   const response = await fetch(`${url}/functions/v1/${name}`, {
+    signal,
     method: "POST",
     headers: {
       apikey: key,
@@ -37,7 +39,7 @@ async function call(index, name, body) {
       ...body,
     }),
   });
-  return { status: response.status, data: await response.json() };
+  return readJson(response, name);
 }
 async function snapshot(index, id) {
   const { data, error } = await clients[index].rpc("chess_snapshot", { p_game_id: id });
@@ -51,9 +53,7 @@ async function create(ruleset, colorPreference = "white") {
   return { id: requestId, game: result.data.game };
 }
 
-const fixture = await call(0, "chess-fixtures", {});
-assert.equal(fixture.status, 200, JSON.stringify(fixture));
-assert.equal(fixture.data.passed, 24);
+await waitForFixtures((signal) => call(0, "chess-fixtures", {}, signal));
 console.log("24 approved fixtures pass inside the actual Edge runtime.");
 const noAuth = await fetch(`${url}/functions/v1/create-game`, {
   method: "POST",

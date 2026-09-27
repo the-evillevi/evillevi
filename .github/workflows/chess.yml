@@ -31,18 +31,22 @@ jobs:
           supabase start > /tmp/chess-start.log 2>&1
           node scripts/chess-local-env.mjs
           supabase functions serve --env-file .env.chess-test.local > /tmp/chess-functions.log 2>&1 &
-          for attempt in $(seq 1 30); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:55431/functions/v1/create-game)
-            if [ "$code" = "401" ]; then exit 0; fi
-            sleep 2
-          done
-          exit 1
+          echo "CHESS_FUNCTIONS_PID=$!" >> "$GITHUB_ENV"
       - run: pnpm test:chess:integration
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm exec playwright test
         env:
           CHESS_ONLINE_TESTS: "1"
       - run: pnpm build
+      - name: Sanitize backend failure logs
+        if: failure()
+        run: node scripts/chess-test-logs.mjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: chess-backend-logs
+          path: test-results/backend/
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

@@ -53,6 +53,8 @@ pnpm build
 
 The integration script needs the running local functions and stack. It creates anonymous test players and retains games for inspection. It exercises the shared engine inside the actual Edge runtime, all color choices, idempotent creation, simultaneous joins and moves, participant-only reads, denied client writes, draw agreement and resignation races. Its loopback guard prevents running it against production.
 
+Before testing matches, it polls the authenticated `chess-fixtures` endpoint for up to 60 seconds, requiring HTTP 200 and all 24 fixtures passing. A gateway's unauthenticated 401 is not a readiness signal. Startup 404/502/503/504 responses and connection failures are retried; fixture failures and authentication errors fail immediately. Requests have bounded timeouts, and CI also checks that the serving process is alive. Non-JSON failures report the endpoint, HTTP status and a short response excerpt. On CI failure, the `chess-backend-logs` artifact contains startup and function logs with credentials redacted; raw logs and environment files are never uploaded.
+
 Playwright uses installed Chrome locally; CI installs Chromium. It covers both variants, two isolated player sessions, history restoration, offline/reconnect, draw results, mobile layout, reduced motion and the WebGL fallback. Software rendering is enabled for reproducible 3D checks. No physical two-device or production smoke test has been performed yet.
 
 The engine in `src/lib/chess/` is canonical. `pnpm chess:sync` generates the Deno-compatible mirror in `supabase/functions/_shared/chess/`; commit both. CI fails if they differ. The mirror uses relative `.ts` imports, no browser aliases or runtime-specific dependencies. Regenerate database types after schema changes:
