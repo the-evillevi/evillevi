@@ -51,6 +51,23 @@ const codeUrl = repoUrl ?? null;
             </div>
           </div>
         </div>
+      ) : entry.id === "3d-chess" ? (
+        <div class="relative grid h-full place-items-center overflow-hidden bg-[#262822]">
+          {[0, 1, 2].map((level) => (
+            <div
+              class="absolute grid size-24 grid-cols-8 border-2 border-[#aeb49e] shadow-lg"
+              style={`transform: translateY(${(level - 1) * 30}px) rotateX(55deg) rotateZ(-30deg);`}
+            >
+              {Array.from({ length: 64 }, (_, i) => (
+                <span
+                  class="aspect-square"
+                  style={`background: ${(i + Math.floor(i / 8)) % 2 ? "#e4dfcf" : "#77916c"}`}
+                />
+              ))}
+            </div>
+          ))}
+          <span class="absolute right-4 bottom-2 text-5xl text-[#eee6d6]">♞</span>
+        </div>
       ) : (
         <div class="grid h-full place-items-center bg-[repeating-linear-gradient(45deg,var(--nb-surface)_0_12px,var(--nb-base)_12px_24px)]">
           <span class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] px-3 py-2 text-xs font-black uppercase">

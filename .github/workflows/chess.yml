@@ -1,0 +1,55 @@
+name: Chess checks
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  chess:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.7.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm chess:sync:check
+      - run: pnpm test
+      - run: pnpm check
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.109.1
+      - name: Start isolated local backend
+        run: |
+          supabase start > /tmp/chess-start.log 2>&1
+          node scripts/chess-local-env.mjs
+          supabase functions serve --env-file .env.chess-test.local > /tmp/chess-functions.log 2>&1 &
+          echo "CHESS_FUNCTIONS_PID=$!" >> "$GITHUB_ENV"
+      - run: pnpm test:chess:integration
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test
+        env:
+          CHESS_ONLINE_TESTS: "1"
+      - run: pnpm build
+      - name: Sanitize backend failure logs
+        if: failure()
+        run: node scripts/chess-test-logs.mjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: chess-backend-logs
+          path: test-results/backend/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: chess-browser-results
+          path: test-results/
+          retention-days: 7

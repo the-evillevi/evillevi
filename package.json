@@ -13,7 +13,12 @@
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:chess:integration": "node scripts/chess-integration.mjs",
+    "chess:sync": "node scripts/sync-chess.mjs",
+    "chess:sync:check": "node scripts/sync-chess.mjs --check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -26,6 +31,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@supabase/supabase-js": "^2.117.1",
     "@tabler/icons": "^3.41.1",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/vite": "^4.2.4",
@@ -68,6 +74,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/d3": "^7.4.3",
     "@types/hast": "^3.0.4",
     "@types/mdast": "^4.0.4",
@@ -75,6 +82,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "tailwindcss-motion": "^1.1.1"
+    "tailwindcss-motion": "^1.1.1",
+    "vitest": "^5.0.1"
   }
 }

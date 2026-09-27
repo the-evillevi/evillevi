@@ -1,0 +1,27 @@
+---
+title: "3D Chess"
+description: "Strato Chess and Chess³ on three stacked boards. Play a private match with a friend or explore both rulesets in local practice."
+valueProp: "Two ways to think beyond the board: private, legal chess across three levels."
+tech: ["Astro", "React Three Fiber", "TypeScript", "Supabase"]
+liveUrl: "/projects/3d-chess"
+repoUrl: "https://github.com/the-evillevi/evillevi"
+featured: true
+order: 3
+tags: ["projects", "games", "3d"]
+---
+
+### Two games, two rulebooks
+
+Strato Chess separates planar captures from transfers between levels. Chess³ allows pieces to attack through three-dimensional space. Each has its own versioned movement policy, backed by explicit examples and documented conventions. A saved match keeps its original rules version.
+
+### A table you can turn
+
+Three stacked boards and procedural Staunton pieces form the React Three Fiber scene. Rotate, zoom or isolate a level to inspect a position. HTML move controls and a selectable 2D board make every move available without a 3D click, including when WebGL is unavailable.
+
+### A shared position
+
+Choose White, Random or Black, then share a private invite. Supabase anonymous authentication identifies each player. Edge Functions validate moves with the same pure TypeScript engine used for practice; a Postgres transaction compares the position version and records exactly one move. Participant-only reads and restricted writes protect the canonical board.
+
+Realtime notifications trigger an authoritative snapshot refresh. Reconnect and page reload restore the position and move history. Matches end in checkmate, stalemate, resignation or a mutually agreed draw.
+
+[Read the rules and application conventions](/projects/3d-chess/rules/) or [take a seat](/projects/3d-chess/).
