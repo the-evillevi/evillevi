@@ -292,8 +292,8 @@ export function ChessApp() {
     >
       <div className="chess-heading">
         <div>
-          <div className="chess-eyebrow">A different perspective</div>
-          <h1>{inGame ? "Three-dimensional chess" : "Your chess table"}</h1>
+          <div className="chess-eyebrow">Good game, G.</div>
+          <h1>gg³</h1>
           {!inGame && <p>Familiar pieces. A whole new dimension.</p>}
         </div>
         <div className="chess-heading-links">

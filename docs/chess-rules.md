@@ -1,4 +1,4 @@
-# Three levels. Two distinct games.
+# gg³ — Rules
 
 This is the application contract for **Strato Chess `strato-v1`** and **Chess³ `chess3-v1`**. Interpretations and example outcomes were reviewed and approved by the project owner before engine implementation on 24 September 2026. Saved games permanently retain their ruleset and rules version. Changes to these rules require a new version.
 

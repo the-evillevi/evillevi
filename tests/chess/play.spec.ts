@@ -2,30 +2,62 @@ import { test, expect, type Page } from "@playwright/test";
 import { piece, position } from "../../src/lib/chess/fixtures";
 import type { Ruleset } from "../../src/lib/chess/engine";
 test("chess discovery, metadata and persistent theme", async ({ page }, info) => {
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
   const card = page
     .locator("article")
-    .filter({ has: page.getByRole("heading", { name: "3D Chess", exact: true }) });
+    .filter({ has: page.getByRole("heading", { name: "gg³", exact: true }) });
   await expect(card).toHaveCount(1);
+  await expect(card.getByRole("heading", { name: "gg³", exact: true })).toHaveCSS(
+    "text-transform",
+    "none",
+  );
   await expect(card.getByRole("link", { name: "View Live Demo" })).toHaveAttribute(
     "href",
     "/projects/3d-chess",
   );
   await page.goto("/projects/");
   await expect(page.locator("#projects-deck a[href='/projects/3d-chess']")).toHaveCount(1);
+  await expect(
+    page
+      .locator("#projects-deck")
+      .getByRole("heading", { name: "gg³", exact: true, includeHidden: true }),
+  ).toHaveCSS("text-transform", "none");
   await page.goto("/projects/3d-chess/");
-  await expect(page).toHaveTitle(/3D Chess/);
+  await expect(page).toHaveTitle(/gg³ — Strato & Chess³/);
+  await expect(page.getByRole("heading", { name: "gg³", exact: true })).toBeVisible();
+  await expect(page.locator(".chess-eyebrow")).toHaveText("Good game, G.");
+  await expect(page.locator(".chess-eyebrow")).toHaveCSS("text-transform", "none");
+  const primary = page.getByRole("button", { name: "Play with a friend" });
+  const selected = page.getByRole("button", { name: "Random", exact: true });
+  await expect(primary).toHaveCSS("background-color", "rgb(166, 227, 161)");
+  await expect(primary).toHaveCSS("color", "rgb(25, 34, 21)");
+  await expect(selected).toHaveCSS("background-color", "rgb(166, 227, 161)");
+  await expect(selected).toHaveCSS("border-top-color", "rgb(49, 91, 53)");
+  await page.getByLabel("Guest name").focus();
+  await expect(page.getByLabel("Guest name")).toHaveCSS("outline-color", "rgb(49, 91, 53)");
+  await page.screenshot({ path: info.outputPath("light-lobby.png"), fullPage: true });
   await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
     "href",
     /\/projects\/3d-chess\/?$/,
   );
   await page.getByRole("button", { name: "Toggle theme", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(primary).toHaveCSS("background-color", "rgb(166, 227, 161)");
+  await expect(primary).toHaveCSS("color", "rgb(25, 34, 21)");
+  await expect(selected).toHaveCSS("border-top-color", "rgb(166, 227, 161)");
   await page.getByRole("button", { name: "Start local practice" }).click();
   await expect(page.locator(".chess-level-label")).toHaveCount(3);
+  await expect(page.getByRole("heading", { name: "gg³", exact: true })).toBeVisible();
   await page.screenshot({ path: info.outputPath("dark-board.png"), fullPage: true });
   await page.getByRole("link", { name: "Rules", exact: true }).click();
-  await expect(page).toHaveTitle(/3D Chess rules/);
+  await expect(page).toHaveTitle(/gg³ rules/);
+  await expect(page.getByRole("heading", { name: "gg³ — Rules", exact: true })).toBeVisible();
+  const rulesLink = page.locator(".chess-rules > a");
+  await expect(rulesLink).toHaveCSS("color", "rgb(166, 227, 161)");
+  await page.getByRole("button", { name: "Toggle theme", exact: true }).click();
+  await expect(rulesLink).toHaveCSS("color", "rgb(49, 91, 53)");
+  await page.getByRole("button", { name: "Toggle theme", exact: true }).click();
   await expect(page.locator("link[rel='canonical']")).toHaveAttribute(
     "href",
     /\/projects\/3d-chess\/rules\/?$/,

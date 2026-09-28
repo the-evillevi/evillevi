@@ -5,8 +5,9 @@
   --chess-text: #292d26;
   --chess-muted: #63695d;
   --chess-line: #d1d3c8;
-  --chess-accent: #4d7138;
-  --chess-button: #fff;
+  --chess-accent: #a6e3a1;
+  --chess-accent-ink: #315b35;
+  --chess-button: #192215;
   background: var(--chess-bg);
   color: var(--chess-text);
   font-family: "Geist Variable", sans-serif;
@@ -20,8 +21,7 @@ html[data-theme="dark"] .chess-shell {
   --chess-text: #eceee5;
   --chess-muted: #b2b8a9;
   --chess-line: #454b3f;
-  --chess-accent: #91b465;
-  --chess-button: #192215;
+  --chess-accent-ink: #a6e3a1;
 }
 .chess-shell *,
 .chess-shell *::before,
@@ -53,8 +53,10 @@ html[data-theme="dark"] .chess-shell {
   cursor: not-allowed;
 }
 .chess-shell button[aria-pressed="true"] {
-  border-color: var(--chess-accent);
-  box-shadow: inset 0 0 0 1px var(--chess-accent);
+  background: var(--chess-accent);
+  color: var(--chess-button);
+  border-color: var(--chess-accent-ink);
+  box-shadow: inset 0 0 0 1px var(--chess-accent-ink);
 }
 .chess-shell .chess-primary {
   background: var(--chess-accent);
@@ -62,7 +64,7 @@ html[data-theme="dark"] .chess-shell {
   border-color: transparent;
 }
 .chess-shell :focus-visible {
-  outline: 3px solid var(--chess-accent);
+  outline: 3px solid var(--chess-accent-ink);
   outline-offset: 3px;
 }
 .chess-site-header {
@@ -126,7 +128,7 @@ html[data-theme="dark"] .chess-shell {
 }
 .chess-eyebrow {
   font-size: 0.7rem;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.14em;
   color: var(--chess-muted);
   margin-bottom: 0.35rem;
@@ -378,7 +380,7 @@ html[data-theme="dark"] .chess-shell {
   padding-left: 1.5rem;
 }
 .chess-rules a {
-  color: var(--chess-accent);
+  color: var(--chess-accent-ink);
   text-decoration: underline;
 }
 .chess-rules table {
