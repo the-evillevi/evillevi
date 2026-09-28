@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { LEVELS, describeSquare } from "@/lib/chess/notation";
 import type { BoardProps } from "./Board3D";
 const GLYPHS = {
   white: { pawn: "♙", knight: "♘", bishop: "♗", rook: "♖", queen: "♕", king: "♔" },
@@ -32,9 +33,19 @@ export function Board2D(props: BoardProps) {
       }}
     >
       {levels.map((level, boardIndex) => (
-        <section className="chess-flat-level" key={level} aria-label={`Level ${level + 1}`}>
-          <h3>Level {level + 1}</h3>
-          <div className="chess-text-board" role="group" aria-label={`Level ${level + 1} squares`}>
+        <section
+          className="chess-flat-level"
+          key={level}
+          aria-label={`${LEVELS[level].name}, ${LEVELS[level].position.toLowerCase()} level`}
+        >
+          <h3>
+            {LEVELS[level].symbol} · {LEVELS[level].position}
+          </h3>
+          <div
+            className="chess-text-board"
+            role="group"
+            aria-label={`${LEVELS[level].name} level squares`}
+          >
             {Array.from({ length: 64 }, (_, i) => {
               const f = props.orientation === "white" ? i % 8 : 7 - (i % 8);
               const r = props.orientation === "white" ? 7 - Math.floor(i / 8) : Math.floor(i / 8);
@@ -62,7 +73,7 @@ export function Board2D(props: BoardProps) {
                   tabIndex={Math.min(focus, levels.length * 64 - 1) === index ? 0 : -1}
                   onFocus={() => setFocus(index)}
                   onClick={() => props.onSelect(sq)}
-                  aria-label={`${sq}: ${piece ? `${piece.color} ${piece.type}` : "empty"}${target ? (capture ? ", legal capture" : ", legal destination") : ""}${props.selected === sq ? ", selected source" : ""}${props.pending === sq ? ", selected destination" : ""}${props.checked === sq ? ", check" : ""}${last ? ", last move" : ""}`}
+                  aria-label={`${describeSquare(sq)}: ${piece ? `${piece.color} ${piece.type}` : "empty"}${target ? (capture ? ", legal capture" : ", legal destination") : ""}${props.selected === sq ? ", selected source" : ""}${props.pending === sq ? ", selected destination" : ""}${props.checked === sq ? ", check" : ""}${last ? ", last move" : ""}`}
                 >
                   {i % 8 === 0 && <small className="rank">{r + 1}</small>}
                   {i >= 56 && <small className="file">{String.fromCharCode(97 + f)}</small>}

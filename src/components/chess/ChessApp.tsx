@@ -3,7 +3,6 @@ import {
   applyMove,
   initialState,
   legalMoves,
-  notation,
   opposite,
   parseState,
   status,
@@ -12,6 +11,7 @@ import {
   type Ruleset,
   type State,
 } from "@/lib/chess/engine";
+import { LEVELS, formatSquare, formatMove, formatHistory } from "@/lib/chess/notation";
 import type { ColorPreference } from "@/lib/chess/protocol";
 import { clockText, guestName, remaining, timeLabel } from "@/lib/chess/timing";
 import { Board3D } from "./Board3D";
@@ -55,9 +55,14 @@ export function ChessApp() {
     : null;
   const state = game?.position ?? practice.position,
     orientation = viewSide ?? playerSide ?? practice.orientation;
-  const history = online.gameId
-    ? (online.snapshot?.moves.map((m) => m.move) ?? [])
-    : practice.history;
+  const history = useMemo(
+    () => (online.gameId ? (online.snapshot?.moves.map((m) => m.move) ?? []) : practice.history),
+    [online.gameId, online.snapshot?.moves, practice.history],
+  );
+  const historyLabels = useMemo(
+    () => formatHistory(initialState(state.ruleset), history),
+    [state.ruleset, history],
+  );
   const outcome = game?.result ?? state.outcome;
   const clear = () => {
     setSelected("");
@@ -78,6 +83,14 @@ export function ChessApp() {
   }, [positionKey, game?.status]);
   const currentStatus = useMemo(() => status(state), [state]);
   const moves = useMemo(() => legalMoves(state, selected), [state, selected]);
+  const moveLabels = useMemo(
+    () => new Map(moves.map((m) => [JSON.stringify(m), formatMove(state, m)])),
+    [state, moves],
+  );
+  const pendingLabel =
+    pending && (!pending.promotion || promotion)
+      ? moveLabels.get(JSON.stringify(pending.promotion ? { ...pending, promotion } : pending))
+      : undefined;
   const movable = useMemo(
     () => state.pieces.filter((p) => p.color === state.turn && legalMoves(state, p.square).length),
     [state],
@@ -397,8 +410,17 @@ export function ChessApp() {
             <div className="chess-toolbar">
               <div aria-label="Visible levels">
                 {[null, 0, 1, 2].map((l) => (
-                  <button key={String(l)} aria-pressed={level === l} onClick={() => setLevel(l)}>
-                    {l === null ? "All levels" : `Level ${l + 1}`}
+                  <button
+                    key={String(l)}
+                    title={
+                      l === null
+                        ? "All levels"
+                        : `${LEVELS[l].name}, ${LEVELS[l].position.toLowerCase()} level`
+                    }
+                    aria-pressed={level === l}
+                    onClick={() => setLevel(l)}
+                  >
+                    {l === null ? "All levels" : `${LEVELS[l].symbol} · ${LEVELS[l].position}`}
                     {selected && (
                       <small>
                         {" "}
@@ -524,7 +546,7 @@ export function ChessApp() {
                     <option value="">Choose a piece</option>
                     {movable.map((p) => (
                       <option key={p.id} value={p.square}>
-                        {label(p.type)} · {p.square}
+                        {label(p.type)} · {formatSquare(p.square)}
                       </option>
                     ))}
                   </select>
@@ -542,7 +564,9 @@ export function ChessApp() {
                       .filter((m, i, a) => a.findIndex((n) => n.to === m.to) === i)
                       .map((m) => (
                         <option key={JSON.stringify(m)} value={JSON.stringify(m)}>
-                          {m.from} → {m.to}
+                          {m.promotion
+                            ? moveLabels.get(JSON.stringify(m))?.replace(/=[QRBN][+#]?$/, "=…")
+                            : moveLabels.get(JSON.stringify(m))}
                         </option>
                       ))}
                   </select>
@@ -579,7 +603,7 @@ export function ChessApp() {
                   disabled={!pending || !canPlay || Boolean(pending.promotion && !promotion)}
                   onClick={commit}
                 >
-                  Confirm move
+                  Confirm {pendingLabel ?? "move"}
                 </button>
                 {pending && (
                   <button className="chess-wide" onClick={clear}>
@@ -660,13 +684,13 @@ export function ChessApp() {
                 {state.ply > 0 && state.ply <= 2 ? "move" : "moves"}
               </h2>
               <ol className="chess-history">
-                {history.map((m, i) => (
+                {historyLabels.map((text, i) => (
                   <li key={i}>
                     <span>
                       {Math.floor(i / 2) + 1}
                       {i % 2 ? "…" : "."}
                     </span>
-                    <span>{notation(m)}</span>
+                    <span>{text}</span>
                   </li>
                 ))}
               </ol>

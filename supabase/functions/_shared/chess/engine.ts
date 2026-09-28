@@ -180,6 +180,3 @@ export function applyMove(state: State, move: Move): State {
   next.outcome = status(next).outcome;
   return next;
 }
-export function notation(move: Move): string {
-  return `${move.castle ? (move.castle === "king" ? "O-O " : "O-O-O ") : ""}${move.from} → ${move.to}${move.promotion ? ` = ${move.promotion}` : ""}`;
-}
