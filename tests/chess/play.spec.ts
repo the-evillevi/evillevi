@@ -52,7 +52,7 @@ async function move(page: Page, from: string, to: string) {
   const candidate = options.find((o) => o.value && JSON.parse(o.value).to === to);
   expect(candidate, `Legal move ${from} → ${to}`).toBeDefined();
   await page.getByLabel("Destination / promotion").selectOption(candidate!.value);
-  await page.getByRole("button", { name: "Confirm move", exact: true }).click();
+  await page.getByRole("button", { name: /^Confirm / }).click();
 }
 test("local Strato, restored history, Chess³ and 3D rendering", async ({ page }, info) => {
   const errors: string[] = [];
@@ -64,8 +64,10 @@ test("local Strato, restored history, Chess³ and 3D rendering", async ({ page }
   await page.screenshot({ path: info.outputPath("three-level-board.png"), fullPage: true });
   await move(page, "1e2", "2e3");
   await expect(page.locator(".chess-status")).toHaveText("Black to move");
+  await expect(page.locator(".chess-history li").first()).toContainText("e3β");
   await page.reload();
   await expect(page.locator(".chess-history li")).toHaveCount(1);
+  await expect(page.locator(".chess-history li").first()).toContainText("e3β");
   await move(page, "3e7", "2e6");
   await expect(page.locator(".chess-history li")).toHaveCount(2);
   await page.getByRole("button", { name: "Resign", exact: true }).click();
@@ -177,6 +179,9 @@ for (const variant of ["strato", "chess3"])
     await b.setOffline(false);
     await friend.reload();
     await expect(friend.locator(".chess-history li")).toHaveCount(2);
+    await expect(friend.locator(".chess-history li").first()).toContainText(
+      variant === "strato" ? "e3β" : "e4α",
+    );
     await creator.reload();
     await expect(creator.locator(".chess-history li")).toHaveCount(2);
     // UI-only positions exercise rare promotion/capture/check states; engine legality is tested separately.
@@ -205,18 +210,21 @@ for (const variant of ["strato", "chess3"])
     await friend.getByRole("button", { name: "2D", exact: true }).click();
     await friend.getByRole("button", { name: /^All levels/ }).click();
     await friend.locator('[data-square="2a4"]').click();
+    await expect(friend.getByRole("option", { name: "Rxd4β", exact: true })).toHaveCount(1);
     await expect(friend.locator('[data-square="2d4"] .chess-capture')).toHaveCount(1);
     await expect(friend.locator('[data-square="2b4"] .chess-dot')).toHaveCount(1);
     await friend.locator('[data-square="2e7"]').click();
     await friend.locator('[data-square="2e8"]').click();
-    await expect(friend.getByRole("button", { name: "Confirm move", exact: true })).toBeDisabled();
+    await expect(friend.getByRole("option", { name: "e8β=…", exact: true })).toHaveCount(1);
+    await expect(friend.getByRole("button", { name: /^Confirm / })).toBeDisabled();
     expect(await friend.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(
       true,
     );
     for (const type of ["Queen", "Rook", "Bishop", "Knight"]) {
       await friend.getByRole("radio", { name: new RegExp(type) }).check();
-      await expect(friend.getByRole("button", { name: "Confirm move", exact: true })).toBeEnabled();
+      await expect(friend.getByRole("button", { name: /^Confirm / })).toBeEnabled();
     }
+    await expect(friend.getByRole("button", { name: "Confirm e8β=N", exact: true })).toBeEnabled();
     fixture = position(variant as Ruleset, [piece("rook", "1h4", "black")]);
     await friend.getByRole("button", { name: "Reconnect / refresh" }).click();
     await expect(friend.locator('[data-square="1h1"]')).toHaveAttribute("data-check", "true");
@@ -283,18 +291,26 @@ test("unified board feedback, cross-level selection, keyboard, reset and desktop
   await page.getByRole("button", { name: "White", exact: true }).click();
   await page.getByRole("button", { name: "Start local practice" }).click();
   await expect(page.locator(".chess-level-label")).toHaveCount(3);
+  await expect(page.locator(".chess-level-label")).toHaveText(["α", "β", "γ"]);
   expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight)).toBe(
     true,
   );
   await page.getByRole("button", { name: "2D", exact: true }).click();
   await expect(page.locator(".chess-flat-level")).toHaveCount(3);
+  await expect(page.locator(".chess-flat-level h3")).toHaveText([
+    "α · Bottom",
+    "β · Middle",
+    "γ · Top",
+  ]);
   const source = page.locator('[data-square="1e2"]');
+  await expect(source).toHaveAccessibleName("e2, Alpha, bottom level: white pawn");
   await source.click();
   await expect(source).toHaveAttribute("data-selected", "true");
-  await page.getByRole("button", { name: /^Level 2/ }).click();
+  await page.getByRole("button", { name: /^β · Middle/ }).click();
   await expect(page.getByLabel("Piece", { exact: true })).toHaveValue("1e2");
   const dest = page.locator('[data-square="2e3"]');
   await dest.click();
+  await expect(page.getByRole("button", { name: "Confirm e3β", exact: true })).toBeEnabled();
   await expect(dest).toHaveAttribute("data-pending", "true");
   await page.getByRole("button", { name: "3D", exact: true }).click();
   await expect(page.getByRole("button", { name: "3D", exact: true })).toHaveAttribute(
@@ -308,7 +324,7 @@ test("unified board feedback, cross-level selection, keyboard, reset and desktop
   await expect(dest).toHaveAttribute("data-pending", "true");
   await page.getByRole("button", { name: /^All levels/ }).click();
   await expect(source).toHaveAttribute("data-selected", "true");
-  await page.getByRole("button", { name: "Confirm move", exact: true }).click();
+  await page.getByRole("button", { name: /^Confirm / }).click();
   await expect(source).toHaveAttribute("data-last", "true");
   await expect(dest).toHaveAttribute("data-last", "true");
   await expect(page.locator('[data-selected="true"]')).toHaveCount(0);

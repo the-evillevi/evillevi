@@ -2,6 +2,7 @@ import { Component, Suspense, useEffect, useMemo, useState, type ReactNode } fro
 import { Canvas, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { Shape, Vector2, type PerspectiveCamera } from "three";
+import { LEVELS, describeSquare } from "@/lib/chess/notation";
 import { coordinate, type Color, type Piece, type State } from "@/lib/chess/engine";
 
 class BoardBoundary extends Component<
@@ -266,7 +267,7 @@ export function Board3D(props: BoardProps) {
       className="chess-three-viewport"
       tabIndex={0}
       role="group"
-      aria-label={`3D board keyboard navigation: ${keyboardSquare}. Arrow keys move, Enter or Space selects, Escape cancels. Page Up and Page Down change level in All levels view.`}
+      aria-label={`3D board keyboard navigation: ${describeSquare(keyboardSquare)}. Arrow keys move, Enter or Space selects, Escape cancels. Page Up and Page Down change level in All levels view.`}
       onFocus={() => setKeyboardFocus(true)}
       onBlur={() => setKeyboardFocus(false)}
       onKeyDown={(e) => {
@@ -424,7 +425,12 @@ export function Board3D(props: BoardProps) {
                     );
                   })}
                   <Html position={[-4.6, l * 3.65, 4.3]} center style={{ pointerEvents: "none" }}>
-                    <span className="chess-level-label">{l + 1}</span>
+                    <span
+                      className="chess-level-label"
+                      aria-label={`${LEVELS[l].name}, ${LEVELS[l].position.toLowerCase()} level`}
+                    >
+                      {LEVELS[l].symbol}
+                    </span>
                   </Html>
                   {Array.from({ length: 8 }, (_, i) => (
                     <Html

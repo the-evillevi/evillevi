@@ -11,6 +11,25 @@ These explanations are written for this application. The conventions below are n
 
 Coordinates consist of level, file and rank: `2e4` means middle level, file e, rank 4. Levels are 1 (bottom), 2 (middle), 3 (top). All boards have identical orientation, with a1 dark. White advances toward rank 8; Black toward rank 1. White moves first, irrespective of the creator's chosen color.
 
+### Algebraic move notation
+
+The interface uses algebraic notation with a Greek suffix on each destination: **α** is bottom (stored level 1), **β** is middle (2), and **γ** is top (3). Thus the stored coordinate `2e4` displays as `e4β`. Numeric coordinates in the technical examples below and in saved games remain unchanged. This is an application-specific 3D extension, not standard SAN or a claim of PGN compatibility.
+
+| Notation | Meaning |
+| --- | --- |
+| `e3β` | Pawn to e3 on the middle level |
+| `Nf3α` | Knight to f3 on the bottom level |
+| `Bxe5γ+` | Bishop captures on e5, top level, giving check |
+| `e8γ=Q` | Pawn promotes to queen on the top level |
+| `exd8β=N` | Pawn from the e-file captures on d8, middle level, and promotes to knight |
+| `O-Oβ` | Kingside castling ending on the middle level, including Strato's joint transfer |
+
+Pieces use `K/Q/R/B/N`; pawns have no piece letter. Captures use `x`, including en passant. Pawn captures always include the origin file, even for Chess³ captures that keep the same file while changing levels. Promotion uses `=Q`, `=R`, `=B` or `=N` after the destination level. Castling uses `O-O` or `O-O-O` followed by the final level. Check appends `+`; checkmate appends `#`. Stalemate, timeout, resignation and agreed draws do not add a mate symbol.
+
+When multiple pieces of the same type can legally reach the same full destination, add the first origin qualifier that distinguishes the move: file, rank, file+rank, level, file+level, rank+level, then file+rank+level. Pinned pieces and other illegal alternatives do not count. Examples include `Nbd2α`, `N1d2α`, `Nb1d2α` and `Nαc3β` (the knight from the bottom level). Pawn captures retain their mandatory file and try file+rank, file+level, then the full origin. Quiet pawns can also need qualifiers in 3D: `αe4β` distinguishes a pawn arriving from the bottom level from `γe4β` arriving from the top.
+
+The formatter uses the position before each move and the resulting position. History is replayed under the saved ruleset to recover this context, so older games receive the same display without a database migration or a movement-rules version change. Promotion destinations show `=…` until a piece is chosen; the confirmation button then shows the complete notation for that choice.
+
 ```text
 3  Black: a8 R N B Q K B N R h8; pawns a7–h7
 2  Empty
