@@ -1,4 +1,4 @@
-# 3D Chess: development and deployment
+# gg³: development and deployment
 
 The static garden hosts `/projects/3d-chess/`; Supabase runs authentication, private game storage, Realtime and four authoritative Edge Functions. Local practice works without configuration. Local development and production release steps are documented separately below.
 
