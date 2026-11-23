@@ -34,7 +34,8 @@ jobs:
           echo "CHESS_FUNCTIONS_PID=$!" >> "$GITHUB_ENV"
       - run: pnpm test:chess:integration
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec playwright test
+      # The legacy project (pnpm test:legacy) compares macOS screenshots and runs locally.
+      - run: pnpm exec playwright test --project chess
         env:
           CHESS_ONLINE_TESTS: "1"
       - run: pnpm build

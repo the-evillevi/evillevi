@@ -60,7 +60,7 @@ async function createPreview(slug: string) {
     const content = html.querySelector("#content") ?? html.querySelector("main") ?? html.body;
     const clone = content.cloneNode(true) as HTMLElement;
     clone.querySelectorAll("aside, nav, script, style").forEach((node) => node.remove());
-    clone.className = "nb-prose text-sm";
+    clone.className = "evil-prose text-sm";
     container.appendChild(clone);
   } catch {
     const fallback = document.createElement("p");

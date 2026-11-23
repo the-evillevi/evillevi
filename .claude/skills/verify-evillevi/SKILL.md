@@ -5,7 +5,7 @@ description: Drive the evillevi digital garden (Astro site at evillevi.pages.dev
 
 # Verify evillevi
 
-The site is an Astro 6 static site with React islands, Tailwind v4 and the `--nb-*` neobrutalist theme. A visitor reads pages, toggles light/dark, searches from the header, steps through the `/projects` deck, and plays gg³ at `/projects/3d-chess/`. This skill runs the real dev server on its own port and drives it with Playwright in system Chrome. All commands run from the repository root.
+The site is an Astro 6 static site with React islands, Tailwind v4 and the Evil Labs visual system (the Karma and gg³ POCs keep the legacy `--nb-*` theme). A visitor reads pages, picks a color mode, searches from the header, steps through the `/projects` deck, and plays gg³ at `/projects/3d-chess/`. This skill runs the real dev server on its own port and drives it with Playwright in system Chrome. All commands run from the repository root.
 
 ## Launch
 
@@ -13,7 +13,7 @@ The site is an Astro 6 static site with React islands, Tailwind v4 and the `--nb
 .claude/skills/verify-evillevi/scripts/launch.sh [port]   # default 4471
 ```
 
-It refuses a busy port, so two agents can run side by side on different ports. Never use 4321, which is the user's own `pnpm dev`. It installs dependencies only if `node_modules` is missing. It starts `astro dev --host 127.0.0.1 --port <port>` with `CHESS_BROWSER_TEST=1`, which hides the Astro dev toolbar from screenshots. It waits until the home page HTML contains "Featured Projects", since the first request compiles the page. Then it visits the main pages in a headless browser, repeating until Vite stops optimizing new dependencies. With a cold Vite cache, Vite reloads the page the first time it sees a dependency such as the search library, and that reload would break a journey mid-step. Ready prints `ready http://127.0.0.1:<port> pid <pid>`. The pid and `server.log` live in `.verify/instance-<port>/`.
+It refuses a busy port, so two agents can run side by side on different ports. Never use 4321, which is the user's own `pnpm dev`. It installs dependencies only if `node_modules` is missing. It starts `astro dev --host 127.0.0.1 --port <port>` with `CHESS_BROWSER_TEST=1`, which hides the Astro dev toolbar from screenshots. It waits until the home page HTML contains "Featured projects", since the first request compiles the page. Then it visits the main pages in a headless browser, repeating until Vite stops optimizing new dependencies. With a cold Vite cache, Vite reloads the page the first time it sees a dependency such as the search library, and that reload would break a journey mid-step. Ready prints `ready http://127.0.0.1:<port> pid <pid>`. The pid and `server.log` live in `.verify/instance-<port>/`.
 
 Every journey below runs without a `.env`. Online gg³ matches need the isolated local Supabase stack from `docs/chess-deployment.md` ("Local stack"): Docker, the Supabase CLI, `supabase start`, `supabase migration up --local`, `node scripts/chess-local-env.mjs` (writes the ignored `.env.local`) and `supabase functions serve --env-file .env.chess-test.local`. Start the stack before `launch.sh`, because the public variables are read when the dev server starts.
 
@@ -31,13 +31,14 @@ It's read-only. It checks that our pid is alive, that the port's listener is our
 node .claude/skills/verify-evillevi/scripts/drive.mjs <journey> [--port 4471] [--width 1440] [--theme light|dark] [--route /path/] [--out dir]
 ```
 
-| Journey          | Proves                                                                                                                                                                                          |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home-theme`     | Home renders its project cards. The nav's "Toggle theme" button switches `html[data-theme]` from light to dark, stores `nb-theme` in localStorage, and dark survives a reload.                  |
-| `search`         | "Open search" opens the sheet. Typing fetches `/contentIndex.json` and returns highlighted results, and the first result navigates to its page.                                                 |
-| `projects-deck`  | The reveal.js deck opens on "Selected Work". Right arrow goes to the first project, down goes to its deep dive (`N / 2`), and Escape opens the overview.                                        |
-| `chess-practice` | The gg³ lobby loads, and "Start local practice" mounts the WebGL board with three level labels.                                                                                                 |
-| `page`           | Any `--route` at any `--width`. It checks for a 200, no console errors, no horizontal page scroll, and no failed same-origin requests. Use it for layout sweeps, e.g. `--width 375` for phones. |
+| Journey          | Proves                                                                                                                                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home-theme`     | Home renders its project cards. The header's "Color mode" control (System, Light, Dark) sets `html[data-evil-mode]`, stores `evil-mode`, survives a reload, and bridges to the legacy `nb-theme` so Karma opens in the same mode.                                                                  |
+| `search`         | "Open search" opens the sheet. Typing fetches `/contentIndex.json` and returns highlighted results, and the first result navigates to its page.                                                                                                                                                    |
+| `projects-deck`  | The reveal.js deck opens on "Selected Work". Right arrow goes to the first project, down goes to its deep dive (`N / 2`), and Escape opens the overview.                                                                                                                                           |
+| `chess-practice` | The gg³ lobby loads, and "Start local practice" mounts the WebGL board with three level labels.                                                                                                                                                                                                    |
+| `evil-showcase`  | The Evil Labs showcase at `/design-system/evil-labs/` renders its component cards in Montserrat. The System/Light/Dark control sets `html[data-evil-mode]` and `.dark`, stores `evil-mode` and survives a reload. The dialog and sheet open with the card frame, and the three voxel friends draw. |
+| `page`           | Any `--route` at any `--width`. It checks for a 200, no console errors, no horizontal page scroll, and no failed same-origin requests. Use it for layout sweeps, e.g. `--width 375` for phones.                                                                                                    |
 
 Each check prints `PASS` or `FAIL`, and the last line is `result: PASS|FAIL <evidence dir>`. The exit code is 1 on failure, and the journey stops at its first failed check. The feature map in `features/` has the selectors and the user path for each journey. Add a journey to `drive.mjs` when you map a new feature.
 

@@ -53,7 +53,7 @@ export function TasksPanel() {
           <SheetDescription>Select a task to receive completed focus sessions.</SheetDescription>
         </SheetHeader>
         <div className="mt-5 space-y-4">
-          <div className="grid gap-3 rounded-none border-2 border-[var(--nb-ink)] p-3">
+          <div className="rounded-control border-border grid gap-3 border-2 p-3">
             <Input
               placeholder="Task title"
               value={draft.title}
@@ -93,9 +93,8 @@ export function TasksPanel() {
               <div
                 key={task.id}
                 className={cn(
-                  "rounded-none border-2 border-[var(--nb-ink)] p-3",
-                  activeTaskId === task.id &&
-                    "bg-[var(--nb-surface)] shadow-[3px_3px_0_0_var(--nb-ink)]",
+                  "rounded-control border-border border-2 p-3",
+                  activeTaskId === task.id && "bg-surface shadow-card",
                 )}
               >
                 <div className="flex items-start justify-between gap-3">

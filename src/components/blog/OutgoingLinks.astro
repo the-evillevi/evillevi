@@ -8,16 +8,16 @@ interface Props {
 const { links } = Astro.props;
 ---
 
-<section class="nb-panel p-4">
-  <h2 class="mb-3 text-sm font-black uppercase">Outgoing Links ({links.length})</h2>
+<section class="evil-panel p-4">
+  <h2 class="evil-label mb-3">Outgoing links ({links.length})</h2>
   <ul class="grid gap-2">
     {
       links.map((link, index) => (
-        <li class="flex items-center gap-3 border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3">
-          <span class="grid size-7 place-items-center border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] text-xs font-black text-[var(--nb-button-text)]">
+        <li class="rounded-control border-border bg-surface flex items-center gap-3 border-2 p-3">
+          <span class="bg-primary text-primary-foreground grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold">
             {index + 1}
           </span>
-          <a class="font-black uppercase" href={link.url}>
+          <a class="font-bold hover:underline hover:underline-offset-4" href={link.url}>
             {link.title}
           </a>
         </li>

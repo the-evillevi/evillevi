@@ -4,6 +4,7 @@ export default defineConfig({
     include: [
       "src/lib/chess/**/*.test.ts",
       "src/lib/supabase/**/*.test.ts",
+      "src/lib/evil-labs/**/*.test.ts",
       "scripts/chess-*.test.mjs",
     ],
     environment: "node",

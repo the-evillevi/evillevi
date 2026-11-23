@@ -72,7 +72,12 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
   const width = canvas.clientWidth || 320;
   const height = canvas.clientHeight || 224;
   const color = (group: string) =>
-    group === "docs" ? "var(--nb-teal)" : group === "tag" ? "var(--nb-yellow)" : "var(--nb-peach)";
+    // Node type is data, so it uses the Evil Labs chart series (legend in GraphView.astro).
+    group === "docs"
+      ? "var(--evil-color-chart-2)"
+      : group === "tag"
+        ? "var(--evil-color-chart-3)"
+        : "var(--evil-color-chart-1)";
 
   const svg = d3
     .select(canvas)
@@ -100,8 +105,9 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
     .selectAll("line")
     .data(links)
     .join("line")
-    .attr("stroke", "var(--nb-ink)")
-    .attr("stroke-width", 2);
+    .attr("stroke", "var(--evil-color-border)")
+    .attr("stroke-opacity", 0.5)
+    .attr("stroke-width", 1.5);
 
   const node = svg
     .append("g")
@@ -136,8 +142,8 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
     .append("circle")
     .attr("r", (datum) => (datum.id === currentSlug ? 9 : 6))
     .attr("fill", (datum) => color(datum.group))
-    .attr("stroke", "var(--nb-ink)")
-    .attr("stroke-width", 3);
+    .attr("stroke", "var(--evil-color-border)")
+    .attr("stroke-width", 2);
 
   // Labels only in local mode — the global graph is too dense for a 288px
   // panel; its native <title> tooltips still expose every title on hover.
@@ -145,16 +151,16 @@ function renderGraph(root: HTMLElement, data: ContentIndex, global = false) {
     node
       .append("text")
       .text((datum) => {
-        const label = datum.title.toUpperCase();
+        const label = datum.title;
         return label.length > 18 ? `${label.slice(0, 17)}…` : label;
       })
       .attr("dy", (datum) => (datum.id === currentSlug ? 21 : 18))
       .attr("text-anchor", "middle")
-      .attr("fill", "var(--nb-text)")
-      .attr("font-size", 9)
-      .attr("font-weight", 900)
+      .attr("fill", "var(--evil-color-text)")
+      .attr("font-size", 10)
+      .attr("font-weight", 700)
       .attr("paint-order", "stroke")
-      .attr("stroke", "var(--nb-base)")
+      .attr("stroke", "var(--evil-color-background)")
       .attr("stroke-width", 3)
       .attr("stroke-linejoin", "round")
       .style("pointer-events", "none");

@@ -13,7 +13,7 @@ The "Search" button in the header opens a right-side sheet. Typing fuzzy-searche
 
 ## How to get to it (user POV)
 
-- Choose "Search" (accessible name "Open search") in the header on any site-layout page.
+- Choose "Search" (accessible name "Open search") in the header on any garden page. The garden uses `components/garden/SearchSheet.astro`; the Karma POC keeps the legacy `blog/SearchSheet.astro`. Both share `scripts/search.ts`, which takes a class map.
 
 ## Driving it with drive.mjs
 

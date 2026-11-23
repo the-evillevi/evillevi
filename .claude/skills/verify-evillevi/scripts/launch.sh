@@ -20,7 +20,7 @@ CHESS_BROWSER_TEST=1 nohup ./node_modules/.bin/astro dev --host 127.0.0.1 --port
 echo $! >"$STATE/pid"
 # Ready means usable: the first request compiles the home page, so wait for its real content.
 if ! curl -fsS --retry 90 --retry-delay 1 --retry-connrefused --retry-all-errors \
-  "http://127.0.0.1:$PORT/" 2>/dev/null | grep -q "Featured Projects"; then
+  "http://127.0.0.1:$PORT/" 2>/dev/null | grep -qi "Featured projects"; then
   echo "not ready after 90s. Last server log lines:"
   tail -20 "$STATE/server.log"
   exit 1

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Drive the evillevi site in a real browser and write evidence.
 // Usage: node .claude/skills/verify-evillevi/scripts/drive.mjs <journey> [options]
-//   journeys: home-theme | search | projects-deck | chess-practice | page | warm (launch.sh runs warm)
+//   journeys: home-theme | search | projects-deck | chess-practice | evil-showcase | page | warm (launch.sh runs warm)
 //   --port 4471        dev server launched by launch.sh
 //   --route /blog/     page journey only: the route to check
 //   --width 1440       viewport width (height follows: 1050, or 844 below 600px wide)
@@ -59,30 +59,66 @@ async function shot(page, label, fullPage = true) {
   await page.screenshot({ path: file, fullPage });
   return file;
 }
-const theme = (page) => page.evaluate(() => document.documentElement.dataset.theme);
+// The garden's color mode: html[data-evil-mode] (absent = System) and the .dark class kept in step.
+const mode = (page) =>
+  page.evaluate(() => ({
+    mode: document.documentElement.dataset.evilMode ?? "system",
+    dark: document.documentElement.classList.contains("dark"),
+  }));
 
 const journeys = {
-  // Home renders, theme toggle switches light to dark, the choice persists across a reload.
+  // Home renders; the System/Light/Dark control sets the mode, persists it, and the
+  // legacy portfolio pages (Karma) open in the same mode through the nb-theme bridge.
   async "home-theme"(page) {
     const res = await page.goto(`${base}/`);
     record("home responds 200", res.status() === 200, String(res.status()));
-    await page.getByRole("heading", { name: "Featured Projects" }).waitFor();
+    await page.getByRole("heading", { name: "Featured projects" }).waitFor();
     const cards = await page
-      .locator("article", { has: page.getByRole("link", { name: "View Live Demo" }) })
+      .locator("article", { has: page.getByRole("link", { name: "View live demo" }) })
       .count();
     record("home shows project cards", cards > 0, `${cards} cards`);
-    record("starts in light theme", (await theme(page)) === "light", await theme(page));
-    await shot(page, "home-light");
-    await page
+    const start = await mode(page);
+    record(
+      "starts on System, following the OS",
+      start.mode === "system" && start.dark === (opt.theme === "dark"),
+      JSON.stringify(start),
+    );
+    await shot(page, "home-system");
+    const control = page
       .getByRole("navigation", { name: "Primary navigation" })
-      .getByRole("button", { name: "Toggle theme" })
-      .click();
-    record("toggle switches to dark", (await theme(page)) === "dark", await theme(page));
-    const saved = await page.evaluate(() => localStorage.getItem("nb-theme"));
-    record("choice saved to localStorage nb-theme", saved === "dark", String(saved));
+      .getByRole("radiogroup", { name: "Color mode" });
+    await control.getByRole("radio", { name: "Dark" }).click();
+    const dark = await mode(page);
+    record(
+      "Dark sets data-evil-mode and .dark",
+      dark.mode === "dark" && dark.dark,
+      JSON.stringify(dark),
+    );
+    const saved = await page.evaluate(() => [
+      localStorage.getItem("evil-mode"),
+      localStorage.getItem("nb-theme"),
+    ]);
+    record(
+      "choice saved as evil-mode, bridged to nb-theme",
+      saved[0] === "dark" && saved[1] === "dark",
+      saved.join(", "),
+    );
     await page.reload();
-    record("dark theme survives reload", (await theme(page)) === "dark", await theme(page));
+    record("dark survives reload", (await mode(page)).mode === "dark");
     await shot(page, "home-dark-after-reload");
+    await page.goto(`${base}/projects/karma/`);
+    const karma = await page.evaluate(() => document.documentElement.dataset.theme);
+    record("the Karma POC opens in the same mode", karma === "dark", String(karma));
+    await page.goto(`${base}/`);
+    await control.getByRole("radio", { name: "Light" }).click();
+    const light = await mode(page);
+    record(
+      "Light sets data-evil-mode",
+      light.mode === "light" && !light.dark,
+      JSON.stringify(light),
+    );
+    await control.getByRole("radio", { name: "System" }).click();
+    record("System removes data-evil-mode", (await mode(page)).mode === "system");
   },
 
   // Header search opens, loads the content index, finds a post, and the result navigates.
@@ -200,6 +236,95 @@ const journeys = {
     await page.locator(".chess-level-label").first().waitFor();
     await page.waitForLoadState("networkidle");
     record("warm-up visited the main pages", true);
+  },
+
+  // Evil Labs showcase: components render in the Evil Labs scope, the 3-way mode control
+  // switches and persists, overlays wear the card frame, and the three voxel friends draw.
+  async "evil-showcase"(page) {
+    const res = await page.goto(`${base}/design-system/evil-labs/`, { waitUntil: "networkidle" });
+    record("showcase responds 200", res.status() === 200, String(res.status()));
+    const cards = await page.locator("#components article.evil-card[id]").count();
+    record("component cards render", cards >= 15, `${cards} cards`);
+    const font = await page.evaluate(() => document.fonts.check("16px Montserrat"));
+    record("Montserrat is loaded", font);
+    const html = () =>
+      page.evaluate(() => ({
+        mode: document.documentElement.dataset.evilMode ?? "system",
+        dark: document.documentElement.classList.contains("dark"),
+        shadow: getComputedStyle(document.querySelector("#card")).boxShadow,
+      }));
+    let state = await html();
+    record(
+      "starts on System, .dark follows the OS",
+      state.mode === "system" && state.dark === (opt.theme === "dark"),
+      JSON.stringify(state),
+    );
+    await shot(page, `showcase-system-${opt.theme}`);
+
+    const modes = page.getByRole("radiogroup", { name: "Color mode" });
+    await modes.getByRole("radio", { name: "Dark" }).click();
+    state = await html();
+    record("Dark forces dark mode", state.mode === "dark" && state.dark, JSON.stringify(state));
+    record("dark cards lose the shadow offset", /0px 0px/.test(state.shadow), state.shadow);
+    const saved = await page.evaluate(() => localStorage.getItem("evil-mode"));
+    record("choice saved to localStorage evil-mode", saved === "dark", String(saved));
+    await page.reload({ waitUntil: "networkidle" });
+    state = await html();
+    record("dark survives reload", state.mode === "dark" && state.dark, JSON.stringify(state));
+    await modes.getByRole("radio", { name: "Light" }).click();
+    state = await html();
+    record("Light forces light mode", state.mode === "light" && !state.dark, JSON.stringify(state));
+    record("light cards keep the 4/4 shadow", /4px 4px/.test(state.shadow), state.shadow);
+
+    await page.getByRole("button", { name: "Open dialog" }).click();
+    const dialog = page.locator('[data-slot="dialog-content"][open]');
+    await dialog.waitFor();
+    const border = await dialog.evaluate((d) => getComputedStyle(d).borderTopWidth);
+    record("dialog opens with the 2px card frame", border === "2px", border);
+    await shot(page, "dialog", false);
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "Open sheet" }).click();
+    await page.locator('[data-slot="sheet-content"][open]').waitFor();
+    record("sheet opens", true);
+    await shot(page, "sheet", false);
+    await page.keyboard.press("Escape");
+
+    // Friends hydrate on client:visible, so scroll them in, then prove each canvas drew
+    // something: the stage must look different with its canvas hidden.
+    await page.locator("#voxel-friends").scrollIntoViewIfNeeded();
+    await page.waitForFunction(
+      () => document.querySelectorAll("#voxel-friends canvas").length === 3,
+      null,
+      { timeout: 30000 },
+    );
+    await settle(page);
+    await page.waitForTimeout(1500);
+    const stages = page.locator("#voxel-friends .evil-friend-stage");
+    const drawn = [];
+    for (let i = 0; i < 3; i++) {
+      const stage = stages.nth(i);
+      const withCanvas = await stage.screenshot();
+      await stage.locator("canvas").evaluate((c) => (c.style.visibility = "hidden"));
+      const without = await stage.screenshot();
+      await stage.locator("canvas").evaluate((c) => (c.style.visibility = ""));
+      drawn.push(!withCanvas.equals(without));
+    }
+    record("all three friends draw", drawn.every(Boolean), drawn.join(","));
+    await page
+      .locator("#voxel-friends")
+      .screenshot({ path: join(out, `${String(++step).padStart(2, "0")}-friends.png`) });
+
+    const cat = page.locator('[data-friend="cat"]');
+    await cat.getByLabel("Cat color family").selectOption("menta");
+    const family = await cat.getAttribute("data-evil-theme");
+    record("family select rescopes the card", family === "menta", String(family));
+
+    const over = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    record("no horizontal page scroll", over <= 1, `${over}px at ${width}px wide`);
+    const errors = consoleLog.filter((m) => m.type === "pageerror" || m.type === "error");
+    record("no console errors", errors.length === 0, `${errors.length} errors`);
   },
 
   // Any route: 200, no uncaught errors, no horizontal page scroll, no failed same-origin requests.

@@ -1,0 +1,407 @@
+/* Evil Labs v1.1.0 - generated; modern CSS light-dark() required. */
+
+:root {
+
+  color-scheme: light dark;
+
+  --evil-palette-orange: #F74813;
+  --evil-palette-cream: #FEF1EF;
+  --evil-palette-ink: #1A1A1A;
+  --evil-palette-dark: #1E1E2E;
+  --evil-palette-light: #EFF1F5;
+  --evil-palette-white: #FFFFFF;
+  --evil-palette-terracotta: #B9472A;
+  --evil-palette-peach: #FAB387;
+  --evil-palette-mauve: #8839EF;
+  --evil-palette-lavender: #B4BEFE;
+  --evil-palette-mint: #179299;
+  --evil-palette-pink: #F38BA8;
+  --evil-palette-blue: #1E66F5;
+  --evil-palette-latte-base: #EFF1F5;
+  --evil-palette-latte-surface: #E6E9EF;
+  --evil-palette-latte-text: #4C4F69;
+  --evil-palette-latte-muted: #5C5F77;
+  --evil-palette-latte-maroon: #E64553;
+  --evil-palette-latte-peach: #FE640B;
+  --evil-palette-latte-mauve: #8839EF;
+  --evil-palette-latte-lavender: #7287FD;
+  --evil-palette-latte-teal: #179299;
+  --evil-palette-latte-pink: #EA76CB;
+  --evil-palette-latte-blue: #1E66F5;
+  --evil-palette-mocha-base: #1E1E2E;
+  --evil-palette-mocha-surface: #313244;
+  --evil-palette-mocha-text: #CDD6F4;
+  --evil-palette-mocha-muted: #BAC2DE;
+  --evil-palette-mocha-crust: #11111B;
+  --evil-palette-mocha-maroon: #EBA0AC;
+  --evil-palette-mocha-peach: #FAB387;
+  --evil-palette-mocha-mauve: #CBA6F7;
+  --evil-palette-mocha-lavender: #B4BEFE;
+  --evil-palette-mocha-teal: #94E2D5;
+  --evil-palette-mocha-pink: #F5C2E7;
+  --evil-palette-mocha-blue: #89B4FA;
+  --evil-palette-cream-surface: #FFFFFF;
+  --evil-palette-label-black: #000000;
+  --evil-palette-latte-green: #40A02B;
+  --evil-palette-latte-yellow: #DF8E1D;
+  --evil-palette-latte-red: #D20F39;
+  --evil-palette-mocha-green: #A6E3A1;
+  --evil-palette-mocha-yellow: #F9E2AF;
+  --evil-palette-mocha-red: #F38BA8;
+  --evil-space-4: 0.25rem;
+  --evil-space-8: 0.5rem;
+  --evil-space-12: 0.75rem;
+  --evil-space-16: 1rem;
+  --evil-space-24: 1.5rem;
+  --evil-space-32: 2rem;
+  --evil-space-48: 3rem;
+  --evil-space-64: 4rem;
+  --evil-font-family-body: "Montserrat", "Arial", sans-serif;
+  --evil-font-family-brand: "Lobster", cursive;
+  --evil-font-weight-regular: 400;
+  --evil-font-weight-medium: 500;
+  --evil-font-weight-semibold: 600;
+  --evil-font-weight-extrabold: 800;
+  --evil-type-h1: 800 3rem/1.08333333333 "Montserrat", "Arial", sans-serif;
+  --evil-type-h1-size: 3rem;
+  --evil-type-h1-weight: 800;
+  --evil-type-h1-line-height: 1.08333333333;
+  --evil-type-h1-tracking: 0px;
+  --evil-type-h2: 800 2rem/1.1875 "Montserrat", "Arial", sans-serif;
+  --evil-type-h2-size: 2rem;
+  --evil-type-h2-weight: 800;
+  --evil-type-h2-line-height: 1.1875;
+  --evil-type-h2-tracking: 0px;
+  --evil-type-h3: 800 1.5rem/1.25 "Montserrat", "Arial", sans-serif;
+  --evil-type-h3-size: 1.5rem;
+  --evil-type-h3-weight: 800;
+  --evil-type-h3-line-height: 1.25;
+  --evil-type-h3-tracking: 0px;
+  --evil-type-body: 500 1rem/1.5 "Montserrat", "Arial", sans-serif;
+  --evil-type-body-size: 1rem;
+  --evil-type-body-weight: 500;
+  --evil-type-body-line-height: 1.5;
+  --evil-type-body-tracking: 0px;
+  --evil-type-label: 600 0.875rem/1.42857142857 "Montserrat", "Arial", sans-serif;
+  --evil-type-label-size: 0.875rem;
+  --evil-type-label-weight: 600;
+  --evil-type-label-line-height: 1.42857142857;
+  --evil-type-label-tracking: 0px;
+  --evil-type-meta: 500 0.75rem/1.33333333333 "Montserrat", "Arial", sans-serif;
+  --evil-type-meta-size: 0.75rem;
+  --evil-type-meta-weight: 500;
+  --evil-type-meta-line-height: 1.33333333333;
+  --evil-type-meta-tracking: 0px;
+  --evil-border-width: 2px;
+  --evil-radius-control: 0.5rem;
+  --evil-padding-card: 1.5rem;
+  --evil-focus-width: 3px;
+  --evil-focus-offset: 3px;
+  --evil-brand-symbol-min: 32px;
+  --evil-brand-symbol-preferred: 48px;
+  --evil-brand-symbol-clearspace-ratio: 0.0940988835726;
+  --evil-brand-wordmark-min: 160px;
+  --evil-brand-wordmark-preferred: 200px;
+  --evil-brand-wordmark-clearspace-ratio: 0.0464245711254;
+  --evil-shadow-hard: 4px 4px 0px 0px #1A1A1A;
+  --evil-shadow-flat: 0px 0px 0px 0px #1A1A1A;
+  --evil-color-success: light-dark(#40A02B, #A6E3A1);
+  --evil-color-on-success: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-warning: light-dark(#DF8E1D, #F9E2AF);
+  --evil-color-on-warning: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-error: light-dark(#D20F39, #F38BA8);
+  --evil-color-on-error: light-dark(#FFFFFF, #1A1A1A);
+  --evil-color-info: light-dark(#1E66F5, #89B4FA);
+  --evil-color-on-info: light-dark(#FFFFFF, #1A1A1A);
+  --evil-color-chart-1: light-dark(#F74813, #F74813);
+  --evil-color-chart-2: light-dark(#179299, #94E2D5);
+  --evil-color-chart-3: light-dark(#1E66F5, #89B4FA);
+  --evil-color-chart-4: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-chart-5: light-dark(#8839EF, #CBA6F7);
+
+  --evil-shadow-card: var(--evil-shadow-hard);
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-evil-mode="light"]) { --evil-shadow-card: var(--evil-shadow-flat); }
+}
+
+[data-evil-mode="light"] { color-scheme: light; --evil-shadow-card: var(--evil-shadow-hard); }
+
+[data-evil-mode="dark"] { color-scheme: dark; --evil-shadow-card: var(--evil-shadow-flat); }
+
+/* Principal: primary */
+
+:root,
+[data-evil-theme="principal"] {
+
+  --evil-color-background: light-dark(#FEF1EF, #1E1E2E);
+  --evil-color-surface: light-dark(#FFFFFF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#F74813, #F74813);
+  --evil-color-on-accent: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#F74813, #F74813);
+  --evil-color-symbol-body: light-dark(#1A1A1A, #F74813);
+  --evil-color-symbol-detail: light-dark(#F74813, #FEF1EF);
+  --evil-color-symbol-background: light-dark(#FEF1EF, #313244);
+  --evil-color-symbol-09-body: light-dark(#F74813, #F74813);
+  --evil-color-symbol-09-detail: light-dark(#FEF1EF, #FEF1EF);
+
+}
+
+/* Terracota: approved-alternative */
+
+[data-evil-theme="terracota"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#E64553, #EBA0AC);
+  --evil-color-on-accent: light-dark(#000000, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#E64553, #EBA0AC);
+  --evil-color-symbol-body: light-dark(#E64553, #EBA0AC);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#E64553, #EBA0AC);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Melocotón: approved-alternative */
+
+[data-evil-theme="melocoton"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#FE640B, #FAB387);
+  --evil-color-on-accent: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#FE640B, #FAB387);
+  --evil-color-symbol-body: light-dark(#FE640B, #FAB387);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#FE640B, #FAB387);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Malva: approved-alternative */
+
+[data-evil-theme="malva"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#8839EF, #CBA6F7);
+  --evil-color-on-accent: light-dark(#FFFFFF, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#8839EF, #CBA6F7);
+  --evil-color-symbol-body: light-dark(#8839EF, #CBA6F7);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#8839EF, #CBA6F7);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Lavanda: approved-alternative */
+
+[data-evil-theme="lavanda"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#7287FD, #B4BEFE);
+  --evil-color-on-accent: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#7287FD, #B4BEFE);
+  --evil-color-symbol-body: light-dark(#7287FD, #B4BEFE);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#7287FD, #B4BEFE);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Menta: approved-alternative */
+
+[data-evil-theme="menta"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#179299, #94E2D5);
+  --evil-color-on-accent: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#179299, #94E2D5);
+  --evil-color-symbol-body: light-dark(#179299, #94E2D5);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#179299, #94E2D5);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Rosa: approved-alternative */
+
+[data-evil-theme="rosa"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-on-accent: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-symbol-body: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Azul: approved-alternative */
+
+[data-evil-theme="azul"] {
+
+  --evil-color-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-surface: light-dark(#E6E9EF, #313244);
+  --evil-color-text: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-text-muted: light-dark(#5C5F77, #BAC2DE);
+  --evil-color-accent: light-dark(#1E66F5, #89B4FA);
+  --evil-color-on-accent: light-dark(#FFFFFF, #1A1A1A);
+  --evil-color-border: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-focus: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-link: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-evil: light-dark(#1A1A1A, #FEF1EF);
+  --evil-color-wordmark-labs: light-dark(#1E66F5, #89B4FA);
+  --evil-color-symbol-body: light-dark(#1E66F5, #89B4FA);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-09-body: light-dark(#1E66F5, #89B4FA);
+  --evil-color-symbol-09-detail: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 01: does not change the page accent or theme. */
+
+[data-evil-mascot="01"] {
+
+  --evil-color-symbol-body: light-dark(#1A1A1A, #1A1A1A);
+  --evil-color-symbol-detail: light-dark(#F74813, #F74813);
+  --evil-color-symbol-background: light-dark(#FEF1EF, #FEF1EF);
+
+}
+
+/* Mascot 02: does not change the page accent or theme. */
+
+[data-evil-mascot="02"] {
+
+  --evil-color-symbol-body: light-dark(#E64553, #EBA0AC);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 03: does not change the page accent or theme. */
+
+[data-evil-mascot="03"] {
+
+  --evil-color-symbol-body: light-dark(#FE640B, #FAB387);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 04: does not change the page accent or theme. */
+
+[data-evil-mascot="04"] {
+
+  --evil-color-symbol-body: light-dark(#8839EF, #CBA6F7);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 05: does not change the page accent or theme. */
+
+[data-evil-mascot="05"] {
+
+  --evil-color-symbol-body: light-dark(#7287FD, #B4BEFE);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 06: does not change the page accent or theme. */
+
+[data-evil-mascot="06"] {
+
+  --evil-color-symbol-body: light-dark(#179299, #94E2D5);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 07: does not change the page accent or theme. */
+
+[data-evil-mascot="07"] {
+
+  --evil-color-symbol-body: light-dark(#EA76CB, #F5C2E7);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 08: does not change the page accent or theme. */
+
+[data-evil-mascot="08"] {
+
+  --evil-color-symbol-body: light-dark(#1E66F5, #89B4FA);
+  --evil-color-symbol-detail: light-dark(#EFF1F5, #1E1E2E);
+  --evil-color-symbol-background: light-dark(#EFF1F5, #1E1E2E);
+
+}
+
+/* Mascot 09: does not change the page accent or theme. */
+
+[data-evil-mascot="09"] {
+
+  --evil-color-symbol-body: light-dark(#F74813, #F74813);
+  --evil-color-symbol-detail: light-dark(#FEF1EF, #FEF1EF);
+  --evil-color-symbol-background: light-dark(#FEF1EF, #1E1E2E);
+
+}

@@ -1,24 +1,25 @@
 ---
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
+import PageHeader from "@/components/garden/PageHeader.astro";
 import { entryHref, formatDate, getBlogPosts } from "@/utils/content";
 
 const posts = await getBlogPosts();
 ---
 
-<SiteLayout title="Archives" description="Chronological blog archive">
+<GardenLayout title="Archives" description="Chronological blog archive">
   <section class="mx-auto max-w-5xl px-4 py-10 md:px-6">
-    <h1 class="mb-8 text-6xl font-black uppercase md:text-8xl">Archives</h1>
+    <PageHeader title="Archives" description="Every post, newest first." />
     <ol class="grid gap-4">
       {
         posts.map((post) => (
-          <li class="nb-card flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
-            <a class="text-xl font-black uppercase" href={entryHref(post)}>
+          <li class="evil-card flex flex-col gap-2 p-4 md:flex-row md:items-center md:justify-between">
+            <a
+              class="text-xl font-extrabold hover:underline hover:underline-offset-4"
+              href={entryHref(post)}
+            >
               {post.data.title}
             </a>
-            <time
-              class="font-bold text-[var(--nb-muted)]"
-              datetime={post.data.publishDate.toISOString()}
-            >
+            <time class="evil-meta" datetime={post.data.publishDate.toISOString()}>
               {formatDate(post.data.publishDate)}
             </time>
           </li>
@@ -26,4 +27,4 @@ const posts = await getBlogPosts();
       }
     </ol>
   </section>
-</SiteLayout>
+</GardenLayout>

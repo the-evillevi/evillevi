@@ -1,0 +1,9 @@
+---
+/* Evil Labs counterpart of components/layout/Metric.astro. */
+const { label, value } = Astro.props;
+---
+
+<div class="evil-panel p-3 text-center">
+  <p class="evil-h2">{value}</p>
+  <p class="evil-label evil-metric-label evil-muted">{label}</p>
+</div>

@@ -1,6 +1,10 @@
 import { defineConfig } from "@playwright/test";
 export default defineConfig({
-  testDir: "./tests/chess",
+  projects: [
+    { name: "chess", testDir: "./tests/chess" },
+    // Screenshot baselines for the portfolio POCs the Evil Labs revamp must not change.
+    { name: "legacy", testDir: "./tests/legacy", use: { viewport: { width: 1280, height: 900 } } },
+  ],
   timeout: 90000,
   expect: { timeout: 15000 },
   workers: 1,

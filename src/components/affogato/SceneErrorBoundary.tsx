@@ -17,11 +17,11 @@ export class SceneErrorBoundary extends Component<{ children: ReactNode }, { fai
   render() {
     if (!this.state.failed) return this.props.children;
     return (
-      <div className="grid h-full w-full place-items-center border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-6 text-center">
+      <div className="border-border bg-surface grid h-full w-full place-items-center border-2 p-6 text-center">
         <div>
           <Cat className="mx-auto size-10" />
-          <p className="mt-3 font-black uppercase">The cat wandered off</p>
-          <p className="text-sm font-bold text-[var(--nb-muted)]">
+          <p className="mt-3 font-extrabold uppercase">The cat wandered off</p>
+          <p className="text-muted-foreground text-sm">
             The 3D scene failed to load. Your timer still works.
           </p>
         </div>

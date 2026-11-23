@@ -1,0 +1,679 @@
+---
+/*
+ * Evil Labs v1 showcase: the garden's existing Starwind and React components
+ * restyled with the Evil Labs tokens, plus the first three Spaag-style voxel
+ * friends. Everything Evil Labs is scoped to this page (see
+ * src/styles/evil-showcase.css); the rest of the garden still uses the
+ * Catppuccin system documented at /design-system/neobrutalism.
+ */
+import Layout from "@/layouts/Layout.astro";
+import "@/styles/evil-labs/dist/fonts.css";
+import "@/styles/evil-labs/dist/evil-labs.css";
+import "@/styles/evil-showcase.css";
+import themes from "@/styles/evil-labs/dist/themes.json";
+import mascot from "@/assets/evil-labs/mascot-inline.svg?raw";
+
+import ThemeScript from "@/components/evil/ThemeScript.astro";
+import EvilNavbar from "@/components/evil-showcase/EvilNavbar.astro";
+import EvilFooter from "@/components/evil-showcase/EvilFooter.astro";
+import EvilShowcaseCard from "@/components/evil-showcase/EvilShowcaseCard.astro";
+import EvilMetric from "@/components/evil-showcase/EvilMetric.astro";
+import EvilDocBlock from "@/components/evil-showcase/EvilDocBlock.astro";
+import ReactOverlaysDemo from "@/components/showcase/ReactOverlaysDemo";
+import SpaagFriend from "@/components/three/SpaagFriend";
+import { EVIL_FAMILIES, SPAAG_FRIENDS } from "@/lib/evil-labs/friends";
+
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/starwind/accordion";
+import { Alert, AlertTitle, AlertDescription } from "@/components/starwind/alert";
+import { Badge } from "@/components/starwind/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/starwind/breadcrumb";
+import { Button } from "@/components/starwind/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/starwind/card";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/starwind/dialog";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownContent,
+  DropdownItem,
+  DropdownLabel,
+  DropdownSeparator,
+} from "@/components/starwind/dropdown";
+import { Input } from "@/components/starwind/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupButton,
+} from "@/components/starwind/input-group";
+import { Label } from "@/components/starwind/label";
+import { Progress } from "@/components/starwind/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/starwind/radio-group";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/starwind/select";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/starwind/sheet";
+import { Skeleton } from "@/components/starwind/skeleton";
+import { Spinner } from "@/components/starwind/spinner";
+import { Switch } from "@/components/starwind/switch";
+import { Textarea } from "@/components/starwind/textarea";
+import { Toggle } from "@/components/starwind/toggle";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/starwind/tooltip";
+
+const componentGroups = [
+  { title: "Layout & structure", items: ["accordion", "alert", "breadcrumb", "card"] },
+  {
+    title: "Forms & inputs",
+    items: ["button", "checkbox", "input", "input-group", "radio-group", "select"],
+  },
+  {
+    title: "Feedback & display",
+    items: ["dialog", "image", "progress", "sheet", "tooltip", "react-overlays", "voxel-friends"],
+  },
+];
+
+/* Live swatches: each reads the role's var, so it follows mode and family. */
+const roles = [
+  ["Background", "background"],
+  ["Surface", "surface"],
+  ["Text", "text"],
+  ["Text muted", "text-muted"],
+  ["Accent", "accent"],
+  ["Border", "border"],
+] as const;
+
+type ThemeEntry = {
+  id: string;
+  label: string;
+  modes: Record<"light" | "dark", { colors: Record<string, string> }>;
+};
+const families = (themes as ThemeEntry[]).map((theme) => ({
+  id: theme.id,
+  label: theme.label,
+  light: theme.modes.light.colors,
+  dark: theme.modes.dark.colors,
+}));
+
+const typeScale = [
+  ["H1", "evil-h1", "48 / 800"],
+  ["H2", "evil-h2", "32 / 800"],
+  ["H3", "evil-h3", "24 / 800"],
+  ["Body", "", "16 / 500"],
+  ["Label", "evil-label", "14 / 600"],
+  ["Meta", "evil-meta", "12 / 500"],
+] as const;
+
+const spacing = [4, 8, 12, 16, 24, 32, 48, 64];
+---
+
+<Layout
+  title="Evil Labs Design System"
+  description="The Evil Labs v1 visual system applied to the evillevi garden's components."
+>
+  <ThemeScript />
+  <script is:inline>
+    (() => {
+      const root = document.documentElement;
+      root.classList.add("evil-page");
+      let family = "principal";
+      try {
+        family = localStorage.getItem("evil-family") || "principal";
+      } catch {}
+      root.dataset.evilTheme = family;
+    })();
+  </script>
+
+  <div class="evil-page">
+    <EvilNavbar />
+    <main>
+      <section id="top" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 md:px-6 md:py-20">
+        <div class="grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
+          <div>
+            <p class="evil-label evil-accent-text mb-4">Design system · v1.0.0</p>
+            <h1 class="evil-display">Evil Labs, on the garden's own parts.</h1>
+            <p class="evil-muted mt-6 max-w-xl text-lg leading-8">
+              Crema, tinta and naranja. Montserrat, 2&nbsp;px borders, 8&nbsp;px corners and a hard
+              4/4 shadow that goes flat in the dark. Every block below is a component the garden
+              already ships, wearing the new tokens.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a class="evil-button evil-primary" href="#components">See components</a>
+              <a class="evil-button" href="#voxel-friends">Meet the friends</a>
+            </div>
+            <div class="mt-10 grid max-w-md grid-cols-3 gap-3">
+              <EvilMetric label="Families" value="8" />
+              <EvilMetric label="Diablillos" value="9" />
+              <EvilMetric label="Modes" value="2" />
+            </div>
+          </div>
+          <div class="evil-card grid place-items-center">
+            <div class="symbol-frame w-full max-w-xs p-8" set:html={mascot} />
+            <p class="evil-meta mt-4">Diablillo 01 in light, 09 in dark. Drawn, never redrawn.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-y-2 border-[var(--evil-color-border)] px-4 py-8 md:px-6">
+        <div class="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {
+            componentGroups.map((group) => (
+              <article class="evil-card">
+                <h2 class="evil-label mb-3">{group.title}</h2>
+                <div class="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <a
+                      class="evil-tag hover:bg-[var(--evil-color-accent)] hover:text-[var(--evil-color-on-accent)]"
+                      href={`#${item}`}
+                    >
+                      {item}
+                    </a>
+                  ))}
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <section id="components" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 md:px-6 md:py-16">
+        <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p class="evil-label evil-accent-text mb-2">Component gallery</p>
+            <h2>Same blocks, new skin</h2>
+          </div>
+          <p class="evil-muted max-w-xl leading-7">
+            Starwind and shadcn components unchanged. The page scope points their color variables at
+            the Evil Labs tokens and adds the border, radius and shadow.
+          </p>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <EvilShowcaseCard id="accordion" title="Accordion">
+            <Accordion defaultValue="item-1">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Why only one accent?</AccordionTrigger>
+                <AccordionContent
+                  >Orange is the signal. About one element in five wears it, so it still means
+                  something when it shows up.</AccordionContent
+                >
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>Where did the shadow go in dark?</AccordionTrigger>
+                <AccordionContent
+                  >An ink shadow vanishes on Mocha. Cards keep their crema border and lose the
+                  offset instead.</AccordionContent
+                >
+              </AccordionItem>
+            </Accordion>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="alert" title="Alert + Badge">
+            <Alert>
+              <AlertTitle>Build signal detected</AlertTitle>
+              <AlertDescription
+                >State the problem and the next step in one line. The accent marks it, not a new
+                color.</AlertDescription
+              >
+            </Alert>
+            <div class="flex flex-wrap gap-2">
+              <Badge class="evil-primary">Stable</Badge>
+              <Badge>Beta</Badge>
+              <Badge class="evil-outline">Experimental</Badge>
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="breadcrumb" title="Breadcrumb">
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem><BreadcrumbLink href="#">System</BreadcrumbLink></BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem><BreadcrumbLink href="#">Evil Labs</BreadcrumbLink></BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem><BreadcrumbPage>v1</BreadcrumbPage></BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="card" title="Card">
+            <Card>
+              <CardHeader>
+                <CardTitle>Release readiness</CardTitle>
+                <CardDescription>Dense, scannable, and calm until it needs you.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div class="grid gap-3 sm:grid-cols-3">
+                  <EvilMetric label="A11y" value="98" />
+                  <EvilMetric label="Motion" value="12" />
+                  <EvilMetric label="Tokens" value="381" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button class="evil-primary">Approve</Button>
+              </CardFooter>
+            </Card>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="button" title="Button + Toggle">
+            <div class="flex flex-wrap gap-3">
+              <Button class="evil-primary">Primary</Button>
+              <Button>Secondary</Button>
+              <Button class="evil-ghost">Ghost</Button>
+              <Toggle aria-label="Toggle pressed state">Snap</Toggle>
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="checkbox" title="Checkbox + Switch">
+            <div class="grid gap-4">
+              <Label for="evil-checkbox">Component contract</Label>
+              <label class="flex items-center gap-3">
+                <input id="evil-checkbox" class="evil-checkbox" type="checkbox" checked />
+                Visible focus, clear selected state
+              </label>
+              <Switch id="evil-high-contrast" label="Reduce motion in demos" />
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="input" title="Input + Textarea">
+            <div class="grid gap-4">
+              <div class="grid gap-2">
+                <Label for="project-name">Project name</Label>
+                <Input id="project-name" placeholder="karma-pos" />
+              </div>
+              <div class="grid gap-2">
+                <Label for="notes">Notes</Label>
+                <Textarea id="notes" placeholder="What changed for the client?" />
+              </div>
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="input-group" title="Input Group">
+            <InputGroup>
+              <InputGroupAddon>@</InputGroupAddon>
+              <InputGroupInput placeholder="workspace" />
+              <InputGroupButton>Claim</InputGroupButton>
+            </InputGroup>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="radio-group" title="Radio Group">
+            <RadioGroup defaultValue="principal" class="grid gap-3">
+              <label class="flex items-center gap-3"
+                ><RadioGroupItem value="principal" /> Principal, orange on crema</label
+              >
+              <label class="flex items-center gap-3"
+                ><RadioGroupItem value="alt" /> An approved alternative family</label
+              >
+              <label class="flex items-center gap-3"
+                ><RadioGroupItem value="custom" /> Custom colors (not allowed)</label
+              >
+            </RadioGroup>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="select" title="Select">
+            <Select defaultValue="principal">
+              <SelectTrigger aria-label="Color family">
+                <SelectValue placeholder="Choose a family" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Families</SelectLabel>
+                  {
+                    EVIL_FAMILIES.map((family) => (
+                      <SelectItem value={family.id}>{family.label}</SelectItem>
+                    ))
+                  }
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="dialog" title="Dialog + Dropdown">
+            <div class="flex flex-wrap gap-3">
+              <Dialog>
+                <DialogTrigger asChild
+                  ><Button class="evil-primary">Open dialog</Button></DialogTrigger
+                >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm the change</DialogTitle>
+                    <DialogDescription
+                      >Same frame as a card: 2&nbsp;px border, 8&nbsp;px corners, hard shadow in
+                      light.</DialogDescription
+                    >
+                  </DialogHeader>
+                  <DialogFooter><Button class="evil-primary">Got it</Button></DialogFooter>
+                </DialogContent>
+              </Dialog>
+              <Dropdown>
+                <DropdownTrigger asChild><Button>Menu</Button></DropdownTrigger>
+                <DropdownContent>
+                  <DropdownLabel>Actions</DropdownLabel>
+                  <DropdownSeparator />
+                  <DropdownItem>Duplicate</DropdownItem>
+                  <DropdownItem>Export</DropdownItem>
+                  <DropdownItem>Archive</DropdownItem>
+                </DropdownContent>
+              </Dropdown>
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="image" title="Image">
+            <figure class="evil-panel overflow-hidden shadow-[var(--evil-shadow-card)]">
+              <div
+                class="grid aspect-[16/9] place-items-center bg-[repeating-linear-gradient(135deg,var(--evil-color-accent)_0_28px,var(--evil-color-surface)_28px_56px)]"
+              >
+                <span class="evil-card evil-h3 py-3">Framed media</span>
+              </div>
+            </figure>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="progress" title="Progress + Skeleton + Spinner">
+            <div class="grid gap-5">
+              <Progress value={68} />
+              <div class="grid gap-2">
+                <Skeleton class="h-5 w-4/5" />
+                <Skeleton class="h-5 w-2/3" />
+              </div>
+              <Spinner />
+            </div>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="sheet" title="Sheet">
+            <Sheet>
+              <SheetTrigger asChild><Button>Open sheet</Button></SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Token inspector</SheetTitle>
+                  <SheetDescription
+                    >Side panels share the card frame. Their only square corner is the one against
+                    the screen edge.</SheetDescription
+                  >
+                </SheetHeader>
+                <SheetFooter><Button class="evil-primary">Close enough</Button></SheetFooter>
+              </SheetContent>
+            </Sheet>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="tooltip" title="Tooltip">
+            <Tooltip>
+              <TooltipTrigger><Button>Hover</Button></TooltipTrigger>
+              <TooltipContent>Short, direct, and framed like everything else.</TooltipContent>
+            </Tooltip>
+          </EvilShowcaseCard>
+
+          <EvilShowcaseCard id="react-overlays" title="React Dialog + Toast">
+            <ReactOverlaysDemo client:load />
+            <p class="evil-muted text-sm leading-6">
+              The shadcn/Radix dialog and sonner toaster from the React islands (like Affogato).
+              Their <code>--nb-*</code> colors resolve to Evil Labs tokens inside this page.
+            </p>
+          </EvilShowcaseCard>
+        </div>
+      </section>
+
+      <section
+        id="modes"
+        class="scroll-mt-24 border-y-2 border-[var(--evil-color-border)] px-4 py-12 md:px-6 md:py-16"
+      >
+        <div class="mx-auto max-w-7xl">
+          <p class="evil-label evil-accent-text mb-2">Light and dark</p>
+          <h2 class="mb-3">Side by side, on any page mode</h2>
+          <p class="evil-muted mb-8 max-w-2xl leading-7">
+            <code>data-evil-mode</code> nests. Each panel below forces its own mode, whatever the page
+            is set to. Without the attribute the page follows the OS.
+          </p>
+          <div class="grid gap-6 md:grid-cols-2">
+            {
+              (["light", "dark"] as const).map((mode) => (
+                <div
+                  data-evil-mode={mode}
+                  class="evil-panel grid gap-5 bg-[var(--evil-color-background)] p-6 text-[var(--evil-color-text)]"
+                >
+                  <p class="evil-label">{mode === "light" ? "Light · Latte" : "Dark · Mocha"}</p>
+                  <div class="evil-card flex items-center gap-5">
+                    <div class="symbol-frame w-20 shrink-0 p-2" set:html={mascot} />
+                    <div>
+                      <h3>Software a la medida.</h3>
+                      <p class="evil-muted mt-1 text-sm">Lectura primero.</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-3">
+                    <a class="evil-button evil-primary" href="#modes">
+                      Primary
+                    </a>
+                    <a class="evil-button" href="#modes">
+                      Secondary
+                    </a>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="voxel-friends"
+        class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 md:px-6 md:py-16"
+      >
+        <p class="evil-label evil-accent-text mb-2">3D test · Spaag style</p>
+        <h2 class="mb-3">Voxel friends</h2>
+        <p class="evil-muted mb-8 max-w-2xl leading-7">
+          Three of Affogato's friends, drawn flat and unlit in one Evil Labs family each, with ink
+          on every hard edge and a solid slab for a shadow. The slab follows the card shadow, so it
+          goes flat in dark. Hover one to make it wave. Pick a family to recolor it live.
+        </p>
+        <div class="grid gap-6 md:grid-cols-3">
+          {
+            SPAAG_FRIENDS.map((friend) => (
+              <article
+                class="evil-card grid gap-4"
+                data-evil-theme={friend.family}
+                data-friend={friend.id}
+              >
+                <div class="evil-friend-stage overflow-hidden">
+                  <SpaagFriend
+                    client:visible
+                    modelPath={friend.modelPath}
+                    groups={friend.groups}
+                    label={`${friend.name}, a voxel animal from Affogato`}
+                  />
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <h3>{friend.name}</h3>
+                  <label class="sr-only" for={`family-${friend.id}`}>
+                    {friend.name} color family
+                  </label>
+                  <select
+                    id={`family-${friend.id}`}
+                    class="evil-panel evil-label h-9 bg-[var(--evil-color-surface)] px-2"
+                    data-friend-family={friend.id}
+                  >
+                    {EVIL_FAMILIES.map((family) => (
+                      <option value={family.id} selected={family.id === friend.family}>
+                        {family.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+        <p class="evil-meta mt-4">
+          Models: Kenney Animal Pack (CC0), the same files Affogato uses. The diablillo is never
+          made 3D.
+        </p>
+      </section>
+
+      <section
+        id="tokens"
+        class="scroll-mt-24 border-y-2 border-[var(--evil-color-border)] px-4 py-12 md:px-6 md:py-16"
+      >
+        <div class="mx-auto max-w-7xl">
+          <p class="evil-label evil-accent-text mb-2">Design tokens</p>
+          <h2 class="mb-8">Roles, families, type and space</h2>
+
+          <h3 class="mb-4">Color roles · live</h3>
+          <div class="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {
+              roles.map(([name, token]) => (
+                <article class="evil-card p-4">
+                  <div
+                    class="mb-3 h-16 rounded-[var(--evil-radius-control)] border-2 border-[var(--evil-color-border)]"
+                    style={`background:var(--evil-color-${token})`}
+                  />
+                  <p class="evil-label">{name}</p>
+                  <p class="evil-meta">--evil-color-{token}</p>
+                </article>
+              ))
+            }
+          </div>
+
+          <h3 class="mb-4">Families · accent in light / dark</h3>
+          <div class="mb-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {
+              families.map((family) => (
+                <article class="evil-card p-4">
+                  <div class="mb-3 grid h-14 grid-cols-2 overflow-hidden rounded-[var(--evil-radius-control)] border-2 border-[var(--evil-color-border)]">
+                    <div style={`background:${family.light.accent}`} />
+                    <div style={`background:${family.dark.accent}`} />
+                  </div>
+                  <p class="evil-label">{family.label}</p>
+                  <p class="evil-meta">
+                    {family.light.accent} / {family.dark.accent}
+                  </p>
+                </article>
+              ))
+            }
+          </div>
+
+          <div class="grid gap-6 lg:grid-cols-2">
+            <article class="evil-card">
+              <h3 class="mb-4">Type · Montserrat</h3>
+              <div class="grid gap-3">
+                {
+                  typeScale.map(([name, cls, spec]) => (
+                    <div class="flex items-baseline justify-between gap-4 border-b-2 border-dashed border-[var(--evil-color-border)] pb-2">
+                      <span class={cls}>{name}</span>
+                      <span class="evil-meta">{spec}</span>
+                    </div>
+                  ))
+                }
+              </div>
+            </article>
+            <article class="evil-card">
+              <h3 class="mb-4">Space and geometry</h3>
+              <div class="mb-6 grid gap-2">
+                {
+                  spacing.map((px) => (
+                    <div class="flex items-center gap-3">
+                      <span class="evil-meta w-10">{px}</span>
+                      <span
+                        class="h-3 rounded-sm bg-[var(--evil-color-accent)]"
+                        style={`width:${px * 2}px`}
+                      />
+                    </div>
+                  ))
+                }
+              </div>
+              <p class="evil-meta">
+                Border 2&nbsp;px · radius 8&nbsp;px · card padding 24&nbsp;px · shadow 4/4/0 tinta
+                in light, flat in dark · focus 3&nbsp;px, offset 3&nbsp;px.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="docs" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-12 md:px-6 md:py-16">
+        <div class="grid gap-6 lg:grid-cols-3">
+          <EvilDocBlock title="Three attributes">
+            <p>
+              <code>data-evil-mode</code> (none for the OS, <code>light</code>, <code>dark</code>), <code
+                >data-evil-theme</code
+              > (the family) and <code>data-evil-mascot</code> (01 to 09). They are independent and they
+              nest.
+            </p>
+          </EvilDocBlock>
+          <EvilDocBlock title="Color usage">
+            <p>
+              Orange is the accent: primary actions, tags, one highlighted card. Small text on
+              orange stays tinta. Alternative families only when asked for by name.
+            </p>
+          </EvilDocBlock>
+          <EvilDocBlock title="Brand marks">
+            <p>
+              Insert the diablillo and wordmark SVGs inline so they inherit the tokens. Borders and
+              shadows go on their container, never on the mark. Lobster is only for "Labs".
+            </p>
+          </EvilDocBlock>
+        </div>
+      </section>
+    </main>
+    <EvilFooter />
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const store = (key: string, value: string) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {}
+    };
+    const familySelect = document.querySelector<HTMLSelectElement>("[data-evil-family-control]");
+    if (familySelect) {
+      familySelect.value = root.dataset.evilTheme ?? "principal";
+      familySelect.addEventListener("change", () => {
+        root.dataset.evilTheme = familySelect.value;
+        store("evil-family", familySelect.value);
+      });
+    }
+
+    document.querySelectorAll<HTMLSelectElement>("[data-friend-family]").forEach((select) => {
+      select.addEventListener("change", () => {
+        const card = select.closest<HTMLElement>("[data-friend]");
+        if (card) card.dataset.evilTheme = select.value;
+      });
+    });
+  </script>
+</Layout>

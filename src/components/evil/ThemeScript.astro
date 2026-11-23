@@ -1,0 +1,47 @@
+---
+/**
+ * Pre-paint color mode for Evil Labs pages. Put it in <head>.
+ *
+ * - `evil-mode` in localStorage: "light" | "dark" sets html[data-evil-mode];
+ *   "system" or nothing removes it, and light-dark() follows the OS.
+ * - Keeps `.dark` on <html> in step with the resolved mode, for Starwind's and
+ *   shadcn's own dark: utilities.
+ * - Bridge to the legacy portfolio POCs (Karma, gg³ chess, neobrutalism):
+ *   writes the resolved mode to their `nb-theme` key, so opening one of them
+ *   after the garden shows the same mode.
+ * - Exposes window.__evilSetMode(mode) for ModeControl.astro.
+ */
+---
+
+<script is:inline>
+  (() => {
+    const root = document.documentElement;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const store = (key, value) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {}
+    };
+    const sync = () => {
+      const mode = root.dataset.evilMode ?? (media.matches ? "dark" : "light");
+      root.classList.toggle("dark", mode === "dark");
+      store("nb-theme", mode);
+    };
+    const apply = (mode) => {
+      if (mode === "light" || mode === "dark") root.dataset.evilMode = mode;
+      else delete root.dataset.evilMode;
+      sync();
+    };
+    let saved = null;
+    try {
+      saved = localStorage.getItem("evil-mode");
+    } catch {}
+    apply(saved);
+    media.addEventListener("change", sync);
+    window.__evilSetMode = (mode) => {
+      store("evil-mode", mode);
+      apply(mode);
+      document.dispatchEvent(new CustomEvent("evil:mode", { detail: { mode } }));
+    };
+  })();
+</script>

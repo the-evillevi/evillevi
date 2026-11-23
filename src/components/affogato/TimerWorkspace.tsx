@@ -59,13 +59,13 @@ export function TimerWorkspace() {
   return (
     // SiteLayout already provides the page's <main> landmark.
     <div>
-      <section className="nb-panel grid gap-6 p-4 md:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:items-center md:gap-8 md:p-6 lg:grid-cols-[minmax(20rem,0.8fr)_minmax(0,1.2fr)]">
+      <section className="evil-card grid gap-6 p-4 md:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.15fr)] md:grid-rows-[auto_auto] md:items-center md:gap-8 md:p-6 lg:grid-cols-[minmax(20rem,0.8fr)_minmax(0,1.2fr)]">
         <div className="flex flex-col items-center gap-5 md:col-start-1 md:row-start-1">
           <div className="text-center">
             <p className="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase">
               {modeLabels[mode]}
             </p>
-            <p className="text-6xl font-black tracking-normal tabular-nums sm:text-7xl lg:text-8xl">
+            <p className="text-6xl font-extrabold tracking-normal tabular-nums sm:text-7xl lg:text-8xl">
               {formatTime(remainingSeconds)}
             </p>
             <p aria-live="polite" className="text-muted-foreground mt-2 text-sm">
@@ -96,8 +96,8 @@ export function TimerWorkspace() {
             <TooltipTrigger
               aria-label={`Cycle ${cycle}: ${Math.min(completedInCycle, pomodorosPerCycle)} of ${pomodorosPerCycle} focus sessions complete`}
             >
-              <span className="flex flex-wrap items-center justify-center gap-3 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] px-4 py-3 shadow-[4px_4px_0_0_var(--nb-ink)]">
-                <span className="text-sm font-black text-[var(--nb-muted)] uppercase">
+              <span className="border-border bg-surface shadow-card flex flex-wrap items-center justify-center gap-3 border-2 px-4 py-3">
+                <span className="text-muted-foreground text-sm font-extrabold uppercase">
                   cycle {cycle}
                 </span>
                 <span className="flex gap-2">
@@ -105,10 +105,10 @@ export function TimerWorkspace() {
                     <span
                       key={index}
                       className={cn(
-                        "flex size-8 items-center justify-center border-4 border-[var(--nb-ink)] text-xs font-black",
+                        "border-border flex size-8 items-center justify-center border-2 text-xs font-extrabold",
                         index < completedInCycle
-                          ? "bg-[var(--nb-peach)] text-[var(--nb-button-text)]"
-                          : "bg-[var(--nb-base)] text-[var(--nb-muted)]",
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-background text-muted-foreground",
                       )}
                     >
                       <Coffee className="size-4" />

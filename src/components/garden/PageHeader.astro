@@ -1,0 +1,15 @@
+---
+/** Title block for the garden's listing pages. */
+interface Props {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+}
+const { title, description, eyebrow } = Astro.props;
+---
+
+<header class="border-border mb-10 border-b-2 pb-8">
+  {eyebrow && <p class="evil-tag evil-primary mb-4">{eyebrow}</p>}
+  <h1 class="evil-display">{title}</h1>
+  {description && <p class="text-muted-foreground mt-4 max-w-2xl text-lg">{description}</p>}
+</header>

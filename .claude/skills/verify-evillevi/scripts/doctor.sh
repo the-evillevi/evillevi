@@ -17,7 +17,7 @@ else
   say FAIL "port $PORT listener is '${LISTENER:-none}', not our pid ${PID:-none}"
 fi
 say ok "checkout $(git -C "$ROOT" rev-parse --short HEAD) on $(git -C "$ROOT" branch --show-current), $(git -C "$ROOT" status --porcelain | wc -l | tr -d ' ') uncommitted paths"
-if curl -fsS "$URL/" 2>/dev/null | grep -q "Featured Projects"; then say ok "home page renders"; else say FAIL "home page missing 'Featured Projects'"; fi
+if curl -fsS "$URL/" 2>/dev/null | grep -qi "Featured projects"; then say ok "home page renders"; else say FAIL "home page missing 'Featured projects'"; fi
 if curl -fsS "$URL/contentIndex.json" 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const n=Object.keys(JSON.parse(s)).length;if(!n)process.exit(1);console.log(n)})' >/dev/null 2>&1; then
   say ok "search index /contentIndex.json is valid JSON with entries"
 else

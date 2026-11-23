@@ -1,0 +1,106 @@
+---
+/**
+ * The garden's layout, on the Evil Labs visual system (src/styles/garden.css).
+ * SiteLayout.astro stays as it is for the Karma POC, which keeps the legacy
+ * look on purpose.
+ */
+import "@/styles/garden.css";
+import mascot from "@/assets/evil-labs/mascot-inline.svg?raw";
+import ThemeScript from "@/components/evil/ThemeScript.astro";
+import ModeControl from "@/components/evil/ModeControl.astro";
+import SearchSheet from "@/components/garden/SearchSheet.astro";
+import Wordmark from "@/components/garden/Wordmark.astro";
+import { siteConfig } from "@/site.config";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const title = Astro.props.title ? `${Astro.props.title} • ${siteConfig.title}` : siteConfig.title;
+const description = Astro.props.description ?? siteConfig.description;
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<!doctype html>
+<html lang={siteConfig.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="canonical" href={Astro.url.href} />
+    <link rel="alternate" type="application/rss+xml" title={siteConfig.title} href="/rss.xml" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.title} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <title>{title}</title>
+    <ThemeScript />
+  </head>
+  <body>
+    <div class="flex min-h-screen flex-col">
+      <a
+        href="#main-content"
+        class="evil-button evil-primary sr-only z-50 focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+      >
+        Skip to content
+      </a>
+      <header class="border-border bg-background border-b-2 px-4 py-3 md:px-6">
+        <nav
+          aria-label="Primary navigation"
+          class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-3"
+        >
+          <a href="/" class="flex items-center gap-3" aria-label={`${siteConfig.author}, home`}>
+            <span class="symbol-frame size-11 shrink-0 p-1" aria-hidden="true">
+              <Fragment set:html={mascot} />
+            </span>
+            <Wordmark class="text-2xl" />
+          </a>
+          <div class="flex flex-wrap items-center gap-1">
+            {
+              siteConfig.nav.map((item) => (
+                <a
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? "page" : undefined}
+                  class="evil-label rounded-control aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground px-3 py-2 underline-offset-4 hover:underline aria-[current=page]:no-underline"
+                >
+                  {item.title}
+                </a>
+              ))
+            }
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <SearchSheet />
+            <ModeControl />
+          </div>
+        </nav>
+      </header>
+
+      <main id="main-content" class="flex-1">
+        <slot />
+      </main>
+
+      <footer class="border-border bg-background border-t-2 px-4 py-8 md:px-6">
+        <div
+          class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between"
+        >
+          <div>
+            <p><Wordmark class="text-2xl" /></p>
+            <p class="text-muted-foreground max-w-2xl">{siteConfig.description}</p>
+          </div>
+          <p class="evil-meta">
+            Built with Astro + Tailwind · Visual system:
+            <a class="underline underline-offset-4" href="/design-system/evil-labs">Evil Labs</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

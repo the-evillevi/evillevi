@@ -1,0 +1,60 @@
+---
+import wordmark from "@/assets/evil-labs/wordmark-inline.svg?raw";
+
+const columns = [
+  {
+    title: "System",
+    links: [
+      { label: "Components", href: "#components" },
+      { label: "Light & dark", href: "#modes" },
+      { label: "Docs", href: "#docs" },
+    ],
+  },
+  {
+    title: "Tokens",
+    links: [
+      { label: "Color", href: "#tokens" },
+      { label: "Voxel friends", href: "#voxel-friends" },
+      { label: "Back to top", href: "#top" },
+    ],
+  },
+  {
+    title: "Garden",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Projects", href: "/projects/" },
+      { label: "Current system", href: "/design-system/neobrutalism" },
+    ],
+  },
+];
+---
+
+<footer class="border-t-2 border-[var(--evil-color-border)] px-4 py-10 md:px-6">
+  <div class="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.2fr_2fr]">
+    <div>
+      <div class="evil-wordmark mb-4 w-48" set:html={wordmark} />
+      <p class="evil-muted max-w-md text-sm leading-6">
+        Evil Labs visual system v1, shown on the evillevi garden's own components. Not yet applied
+        to the rest of the garden.
+      </p>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-3">
+      {
+        columns.map((column) => (
+          <div>
+            <p class="evil-label mb-3">{column.title}</p>
+            <ul class="grid gap-2 text-sm">
+              {column.links.map((link) => (
+                <li>
+                  <a class="underline decoration-2 underline-offset-4" href={link.href}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,64 @@
+---
+/**
+ * System / Light / Dark radiogroup. Needs ThemeScript.astro in <head>.
+ * Styled with plain Evil Labs tokens so it works under both garden.css and
+ * the showcase stylesheet.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+const modes = [
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
+];
+---
+
+<div
+  class:list={[
+    "flex overflow-hidden rounded-[var(--evil-radius-control)] border-2 border-[var(--evil-color-border)] bg-[var(--evil-color-background)] p-0.5",
+    className,
+  ]}
+  role="radiogroup"
+  aria-label="Color mode"
+  data-evil-mode-control
+>
+  {
+    modes.map((mode) => (
+      <button
+        type="button"
+        role="radio"
+        aria-checked="false"
+        class="rounded-[calc(var(--evil-radius-control)-2px)] px-3 py-1.5 text-[0.8125rem] leading-5 font-semibold tracking-[0.06em] text-[var(--evil-color-text)] uppercase aria-checked:bg-[var(--evil-color-accent)] aria-checked:text-[var(--evil-color-on-accent)]"
+        data-mode={mode.value}
+      >
+        {mode.label}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  type ModeWindow = Window & { __evilSetMode?: (mode: string) => void };
+
+  const paint = () => {
+    const current = document.documentElement.dataset.evilMode ?? "system";
+    document
+      .querySelectorAll<HTMLButtonElement>("[data-evil-mode-control] [data-mode]")
+      .forEach((button) =>
+        button.setAttribute("aria-checked", String(button.dataset.mode === current)),
+      );
+  };
+
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-evil-mode-control] [data-mode]")
+    .forEach((button) =>
+      button.addEventListener("click", () =>
+        (window as ModeWindow).__evilSetMode?.(button.dataset.mode ?? "system"),
+      ),
+    );
+  document.addEventListener("evil:mode", paint);
+  paint();
+</script>

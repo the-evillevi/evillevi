@@ -1,0 +1,395 @@
+/*
+ * The garden's global stylesheet: the Evil Labs visual system as Tailwind's
+ * base. Imported by GardenLayout only.
+ *
+ * Tokens come from ./evil-labs/dist (synced from the design system with
+ * `pnpm evil:sync`, never edited here). Tailwind's colors, radius, shadow and
+ * font point straight at those tokens through `@theme inline`, so a utility
+ * like `bg-primary` compiles to `var(--evil-color-accent)`. Because the
+ * --evil-color-* vars are declared on every [data-evil-theme] and resolve
+ * light-dark() where they are used, a nested family or mode recolors
+ * everything inside it, Starwind components included.
+ *
+ * The portfolio POCs (Karma, gg³ chess, /design-system/neobrutalism) keep the
+ * legacy Catppuccin system in starwind.css on purpose. Nothing here reaches
+ * them: they never import this file.
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "./evil-labs/dist/fonts.css";
+@import "./evil-labs/dist/evil-labs.css";
+@plugin "@tailwindcss/forms";
+@plugin "tailwindcss-motion";
+/* .dark is kept in step with the resolved mode by ThemeScript.astro, so
+ * Starwind's and shadcn's own dark: utilities agree with light-dark(). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--starwind-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--starwind-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@theme inline {
+  /* Evil Labs roles under the names the garden's markup uses. */
+  --color-background: var(--evil-color-background);
+  --color-surface: var(--evil-color-surface);
+  --color-foreground: var(--evil-color-text);
+  --color-muted-foreground: var(--evil-color-text-muted);
+  --color-border: var(--evil-color-border);
+  --color-link: var(--evil-color-link);
+  --color-focus: var(--evil-color-focus);
+  --color-primary: var(--evil-color-accent);
+  --color-primary-foreground: var(--evil-color-on-accent);
+  --color-ink: var(--evil-palette-ink);
+  --color-crema: var(--evil-palette-cream);
+
+  --color-success: var(--evil-color-success);
+  --color-success-foreground: var(--evil-color-on-success);
+  --color-warning: var(--evil-color-warning);
+  --color-warning-foreground: var(--evil-color-on-warning);
+  --color-error: var(--evil-color-error);
+  --color-error-foreground: var(--evil-color-on-error);
+  --color-info: var(--evil-color-info);
+  --color-info-foreground: var(--evil-color-on-info);
+  --color-chart-1: var(--evil-color-chart-1);
+  --color-chart-2: var(--evil-color-chart-2);
+  --color-chart-3: var(--evil-color-chart-3);
+  --color-chart-4: var(--evil-color-chart-4);
+  --color-chart-5: var(--evil-color-chart-5);
+
+  /* The shadcn/Starwind names, so the components the garden uses (the search
+   * sheet, affogato's dialogs) render on Evil Labs without overrides. */
+  --color-card: var(--evil-color-surface);
+  --color-card-foreground: var(--evil-color-text);
+  --color-popover: var(--evil-color-surface);
+  --color-popover-foreground: var(--evil-color-text);
+  --color-secondary: var(--evil-color-surface);
+  --color-secondary-foreground: var(--evil-color-text);
+  --color-muted: var(--evil-color-surface);
+  --color-accent: var(--evil-color-surface);
+  --color-accent-foreground: var(--evil-color-text);
+  --color-destructive: var(--evil-color-error);
+  --color-input: var(--evil-color-border);
+  --color-outline: var(--evil-color-focus);
+  --color-ring: var(--evil-color-focus);
+
+  --radius-xs: calc(var(--evil-radius-control) / 4);
+  --radius-sm: calc(var(--evil-radius-control) / 2);
+  --radius-md: var(--evil-radius-control);
+  --radius-lg: var(--evil-radius-control);
+  --radius-xl: calc(var(--evil-radius-control) * 1.5);
+  --radius-control: var(--evil-radius-control);
+
+  /* 4/4 ink in light, flat in dark. */
+  --shadow-card: var(--evil-shadow-card);
+
+  --font-sans: var(--evil-font-family-body);
+  --font-heading: var(--evil-font-family-body);
+  --font-brand: var(--evil-font-family-brand);
+
+  --ease-evil: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-focus/50;
+  }
+  html {
+    background: var(--evil-color-background);
+  }
+  body {
+    background: var(--evil-color-background);
+    color: var(--evil-color-text);
+    font: var(--evil-type-body);
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  :focus-visible {
+    outline: var(--evil-focus-width) solid var(--evil-color-focus);
+    outline-offset: var(--evil-focus-offset);
+  }
+  h1 {
+    font: var(--evil-type-h1);
+  }
+  h2 {
+    font: var(--evil-type-h2);
+  }
+  h3 {
+    font: var(--evil-type-h3);
+  }
+}
+
+/* ---------- Garden components ---------- */
+
+@layer components {
+  .evil-display {
+    font-weight: var(--evil-font-weight-extrabold);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+  }
+  .evil-label {
+    font: var(--evil-type-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .evil-meta {
+    font: var(--evil-type-meta);
+    color: var(--evil-color-text-muted);
+  }
+
+  /* A raised surface: cards, panels with content. */
+  .evil-card {
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    background: var(--evil-color-surface);
+    color: var(--evil-color-text);
+    box-shadow: var(--evil-shadow-card);
+  }
+  /* A quiet frame on the page background, no shadow. */
+  .evil-panel {
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    background: var(--evil-color-background);
+    color: var(--evil-color-text);
+  }
+
+  .evil-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--evil-space-8);
+    min-height: 2.75rem;
+    padding: 0 var(--evil-space-24);
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    background: var(--evil-color-surface);
+    color: var(--evil-color-text);
+    box-shadow: var(--evil-shadow-card);
+    font: var(--evil-type-label);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition:
+      transform 160ms var(--ease-evil),
+      box-shadow 160ms var(--ease-evil),
+      background-color 160ms var(--ease-evil);
+  }
+  .evil-button:hover {
+    transform: translateY(-2px);
+  }
+  .evil-button:active {
+    box-shadow: var(--evil-shadow-flat);
+    transform: translate(4px, 4px);
+  }
+  .evil-button.evil-primary {
+    background: var(--evil-color-accent);
+    color: var(--evil-color-on-accent);
+  }
+  .evil-button.evil-ghost {
+    background: transparent;
+    box-shadow: none;
+  }
+  .evil-button.evil-sm {
+    min-height: 2.25rem;
+    padding: 0 var(--evil-space-12);
+  }
+
+  /* Small uppercase chip: categories, tags, status. */
+  .evil-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--evil-space-4);
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    padding: 0.125rem var(--evil-space-8);
+    background: var(--evil-color-surface);
+    color: var(--evil-color-text);
+    font: var(--evil-type-label);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .evil-tag.evil-primary {
+    background: var(--evil-color-accent);
+    color: var(--evil-color-on-accent);
+  }
+  a.evil-tag {
+    transition: transform 160ms var(--ease-evil);
+  }
+  a.evil-tag:hover {
+    transform: translateY(-2px);
+  }
+
+  .symbol-frame {
+    display: grid;
+    place-items: center;
+    border-radius: var(--evil-radius-control);
+    background: var(--evil-color-symbol-background);
+  }
+  .symbol-frame svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* ---------- Long-form writing ---------- */
+
+@layer components {
+  .evil-prose {
+    line-height: 1.75;
+  }
+  .evil-prose :where(h1, h2, h3, h4) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .evil-prose :where(h4) {
+    font: var(--evil-type-label);
+    font-size: 1.125rem;
+  }
+  .evil-prose :where(p, ul, ol, blockquote, pre, table) {
+    margin-block: 1rem;
+  }
+  .evil-prose :where(ul) {
+    list-style: disc;
+    padding-left: 1.5rem;
+  }
+  .evil-prose :where(ol) {
+    list-style: decimal;
+    padding-left: 1.5rem;
+  }
+  .evil-prose :where(a) {
+    color: var(--evil-color-link);
+    font-weight: var(--evil-font-weight-semibold);
+    text-decoration: underline;
+    text-decoration-thickness: 0.1em;
+    text-underline-offset: 0.18em;
+  }
+  .evil-prose :where(blockquote) {
+    border-left: 6px solid var(--evil-color-accent);
+    border-radius: var(--evil-radius-control);
+    background: var(--evil-color-surface);
+    padding: 1rem;
+  }
+  .evil-prose :where(code) {
+    border-radius: calc(var(--evil-radius-control) / 2);
+    background: var(--evil-color-surface);
+    padding: 0.05em 0.35em;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.875em;
+  }
+  .evil-prose :where(pre) {
+    overflow: auto;
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    background: light-dark(var(--evil-palette-ink), var(--evil-color-surface));
+    color: light-dark(var(--evil-palette-cream), var(--evil-color-text));
+    padding: 1rem;
+    box-shadow: var(--evil-shadow-card);
+  }
+  .evil-prose :where(pre code) {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+  .evil-prose :where(img, table) {
+    border: var(--evil-border-width) solid var(--evil-color-border);
+    border-radius: var(--evil-radius-control);
+    box-shadow: var(--evil-shadow-card);
+  }
+  .evil-prose :where(table) {
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+  }
+  .evil-prose :where(th, td) {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--evil-color-border);
+  }
+}
+
+/* @tailwindcss/forms paints a blue ring and border on focus from its base
+ * layer; unlayered, this wins and uses the Evil Labs focus color instead. */
+:where(input, select, textarea):focus {
+  --tw-ring-color: var(--evil-color-focus);
+  border-color: var(--evil-color-border);
+}
+
+.heading-anchor {
+  margin-left: 0.5rem;
+  color: var(--evil-color-accent) !important;
+  text-decoration: none !important;
+}
+
+a.wikilink {
+  border-bottom: var(--evil-border-width) solid var(--evil-color-accent);
+  border-radius: 2px;
+  padding: 0 0.15rem;
+  color: var(--evil-color-text);
+  font-weight: var(--evil-font-weight-semibold);
+  text-decoration: none;
+}
+
+a.wikilink:hover,
+a.wikilink-highlight {
+  background: var(--evil-color-accent);
+  color: var(--evil-color-on-accent);
+}
+
+a.wikilink-broken {
+  border-bottom-color: var(--evil-color-error);
+  color: var(--evil-color-error);
+  text-decoration: line-through;
+}
+
+.tippy-box[data-theme~="wikilink-preview"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-surface);
+  color: var(--evil-color-text);
+  box-shadow: var(--evil-shadow-card);
+}
+
+.tippy-box[data-theme~="wikilink-preview"] .tippy-content {
+  padding: 0;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+  .evil-button:hover,
+  a.evil-tag:hover {
+    transform: none;
+  }
+}

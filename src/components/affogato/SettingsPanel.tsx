@@ -132,7 +132,7 @@ function SettingRow({
 }) {
   const id = useId();
   return (
-    <div className="flex items-center justify-between rounded-none border-2 border-[var(--nb-ink)] p-3">
+    <div className="rounded-control border-border flex items-center justify-between border-2 p-3">
       <label htmlFor={id} className="flex items-center gap-2 text-sm font-medium">
         {icon}
         {label}

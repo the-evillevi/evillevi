@@ -1,0 +1,439 @@
+/*
+ * Evil Labs v1 scope for /design-system/evil-labs only.
+ *
+ * Tokens come from ./evil-labs/dist/evil-labs.css (synced from the design
+ * system with `pnpm evil:sync`). This file maps them onto the components the
+ * garden already has, without touching the components themselves:
+ *
+ * 1. Starwind/shadcn semantic vars (--background, --primary, ...) and the
+ *    garden's --nb-* vars are redefined inside the scope, so every utility
+ *    those components use already resolves to an Evil Labs color.
+ * 2. Per-slot rules add the neobrutalist geometry: 2px border, 8px radius,
+ *    4/4 hard shadow in light (flat in dark, via --evil-shadow-card).
+ *
+ * The scope class sits on the page wrapper (works without JS) and on <html>
+ * (set by the page's pre-paint script) so portaled overlays, such as the
+ * Radix dialog, are covered too. Nothing here reaches other routes.
+ */
+
+.evil-page,
+html.evil-page {
+  /* Starwind / shadcn semantic tokens */
+  --background: var(--evil-color-background);
+  --foreground: var(--evil-color-text);
+  --card: var(--evil-color-surface);
+  --card-foreground: var(--evil-color-text);
+  --popover: var(--evil-color-surface);
+  --popover-foreground: var(--evil-color-text);
+  --primary: var(--evil-color-accent);
+  --primary-foreground: var(--evil-color-on-accent);
+  --secondary: var(--evil-color-surface);
+  --secondary-foreground: var(--evil-color-text);
+  --muted: var(--evil-color-surface);
+  --muted-foreground: var(--evil-color-text-muted);
+  --accent: var(--evil-color-surface);
+  --accent-foreground: var(--evil-color-text);
+  --border: var(--evil-color-border);
+  --input: var(--evil-color-border);
+  --outline: var(--evil-color-focus);
+  --ring: var(--evil-color-focus);
+  --radius: var(--evil-radius-control);
+  --font-sans: var(--evil-font-family-body);
+
+  /* Garden --nb-* tokens, used by the shared React overlays and sonner. */
+  --nb-base: var(--evil-color-background);
+  --nb-surface: var(--evil-color-surface);
+  --nb-text: var(--evil-color-text);
+  --nb-muted: var(--evil-color-text-muted);
+  --nb-ink: var(--evil-color-border);
+  --nb-button-text: var(--evil-color-on-accent);
+  --nb-peach: var(--evil-color-accent);
+  --nb-pink: var(--evil-color-accent);
+  --nb-green: var(--evil-color-accent);
+  --nb-teal: var(--evil-color-accent);
+  --nb-blue: var(--evil-color-accent);
+  --nb-yellow: var(--evil-color-accent);
+  --nb-red: var(--evil-color-accent);
+  --nb-lavender: var(--evil-color-accent);
+
+  --evil-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* <html> also carries .dark (synced by the page script); html.evil-page
+ * outranks that rule whatever order the two stylesheets load in. */
+html.evil-page {
+  background: var(--evil-color-background);
+}
+
+.evil-page body,
+div.evil-page {
+  background: var(--evil-color-background);
+  color: var(--evil-color-text);
+  font: var(--evil-type-body);
+}
+
+div.evil-page {
+  min-height: 100vh;
+}
+
+/* ---------- Type ---------- */
+
+.evil-page :where(h1, .evil-h1) {
+  font: var(--evil-type-h1);
+}
+.evil-page :where(h2, .evil-h2) {
+  font: var(--evil-type-h2);
+}
+.evil-page :where(h3, .evil-h3) {
+  font: var(--evil-type-h3);
+}
+.evil-page .evil-display {
+  font-weight: var(--evil-font-weight-extrabold);
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.evil-page .evil-label {
+  font: var(--evil-type-label);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.evil-page .evil-meta {
+  font: var(--evil-type-meta);
+  color: var(--evil-color-text-muted);
+}
+.evil-page .evil-muted {
+  color: var(--evil-color-text-muted);
+}
+.evil-page .evil-accent-text {
+  color: var(--evil-color-accent);
+}
+
+.evil-page :focus-visible {
+  outline: var(--evil-focus-width) solid var(--evil-color-focus);
+  outline-offset: var(--evil-focus-offset);
+}
+
+/* ---------- Surfaces ---------- */
+
+.evil-page .evil-card,
+.evil-page [data-slot="card"],
+.evil-page [data-slot="alert"],
+.evil-page [data-slot="accordion-item"],
+.evil-page [data-slot="dialog-content"],
+.evil-page [data-slot="sheet-content"],
+.evil-page [data-slot="dropdown-content"],
+.evil-page [data-slot="select-content"],
+.evil-page [data-slot="tooltip-content"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-surface);
+  color: var(--evil-color-text);
+  box-shadow: var(--evil-shadow-card);
+}
+
+.evil-page .evil-card {
+  padding: var(--evil-padding-card);
+}
+
+/* The page background panel behind cards, one step quieter than surface. */
+.evil-page .evil-panel {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-background);
+}
+
+.evil-page [data-slot="accordion"] {
+  display: grid;
+  gap: var(--evil-space-12);
+}
+
+.evil-page [data-slot="accordion-trigger"] {
+  padding-inline: var(--evil-space-16);
+  font-weight: var(--evil-font-weight-semibold);
+}
+
+.evil-page [data-slot="accordion-content"] > * {
+  padding-inline: var(--evil-space-16);
+}
+
+.evil-page [data-slot="sheet-content"] {
+  border-radius: 0;
+}
+
+/* ---------- Actions ---------- */
+
+.evil-page [data-slot="button"],
+.evil-page [data-slot="toggle"],
+.evil-page [data-slot="select-trigger"],
+.evil-page .evil-button {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-surface);
+  color: var(--evil-color-text);
+  box-shadow: var(--evil-shadow-card);
+  font: var(--evil-type-label);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition:
+    transform 160ms var(--evil-ease),
+    box-shadow 160ms var(--evil-ease),
+    background-color 160ms var(--evil-ease);
+}
+
+.evil-page .evil-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--evil-space-8);
+  min-height: 2.75rem;
+  padding: 0 var(--evil-space-24);
+  cursor: pointer;
+}
+
+.evil-page [data-slot="button"].evil-primary,
+.evil-page .evil-button.evil-primary,
+.evil-page [data-slot="toggle"][data-state="on"],
+.evil-page [data-slot="toggle"][aria-pressed="true"] {
+  background: var(--evil-color-accent);
+  color: var(--evil-color-on-accent);
+}
+
+.evil-page [data-slot="button"].evil-ghost,
+.evil-page .evil-button.evil-ghost {
+  background: transparent;
+  box-shadow: none;
+}
+
+.evil-page :is([data-slot="button"], [data-slot="toggle"], .evil-button):hover {
+  transform: translateY(-2px);
+}
+
+.evil-page :is([data-slot="button"], [data-slot="toggle"], .evil-button):active {
+  box-shadow: var(--evil-shadow-flat);
+  transform: translate(4px, 4px);
+}
+
+/* ---------- Forms ---------- */
+
+.evil-page [data-slot="input"],
+.evil-page [data-slot="textarea"],
+.evil-page [data-slot="input-group"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-surface);
+  color: var(--evil-color-text);
+  box-shadow: none;
+}
+
+.evil-page [data-slot="input-group"] :is([data-slot="input"], [data-slot="input-group-control"]) {
+  border: 0;
+  box-shadow: none;
+}
+
+.evil-page [data-slot="input-group-addon"] {
+  font-weight: var(--evil-font-weight-semibold);
+}
+
+.evil-page [data-slot="input-group"] [data-slot="button"] {
+  box-shadow: none;
+  border-width: 0 0 0 var(--evil-border-width);
+  border-radius: 0;
+  background: var(--evil-color-accent);
+  color: var(--evil-color-on-accent);
+}
+
+.evil-page [data-slot="input"]::placeholder,
+.evil-page [data-slot="textarea"]::placeholder {
+  color: var(--evil-color-text-muted);
+}
+
+.evil-page [data-slot="label"] {
+  font: var(--evil-type-label);
+}
+
+.evil-page .evil-checkbox {
+  appearance: none;
+  display: grid;
+  place-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: calc(var(--evil-radius-control) / 2);
+  background: var(--evil-color-surface);
+  flex: none;
+}
+.evil-page .evil-checkbox:checked {
+  background: var(--evil-color-accent);
+}
+.evil-page .evil-checkbox:checked::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.85rem;
+  margin-top: -0.15rem;
+  border: solid var(--evil-color-on-accent);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.evil-page [data-slot="switch-button"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  background: var(--evil-color-surface);
+}
+.evil-page [data-slot="switch-button"][aria-checked="true"] {
+  background: var(--evil-color-accent);
+}
+.evil-page [data-slot="switch-toggle"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  background: var(--evil-color-background);
+  box-shadow: none;
+}
+
+.evil-page [data-slot="radio-group-item-control"] {
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  background: var(--evil-color-surface);
+  box-shadow: none;
+}
+.evil-page [data-slot="radio-group-item-wrapper"] svg {
+  fill: var(--evil-color-accent);
+}
+
+/* ---------- Display ---------- */
+
+.evil-page [data-slot="badge"],
+.evil-page .evil-tag {
+  display: inline-flex;
+  align-items: center;
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  padding: 0.125rem var(--evil-space-8);
+  background: var(--evil-color-surface);
+  color: var(--evil-color-text);
+  font: var(--evil-type-label);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.evil-page [data-slot="badge"].evil-primary,
+.evil-page .evil-tag.evil-primary {
+  background: var(--evil-color-accent);
+  color: var(--evil-color-on-accent);
+}
+
+.evil-page [data-slot="badge"].evil-outline {
+  background: transparent;
+}
+
+.evil-page [data-slot="progress"] {
+  height: 1rem;
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-surface);
+}
+.evil-page [data-slot="progress"] > div {
+  background: var(--evil-color-accent);
+  border-right: var(--evil-border-width) solid var(--evil-color-border);
+}
+
+.evil-page [data-slot="skeleton"] {
+  border-radius: var(--evil-radius-control);
+  background: color-mix(in srgb, var(--evil-color-text-muted) 22%, transparent);
+}
+
+.evil-page [data-slot="spinner"] {
+  color: var(--evil-color-accent);
+}
+
+.evil-page [data-slot="breadcrumb-link"] {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 2px;
+}
+.evil-page [data-slot="breadcrumb-page"] {
+  font-weight: var(--evil-font-weight-semibold);
+}
+
+.evil-page [data-slot="dropdown-item"],
+.evil-page [data-slot="select-item"] {
+  border-radius: calc(var(--evil-radius-control) / 2);
+}
+.evil-page [data-slot="dropdown-item"]:hover,
+.evil-page [data-slot="select-item"]:hover,
+.evil-page [data-slot="select-item"][aria-selected="true"] {
+  background: var(--evil-color-accent);
+  color: var(--evil-color-on-accent);
+}
+
+.evil-page [data-slot="dialog-overlay"],
+.evil-page [data-slot="dialog-backdrop"] {
+  background: color-mix(in srgb, #1a1a1a 55%, transparent);
+}
+.evil-page dialog::backdrop {
+  background: color-mix(in srgb, #1a1a1a 55%, transparent);
+}
+
+/* Sonner marks its toast classes !important inside Tailwind's utilities
+ * layer. An important declaration in an earlier layer wins over a later
+ * one, so these sit in `base`; unlayered !important would lose. */
+@layer base {
+  .evil-page [data-sonner-toast] {
+    border-width: var(--evil-border-width) !important;
+    border-radius: var(--evil-radius-control) !important;
+    box-shadow: var(--evil-shadow-card) !important;
+    font-family: var(--evil-font-family-body) !important;
+  }
+}
+
+/* ---------- Brand ---------- */
+
+.evil-page .symbol-frame {
+  display: grid;
+  place-items: center;
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-symbol-background);
+}
+.evil-page .symbol-frame svg,
+.evil-page .evil-wordmark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- Voxel friends ---------- */
+
+.evil-page .evil-friend-stage {
+  aspect-ratio: 1;
+  border: var(--evil-border-width) solid var(--evil-color-border);
+  border-radius: var(--evil-radius-control);
+  background: var(--evil-color-background);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evil-page :is([data-slot="button"], [data-slot="toggle"], .evil-button) {
+    transition: none;
+  }
+  .evil-page :is([data-slot="button"], [data-slot="toggle"], .evil-button):hover {
+    transform: none;
+  }
+}
+
+.evil-page code {
+  border-radius: calc(var(--evil-radius-control) / 2);
+  padding: 0.05em 0.35em;
+  background: var(--evil-color-surface);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85em;
+}
+
+/* Metric labels ("DIABLILLOS") must fit a third of a 390px screen. */
+.evil-page .evil-metric-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+@media (min-width: 640px) {
+  .evil-page .evil-metric-label {
+    font-size: var(--evil-type-label-size);
+    letter-spacing: 0.06em;
+  }
+}
