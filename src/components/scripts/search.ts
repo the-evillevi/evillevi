@@ -57,7 +57,34 @@ const escapeHtml = (value: string) =>
     (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]!,
   );
 
-const MARK_OPEN = '<mark class="bg-[var(--nb-yellow)] px-0.5 text-[var(--nb-button-text)]">';
+/** Class names for the rendered results. The legacy set is the Karma POC's
+ *  header (SiteLayout); the garden passes its own (garden/SearchSheet). */
+export type SearchClasses = {
+  mark: string;
+  result: string;
+  resultChip: string;
+  resultTitle: string;
+  resultExcerpt: string;
+  groupHeader: string;
+  tag: string;
+  empty: string;
+};
+
+const LEGACY_CLASSES: SearchClasses = {
+  mark: "bg-[var(--nb-yellow)] px-0.5 text-[var(--nb-button-text)]",
+  result:
+    "block border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-4 font-bold transition hover:-translate-y-1",
+  resultChip:
+    "mb-2 inline-flex border-2 border-[var(--nb-ink)] bg-[var(--nb-pink)] px-2 py-1 text-xs font-black uppercase text-[var(--nb-button-text)]",
+  resultTitle: "text-xl font-black uppercase",
+  resultExcerpt: "mt-2 text-sm text-[var(--nb-muted)]",
+  groupHeader:
+    "border-b-4 border-[var(--nb-ink)] pb-1 text-xs font-black uppercase text-[var(--nb-muted)]",
+  tag: "border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase transition hover:-translate-y-0.5",
+  empty: "font-black uppercase text-[var(--nb-muted)]",
+};
+
+let classes = LEGACY_CLASSES;
 
 /** Escape while wrapping the given flat [start,end,...] ranges in marks.
  *  Ranges index the RAW string — slice first, escape each segment after. */
@@ -69,7 +96,7 @@ function highlightRanges(value: string, ranges: number[]): string {
     const start = ranges[i]!;
     const end = ranges[i + 1]!;
     if (start < pos) continue;
-    html += `${escapeHtml(value.slice(pos, start))}${MARK_OPEN}${escapeHtml(value.slice(start, end))}</mark>`;
+    html += `${escapeHtml(value.slice(pos, start))}<mark class="${classes.mark}">${escapeHtml(value.slice(start, end))}</mark>`;
     pos = end;
   }
   return html + escapeHtml(value.slice(pos));
@@ -140,21 +167,19 @@ function renderResult(match: ItemMatch) {
   const { item } = match;
   const result = document.createElement("a");
   result.href = `/${item.slug}`;
-  result.className =
-    "block border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-4 font-bold transition hover:-translate-y-1";
+  result.className = classes.result;
   result.dataset.slug = item.slug;
   result.innerHTML = `
-    <span class="mb-2 inline-flex border-2 border-[var(--nb-ink)] bg-[var(--nb-pink)] px-2 py-1 text-xs font-black uppercase text-[var(--nb-button-text)]">${escapeHtml(item.collection)}</span>
-    <h2 class="text-xl font-black uppercase">${highlightRanges(item.title, match.titleRanges)}</h2>
-    <p class="mt-2 text-sm text-[var(--nb-muted)]">${excerptWithRanges(item.content, match.contentRanges)}</p>
+    <span class="${classes.resultChip}">${escapeHtml(item.collection)}</span>
+    <h2 class="${classes.resultTitle}">${highlightRanges(item.title, match.titleRanges)}</h2>
+    <p class="${classes.resultExcerpt}">${excerptWithRanges(item.content, match.contentRanges)}</p>
   `;
   return result;
 }
 
 function renderGroupHeader(label: string) {
   const heading = document.createElement("p");
-  heading.className =
-    "border-b-4 border-[var(--nb-ink)] pb-1 text-xs font-black uppercase text-[var(--nb-muted)]";
+  heading.className = classes.groupHeader;
   heading.textContent = label;
   return heading;
 }
@@ -165,13 +190,14 @@ function renderTagRow(hits: { tag: string; ranges: number[] }[]) {
   row.innerHTML = hits
     .map(
       ({ tag, ranges }) =>
-        `<a class="border-2 border-[var(--nb-ink)] bg-[var(--nb-yellow)] px-2 py-1 text-xs font-black text-[var(--nb-button-text)] uppercase transition hover:-translate-y-0.5" href="/tags/${encodeURIComponent(tag)}">#${highlightRanges(tag, ranges)}</a>`,
+        `<a class="${classes.tag}" href="/tags/${encodeURIComponent(tag)}">#${highlightRanges(tag, ranges)}</a>`,
     )
     .join("");
   return row;
 }
 
-export async function initSearch() {
+export async function initSearch(custom?: SearchClasses) {
+  if (custom) classes = custom;
   const roots = document.querySelectorAll<HTMLElement>("[data-search-root]");
   if (!roots.length) return;
 
@@ -298,7 +324,7 @@ export async function initSearch() {
       }
       if (!children.length) {
         const empty = document.createElement("p");
-        empty.className = "font-black uppercase text-[var(--nb-muted)]";
+        empty.className = classes.empty;
         empty.textContent = "No results";
         children.push(empty);
       }

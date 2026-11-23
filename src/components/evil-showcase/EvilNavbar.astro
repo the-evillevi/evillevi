@@ -1,5 +1,6 @@
 ---
 import wordmark from "@/assets/evil-labs/wordmark-inline.svg?raw";
+import ModeControl from "@/components/evil/ModeControl.astro";
 import { EVIL_FAMILIES } from "@/lib/evil-labs/friends";
 
 const navItems = [
@@ -8,12 +9,6 @@ const navItems = [
   { href: "#voxel-friends", label: "Friends" },
   { href: "#tokens", label: "Tokens" },
   { href: "#docs", label: "Docs" },
-];
-
-const modes = [
-  { value: "system", label: "System" },
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
 ];
 ---
 
@@ -42,26 +37,7 @@ const modes = [
     </div>
 
     <div class="flex flex-wrap items-center gap-2">
-      <div
-        class="evil-panel flex overflow-hidden p-0.5"
-        role="radiogroup"
-        aria-label="Color mode"
-        data-evil-mode-control
-      >
-        {
-          modes.map((mode) => (
-            <button
-              type="button"
-              role="radio"
-              aria-checked="false"
-              class="evil-label rounded-[calc(var(--evil-radius-control)-2px)] px-3 py-1.5 aria-checked:bg-[var(--evil-color-accent)] aria-checked:text-[var(--evil-color-on-accent)]"
-              data-mode={mode.value}
-            >
-              {mode.label}
-            </button>
-          ))
-        }
-      </div>
+      <ModeControl />
       <label class="sr-only" for="evil-family">Color family</label>
       <select
         id="evil-family"

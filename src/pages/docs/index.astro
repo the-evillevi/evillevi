@@ -1,12 +1,12 @@
 ---
 import PostCard from "@/components/blog/PostCard.astro";
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
 import { getDocsEntries } from "@/utils/content";
 
 const docs = await getDocsEntries();
 ---
 
-<SiteLayout title="Docs" description="Knowledge-base documents">
+<GardenLayout title="Docs" description="Knowledge-base documents">
   <section class="mx-auto max-w-7xl px-4 py-10 md:px-6">
     <header class="nb-shadow mb-8 border-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-6">
       <h1 class="text-6xl font-black uppercase md:text-8xl">Docs</h1>
@@ -18,4 +18,4 @@ const docs = await getDocsEntries();
       {docs.map((entry) => <PostCard {entry} />)}
     </div>
   </section>
-</SiteLayout>
+</GardenLayout>

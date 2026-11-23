@@ -13,6 +13,7 @@ import "@/styles/evil-showcase.css";
 import themes from "@/styles/evil-labs/dist/themes.json";
 import mascot from "@/assets/evil-labs/mascot-inline.svg?raw";
 
+import ThemeScript from "@/components/evil/ThemeScript.astro";
 import EvilNavbar from "@/components/evil-showcase/EvilNavbar.astro";
 import EvilFooter from "@/components/evil-showcase/EvilFooter.astro";
 import EvilShowcaseCard from "@/components/evil-showcase/EvilShowcaseCard.astro";
@@ -149,29 +150,16 @@ const spacing = [4, 8, 12, 16, 24, 32, 48, 64];
   title="Evil Labs Design System"
   description="The Evil Labs v1 visual system applied to the evillevi garden's components."
 >
+  <ThemeScript />
   <script is:inline>
     (() => {
       const root = document.documentElement;
       root.classList.add("evil-page");
-      let mode = "system";
       let family = "principal";
       try {
-        mode = localStorage.getItem("evil-mode") || "system";
         family = localStorage.getItem("evil-family") || "principal";
       } catch {}
-      if (mode === "light" || mode === "dark") root.dataset.evilMode = mode;
-      else delete root.dataset.evilMode;
       root.dataset.evilTheme = family;
-      // Starwind's own dark: utilities key off .dark, so keep it in step.
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const syncDark = () =>
-        root.classList.toggle(
-          "dark",
-          root.dataset.evilMode ? root.dataset.evilMode === "dark" : media.matches,
-        );
-      syncDark();
-      media.addEventListener("change", syncDark);
-      window.__evilSyncDark = syncDark;
     })();
   </script>
 
@@ -672,30 +660,6 @@ const spacing = [4, 8, 12, 16, 24, 32, 48, 64];
         localStorage.setItem(key, value);
       } catch {}
     };
-    const syncDark = () =>
-      (window as unknown as { __evilSyncDark?: () => void }).__evilSyncDark?.();
-
-    const modeButtons = document.querySelectorAll<HTMLButtonElement>(
-      "[data-evil-mode-control] [data-mode]",
-    );
-    const paintMode = () => {
-      const current = root.dataset.evilMode ?? "system";
-      modeButtons.forEach((button) =>
-        button.setAttribute("aria-checked", String(button.dataset.mode === current)),
-      );
-    };
-    modeButtons.forEach((button) =>
-      button.addEventListener("click", () => {
-        const mode = button.dataset.mode ?? "system";
-        if (mode === "system") delete root.dataset.evilMode;
-        else root.dataset.evilMode = mode;
-        store("evil-mode", mode);
-        syncDark();
-        paintMode();
-      }),
-    );
-    paintMode();
-
     const familySelect = document.querySelector<HTMLSelectElement>("[data-evil-family-control]");
     if (familySelect) {
       familySelect.value = root.dataset.evilTheme ?? "principal";

@@ -3,7 +3,7 @@ import type { MarkdownHeading } from "astro";
 import type { ContentEntry } from "@/utils/content";
 import { entryHref, formatDate } from "@/utils/content";
 import type { Backlink, ContentLink } from "@/utils/links";
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
 import Backlinks from "@/components/blog/Backlinks.astro";
 import GiscusComments from "@/components/blog/GiscusComments.astro";
 import GraphView from "@/components/blog/GraphView.astro";
@@ -20,7 +20,7 @@ const { entry, headings, backlinks = [], outgoingLinks = [] } = Astro.props;
 const pageDate = entry.collection === "blog" ? entry.data.publishDate : entry.data.publishDate;
 ---
 
-<SiteLayout title={entry.data.title} description={entry.data.description}>
+<GardenLayout title={entry.data.title} description={entry.data.description}>
   <article
     class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:px-6 lg:grid-cols-[minmax(0,1fr)_320px]"
   >
@@ -93,4 +93,4 @@ const pageDate = entry.collection === "blog" ? entry.data.publishDate : entry.da
       console.error("Failed to load wikilink previews", error);
     });
   </script>
-</SiteLayout>
+</GardenLayout>

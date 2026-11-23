@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
 
 /* Live-demo host for projects without their own app page. Static routes
  * (e.g. projects/affogato/index.astro) win over this dynamic route, so
@@ -14,7 +14,7 @@ const { entry } = Astro.props;
 const { title, valueProp, repoUrl } = entry.data;
 ---
 
-<SiteLayout title={title} description={entry.data.description}>
+<GardenLayout title={title} description={entry.data.description}>
   <section class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-8 md:px-6">
     <div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
       <div>
@@ -59,4 +59,4 @@ const { title, valueProp, repoUrl } = entry.data;
       </div>
     </div>
   </section>
-</SiteLayout>
+</GardenLayout>

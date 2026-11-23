@@ -1,12 +1,12 @@
 ---
 import { AffogatoApp } from "@/components/affogato/AffogatoApp";
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
 
 const description =
   "Affogato is a local-first Pomodoro timer with tasks, stats, bean rewards, and unlockable voxel cube friends.";
 ---
 
-<SiteLayout title="Affogato - Voxel Pomodoro Timer" description={description}>
+<GardenLayout title="Affogato - Voxel Pomodoro Timer" description={description}>
   <noscript>
     <p class="nb-panel mx-auto my-8 max-w-3xl p-5 text-center font-bold">
       Affogato needs JavaScript to run the timer and track your beans.
@@ -36,4 +36,4 @@ const description =
       </p>
     </article>
   </section>
-</SiteLayout>
+</GardenLayout>

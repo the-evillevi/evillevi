@@ -1,0 +1,60 @@
+---
+/**
+ * The garden's search sheet on Evil Labs. Same behavior as
+ * blog/SearchSheet.astro (which the Karma POC's legacy header keeps), with
+ * Evil Labs classes for the sheet and the results.
+ */
+import { Sheet, SheetContent, SheetTrigger } from "@/components/starwind/sheet";
+---
+
+<Sheet>
+  <SheetTrigger asChild>
+    <button type="button" class="evil-button evil-sm" aria-label="Open search">Search</button>
+  </SheetTrigger>
+  <SheetContent
+    side="right"
+    class="border-border bg-background text-foreground w-full border-l-2 p-0 sm:max-w-md"
+  >
+    <div class="flex h-full min-h-0 flex-col gap-4 p-5" data-search-root>
+      <h2 class="evil-label">Search the garden</h2>
+      <div class="flex gap-2">
+        <input
+          class="rounded-control border-border bg-surface text-foreground placeholder:text-muted-foreground min-h-12 w-full min-w-0 flex-1 border-2 px-3"
+          type="search"
+          data-search-input
+          autofocus
+          placeholder="Search notes, docs, and tags"
+          aria-label="Search"
+        />
+        <select
+          class="evil-label rounded-control border-border bg-surface text-foreground min-h-12 border-2 px-2"
+          data-search-type
+          aria-label="Filter by type"
+        >
+          <option value="all">All</option>
+          <option value="blog">Blog</option>
+          <option value="docs">Docs</option>
+        </select>
+      </div>
+      <div class="min-h-0 flex-1 overflow-y-auto p-1 pr-2">
+        <div class="grid gap-3" data-search-results></div>
+      </div>
+    </div>
+  </SheetContent>
+</Sheet>
+
+<script>
+  import type { SearchClasses } from "@/components/scripts/search";
+
+  const classes: SearchClasses = {
+    mark: "rounded-sm bg-primary px-0.5 text-primary-foreground",
+    result: "evil-card block p-4 transition hover:-translate-y-1",
+    resultChip: "evil-tag mb-2",
+    resultTitle: "text-lg font-extrabold",
+    resultExcerpt: "mt-2 text-sm text-muted-foreground",
+    groupHeader: "evil-label border-b-2 border-border pb-1 text-muted-foreground",
+    tag: "evil-tag",
+    empty: "evil-label text-muted-foreground",
+  };
+  import("@/components/scripts/search").then(({ initSearch }) => initSearch(classes));
+</script>

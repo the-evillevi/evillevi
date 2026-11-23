@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import PostCard from "@/components/blog/PostCard.astro";
 import ProjectCard from "@/components/home/ProjectCard.astro";
 import Accent3D from "@/components/three/Accent3D.astro";
-import SiteLayout from "@/layouts/SiteLayout.astro";
+import GardenLayout from "@/layouts/GardenLayout.astro";
 import { siteConfig } from "@/site.config";
 import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
 
@@ -15,7 +15,7 @@ const featuredProjects = (await getCollection("projects", ({ data }) => data.fea
 );
 ---
 
-<SiteLayout>
+<GardenLayout>
   <section
     class="border-b-4 border-[var(--nb-ink)] bg-[var(--nb-base)] px-4 py-12 md:px-6 md:py-20"
   >
@@ -109,4 +109,4 @@ const featuredProjects = (await getCollection("projects", ({ data }) => data.fea
       </section>
     </aside>
   </section>
-</SiteLayout>
+</GardenLayout>
