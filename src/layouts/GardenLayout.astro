@@ -9,6 +9,7 @@ import mascot from "@/assets/evil-labs/mascot-inline.svg?raw";
 import ThemeScript from "@/components/evil/ThemeScript.astro";
 import ModeControl from "@/components/evil/ModeControl.astro";
 import SearchSheet from "@/components/garden/SearchSheet.astro";
+import Wordmark from "@/components/garden/Wordmark.astro";
 import { siteConfig } from "@/site.config";
 
 interface Props {
@@ -60,9 +61,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
             <span class="symbol-frame size-11 shrink-0 p-1" aria-hidden="true">
               <Fragment set:html={mascot} />
             </span>
-            <span class="text-xl font-extrabold tracking-tight lowercase">
-              {siteConfig.author}
-            </span>
+            <Wordmark class="text-2xl" />
           </a>
           <div class="flex flex-wrap items-center gap-1">
             {
@@ -93,7 +92,7 @@ const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`)
           class="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-end md:justify-between"
         >
           <div>
-            <p class="text-xl font-extrabold lowercase">{siteConfig.author}</p>
+            <p><Wordmark class="text-2xl" /></p>
             <p class="text-muted-foreground max-w-2xl">{siteConfig.description}</p>
           </div>
           <p class="evil-meta">

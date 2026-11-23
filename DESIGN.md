@@ -134,6 +134,11 @@ screenshots, so a leak into them fails.
 
 - One family: **Montserrat** (local woff2, from the design system).
   Lobster is the brand script; it is reserved for the wordmark.
+- **The evillevi wordmark** is "evil" in Montserrat 800 and "levi" in Lobster
+  in the accent color. Always render it with
+  `src/components/garden/Wordmark.astro` (`text` turns every "evillevi" in a
+  title into the wordmark), at 24px or more: the accent on crema only passes
+  contrast as large text.
 - Headings are sentence case, weight 800: `.evil-display` for page titles,
   then the h1/h2/h3 token sizes.
 - Body is weight 500, line-height 1.5; long-form uses `.evil-prose`.
