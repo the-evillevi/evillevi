@@ -1,5 +1,5 @@
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
-import { Edges, useAnimations, useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -11,6 +11,7 @@ import {
   type Rgb,
 } from "@/lib/evil-labs/recolor";
 import { NeoCanvas } from "./NeoCanvas";
+import { INK, InkEdges, placeSlab, slabOffset } from "./spaag";
 import { useEvilTokens, type EvilTokens } from "./useEvilTokens";
 import { useReducedMotion } from "./useReducedMotion";
 
@@ -31,10 +32,6 @@ const TILT_X = 0.32;
 const YAW = -0.6;
 const SWAY = 0.35;
 const HOVER_SCALE = 1.08;
-const EDGE_WIDTH = 2;
-const EDGE_THRESHOLD = 32;
-/* The slab sits this far behind the model so it never cuts through a part. */
-const SHADOW_DEPTH = 4;
 
 type Part = { mesh: THREE.Mesh; vertexGroups: Uint8Array; shadow: THREE.Mesh };
 
@@ -78,7 +75,7 @@ function Friend({
   const { model, parts, fill, shadowMaterial } = useMemo(() => {
     const model = scene.clone(true);
     const fill = new THREE.MeshBasicMaterial({ vertexColors: true });
-    const shadowMaterial = new THREE.MeshBasicMaterial({ color: "#1A1A1A" });
+    const shadowMaterial = new THREE.MeshBasicMaterial({ color: INK });
     let sample: ((u: number, v: number) => Rgb) | null = null;
     const parts: Part[] = [];
     model.traverse((object) => {
@@ -166,18 +163,13 @@ function Friend({
       sway.scale.setScalar(THREE.MathUtils.damp(sway.scale.x, target, 14, delta));
     }
     rootRef.current?.updateMatrixWorld(true);
-    // px to world units: the ortho camera shows VERTICAL_UNITS over the canvas height.
-    const unitsPerPx = viewport.height / state.size.height;
-    const dx = tokens.shadowX * unitsPerPx;
-    const dy = -tokens.shadowY * unitsPerPx;
-    for (const part of parts) {
-      part.shadow.visible = dx !== 0 || dy !== 0;
-      part.mesh.getWorldPosition(world);
-      world.x += dx;
-      world.y += dy;
-      world.z -= SHADOW_DEPTH;
-      part.shadow.position.copy(part.mesh.worldToLocal(world));
-    }
+    const { dx, dy } = slabOffset(
+      tokens.shadowX,
+      tokens.shadowY,
+      viewport.height,
+      state.size.height,
+    );
+    for (const part of parts) placeSlab(part.mesh, part.shadow, dx, dy, world);
   });
 
   return (
@@ -200,7 +192,7 @@ function Friend({
         <Fragment key={part.mesh.uuid}>
           {createPortal(
             <>
-              <Edges threshold={EDGE_THRESHOLD} linewidth={EDGE_WIDTH} color={tokens.border} />
+              <InkEdges color={tokens.border} />
               <primitive object={part.shadow} />
             </>,
             part.mesh,

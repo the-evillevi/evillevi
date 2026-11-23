@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import VoxelPetVisual from "./VoxelPetVisual";
+import SpaagFriend from "@/components/three/SpaagFriend";
+import { SPAAG_FRIENDS } from "@/lib/evil-labs/friends";
 
 interface Props {
   entry: CollectionEntry<"projects">;
@@ -9,6 +10,7 @@ interface Props {
 const { entry } = Astro.props;
 const { title, description, tech, liveUrl, repoUrl } = entry.data;
 const codeUrl = repoUrl ?? null;
+const cat = SPAAG_FRIENDS.find((friend) => friend.id === "cat")!;
 ---
 
 <article class="evil-card flex w-[19rem] shrink-0 snap-start flex-col p-5 sm:w-[23rem]">
@@ -18,7 +20,14 @@ const codeUrl = repoUrl ?? null;
   >
     {
       entry.id === "affogato" ? (
-        <VoxelPetVisual client:visible modelPath="/models/animal-cat.glb" />
+        <div class="h-full" data-evil-theme={cat.family}>
+          <SpaagFriend
+            client:visible
+            modelPath={cat.modelPath}
+            groups={cat.groups}
+            label={`${cat.name}, a voxel friend from Affogato`}
+          />
+        </div>
       ) : entry.id === "evillevi-garden" ? (
         <div class="grid h-full grid-rows-[auto_1fr] gap-2 p-3">
           {/* CSS-only mini mockup of the garden UI */}

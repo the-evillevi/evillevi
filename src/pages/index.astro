@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import PostCard from "@/components/blog/PostCard.astro";
 import TagBadge from "@/components/blog/TagBadge.astro";
 import ProjectCard from "@/components/home/ProjectCard.astro";
-import Accent3D from "@/components/three/Accent3D.astro";
+import SpaagShape from "@/components/three/SpaagShape";
 import GardenLayout from "@/layouts/GardenLayout.astro";
 import { siteConfig } from "@/site.config";
 import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
@@ -31,7 +31,9 @@ const featuredProjects = (await getCollection("projects", ({ data }) => data.fea
         </div>
       </div>
       <div class="grid gap-2">
-        <Accent3D shape="torus" color="peach" size="9rem" class="justify-self-end max-lg:hidden" />
+        <div class="size-40 justify-self-end max-lg:hidden" aria-hidden="true">
+          <SpaagShape client:visible shape="ring" />
+        </div>
         <div class="evil-card grid gap-4 p-5">
           <p class="evil-label text-primary">Garden stats</p>
           <div class="grid grid-cols-3 gap-3">
