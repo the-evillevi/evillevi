@@ -1,0 +1,15 @@
+/* Optional local fonts; no network dependency. */
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat-Variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lobster";
+  src: url("../fonts/Lobster-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
