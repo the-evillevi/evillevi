@@ -4,6 +4,8 @@
 // revamp started. If one fails, the revamp leaked into a frozen page.
 // Canvases (3D scenes) are masked: they animate and are not part of the frozen
 // chrome. Update baselines only on purpose: `pnpm test:legacy --update-snapshots`.
+// The baselines are macOS (darwin) screenshots, so this is a local check, not a
+// CI one; CI runs only the chess project.
 import { test, expect } from "@playwright/test";
 
 const routes = [
