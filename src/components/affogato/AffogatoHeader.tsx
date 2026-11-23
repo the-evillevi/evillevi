@@ -31,14 +31,14 @@ export function AffogatoHeader({ children }: { children: ReactNode }) {
   }
 
   return (
-    <header className="nb-panel flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
+    <header className="evil-card flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
       <div className="flex items-center gap-3">
-        <div className="nb-shadow-sm flex size-11 items-center justify-center border-4 border-[var(--nb-ink)] bg-[var(--nb-peach)] text-[var(--nb-button-text)]">
+        <div className="shadow-card border-border bg-primary text-primary-foreground flex size-11 items-center justify-center border-2">
           <Cat className="size-6" />
         </div>
         <div>
-          <p className="text-xl font-black tracking-normal uppercase">Affogato</p>
-          <p className="text-sm font-bold text-[var(--nb-muted)]">Focus timer with cube friends</p>
+          <p className="text-xl font-extrabold tracking-normal uppercase">Affogato</p>
+          <p className="text-muted-foreground text-sm">Focus timer with cube friends</p>
         </div>
       </div>
 

@@ -4,16 +4,30 @@ interface Props {
 }
 
 const { currentSlug } = Astro.props;
+
+const legend = [
+  { label: "Post", color: "bg-chart-1" },
+  { label: "Doc", color: "bg-chart-2" },
+  { label: "Tag", color: "bg-chart-3" },
+];
 ---
 
-<section class="nb-panel p-4" data-graph-view data-current-slug={currentSlug}>
+<section class="evil-panel p-4" data-graph-view data-current-slug={currentSlug}>
   <div class="mb-3 flex items-center justify-between gap-3">
-    <h2 class="text-sm font-black uppercase">Graph View</h2>
-    <button class="nb-action bg-[var(--nb-teal)] px-2 py-1 text-xs" type="button" data-graph-toggle>
-      Global
-    </button>
+    <h2 class="evil-label">Graph view</h2>
+    <button class="evil-button evil-sm" type="button" data-graph-toggle>Global</button>
   </div>
-  <div class="h-72 border-4 border-[var(--nb-ink)] bg-[var(--nb-base)]" data-graph-canvas></div>
+  <div class="rounded-control border-border bg-surface h-72 border-2" data-graph-canvas></div>
+  <ul class="evil-meta mt-3 flex gap-4" aria-label="Node types">
+    {
+      legend.map((item) => (
+        <li class="flex items-center gap-1.5">
+          <span class:list={["border-border size-3 rounded-full border-2", item.color]} />
+          {item.label}
+        </li>
+      ))
+    }
+  </ul>
 </section>
 
 <script>

@@ -329,6 +329,13 @@
   }
 }
 
+/* @tailwindcss/forms paints a blue ring and border on focus from its base
+ * layer; unlayered, this wins and uses the Evil Labs focus color instead. */
+:where(input, select, textarea):focus {
+  --tw-ring-color: var(--evil-color-focus);
+  border-color: var(--evil-color-border);
+}
+
 .heading-anchor {
   margin-left: 0.5rem;
   color: var(--evil-color-accent) !important;

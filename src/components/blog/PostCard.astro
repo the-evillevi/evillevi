@@ -5,25 +5,32 @@ import TagBadge from "@/components/blog/TagBadge.astro";
 
 interface Props {
   entry: ContentEntry;
+  /** 2 on listing pages (under the page h1), 3 under a section h2. */
+  headingLevel?: 2 | 3;
 }
 
-const { entry } = Astro.props;
+const { entry, headingLevel = 2 } = Astro.props;
+const Heading = headingLevel === 3 ? "h3" : "h2";
 const date = entry.collection === "blog" ? entry.data.publishDate : entry.data.publishDate;
 ---
 
-<article class="nb-card p-5 transition hover:-translate-y-1">
-  <div class="mb-4 flex flex-wrap items-center gap-2 text-xs font-black uppercase">
-    <span
-      class="border-2 border-[var(--nb-ink)] bg-[var(--nb-pink)] px-2 py-1 text-[var(--nb-button-text)]"
-    >
-      {entry.collection}
-    </span>
-    {date && <time datetime={date.toISOString()}>{formatDate(date)}</time>}
+<article class="evil-card p-5 transition hover:-translate-y-1">
+  <div class="mb-4 flex flex-wrap items-center gap-2">
+    <span class="evil-tag evil-primary">{entry.collection}</span>
+    {
+      date && (
+        <time class="evil-meta" datetime={date.toISOString()}>
+          {formatDate(date)}
+        </time>
+      )
+    }
   </div>
-  <h2 class="text-2xl font-black uppercase">
-    <a href={entryHref(entry)}>{entry.data.title}</a>
-  </h2>
-  <p class="mt-3 font-bold text-[var(--nb-muted)]">{entry.data.description}</p>
+  <Heading class="text-2xl">
+    <a class="hover:underline hover:underline-offset-4" href={entryHref(entry)}>
+      {entry.data.title}
+    </a>
+  </Heading>
+  <p class="text-muted-foreground mt-3">{entry.data.description}</p>
   <div class="mt-5 flex flex-wrap gap-2">
     {entry.data.tags.slice(0, 4).map((tag) => <TagBadge {tag} />)}
   </div>

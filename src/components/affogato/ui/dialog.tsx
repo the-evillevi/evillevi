@@ -51,7 +51,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-none border-4 border-[var(--nb-ink)] bg-[var(--nb-base)] p-5 text-sm text-[var(--nb-text)] shadow-[8px_8px_0_0_var(--nb-ink)] duration-100 outline-none sm:max-w-sm",
+          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 rounded-control border-border bg-background text-foreground shadow-card fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 border-2 p-5 text-sm duration-100 outline-none sm:max-w-sm",
           className,
         )}
         {...props}
@@ -88,7 +88,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-5 -mb-5 flex flex-col-reverse gap-2 rounded-none border-t-4 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-4 sm:flex-row sm:justify-end",
+        "rounded-control border-border bg-surface -mx-5 -mb-5 flex flex-col-reverse gap-2 border-t-2 p-4 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}
@@ -107,7 +107,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-base leading-none font-black uppercase", className)}
+      className={cn("text-base leading-none font-extrabold uppercase", className)}
       {...props}
     />
   );
@@ -121,7 +121,7 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "*:[a]:hover:text-foreground text-sm font-bold text-[var(--nb-muted)] *:[a]:underline *:[a]:underline-offset-3",
+        "*:[a]:hover:text-foreground text-muted-foreground text-sm font-bold *:[a]:underline *:[a]:underline-offset-3",
         className,
       )}
       {...props}

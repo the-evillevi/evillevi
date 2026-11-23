@@ -1,5 +1,6 @@
 ---
 import GardenLayout from "@/layouts/GardenLayout.astro";
+import PageHeader from "@/components/garden/PageHeader.astro";
 import { getAllTags, getBlogPosts, getDocsEntries } from "@/utils/content";
 
 const entries = [...(await getBlogPosts()), ...(await getDocsEntries())];
@@ -8,12 +9,16 @@ const tags = getAllTags(entries);
 
 <GardenLayout title="Tags" description="Browse notes by tag">
   <section class="mx-auto max-w-7xl px-4 py-10 md:px-6">
-    <h1 class="mb-8 text-6xl font-black uppercase md:text-8xl">Tags</h1>
+    <PageHeader
+      title="Tags"
+      description="Every topic in the garden, with how many notes carry it."
+    />
     <div class="flex flex-wrap gap-3">
       {
         tags.map(({ tag, count }) => (
-          <a class="nb-action bg-[var(--nb-yellow)] px-4 py-3" href={`/tags/${tag}`}>
-            #{tag} {count}
+          <a class="evil-button" href={`/tags/${tag}`}>
+            #{tag}
+            <span class="text-muted-foreground">{count}</span>
           </a>
         ))
       }

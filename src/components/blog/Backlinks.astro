@@ -9,18 +9,19 @@ interface Props {
 const { backlinks, currentEntryId } = Astro.props;
 ---
 
-<section class="nb-panel p-4">
-  <h2 class="mb-3 text-sm font-black uppercase">Backlinks ({backlinks.length})</h2>
+<section class="evil-panel p-4">
+  <h2 class="evil-label mb-3">Backlinks ({backlinks.length})</h2>
   <ul class="grid gap-3">
     {
       backlinks.map((link) => (
-        <li class="border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] p-3">
-          <a class="font-black uppercase" href={`${link.url}?locate=${currentEntryId}`}>
+        <li class="rounded-control border-border bg-surface border-2 p-3">
+          <a
+            class="font-bold hover:underline hover:underline-offset-4"
+            href={`${link.url}?locate=${currentEntryId}`}
+          >
             {link.title}
           </a>
-          {link.context && (
-            <p class="mt-1 text-sm font-bold text-[var(--nb-muted)]">{link.context}</p>
-          )}
+          {link.context && <p class="text-muted-foreground mt-1 text-sm">{link.context}</p>}
         </li>
       ))
     }

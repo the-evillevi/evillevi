@@ -24,7 +24,7 @@ import { useAffogatoStore } from "@/lib/affogato/store";
 const FriendPreviewCanvas = lazy(() => import("@/components/affogato/FriendPreview"));
 
 function PreviewSlotFallback() {
-  return <div className="size-24 border-2 border-[var(--nb-ink)] bg-[var(--nb-base)]" />;
+  return <div className="border-border bg-background size-24 border-2" />;
 }
 
 export function FriendsPanel() {
@@ -57,17 +57,15 @@ export function FriendsPanel() {
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-4 flex items-center gap-3 border-2 border-[var(--nb-ink)] bg-[var(--nb-surface)] p-2">
+        <div className="border-border bg-surface mt-4 flex items-center gap-3 border-2 p-2">
           <SceneErrorBoundary>
             <Suspense fallback={<PreviewSlotFallback />}>
               <FriendPreviewCanvas modelPath={previewFriend.modelPath} />
             </Suspense>
           </SceneErrorBoundary>
           <div>
-            <p className="font-black uppercase">{previewFriend.name}</p>
-            <p className="text-xs font-bold text-[var(--nb-muted)]">
-              Hover a friend to preview it here.
-            </p>
+            <p className="font-extrabold uppercase">{previewFriend.name}</p>
+            <p className="text-muted-foreground text-xs">Hover a friend to preview it here.</p>
           </div>
         </div>
 
@@ -81,15 +79,15 @@ export function FriendsPanel() {
               <div
                 key={friend.id}
                 className={cn(
-                  "flex items-center justify-between gap-3 rounded-none border-2 border-[var(--nb-ink)] p-3",
-                  selected && "bg-[var(--nb-surface)] shadow-[3px_3px_0_0_var(--nb-ink)]",
+                  "rounded-control border-border flex items-center justify-between gap-3 border-2 p-3",
+                  selected && "bg-surface shadow-card",
                 )}
                 onMouseEnter={() => setPreviewFriendId(friend.id)}
                 onFocus={() => setPreviewFriendId(friend.id)}
               >
                 <div>
-                  <p className="font-black uppercase">{friend.name}</p>
-                  <p className="flex items-center gap-1 text-xs font-bold text-[var(--nb-muted)]">
+                  <p className="font-extrabold uppercase">{friend.name}</p>
+                  <p className="text-muted-foreground flex items-center gap-1 text-xs">
                     {unlocked ? (
                       selected ? (
                         "In the scene"
@@ -106,14 +104,14 @@ export function FriendsPanel() {
                   </p>
                 </div>
                 {selected ? (
-                  <Badge className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-green)] font-black text-[var(--nb-button-text)] uppercase">
+                  <Badge className="rounded-control border-border bg-success text-success-foreground border-2 font-extrabold uppercase">
                     Selected
                   </Badge>
                 ) : unlocked ? (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-base)] font-black text-[var(--nb-text)] uppercase shadow-[2px_2px_0_0_var(--nb-ink)]"
+                    className="rounded-control border-border bg-background text-foreground shadow-card border-2 font-extrabold uppercase"
                     aria-label={`Select ${friend.name}`}
                     onClick={() => onSelectFriend(friend.id)}
                   >
@@ -123,7 +121,7 @@ export function FriendsPanel() {
                   <Button
                     size="sm"
                     disabled={!affordable}
-                    className="rounded-none border-2 border-[var(--nb-ink)] bg-[var(--nb-peach)] font-black text-[var(--nb-button-text)] uppercase shadow-[2px_2px_0_0_var(--nb-ink)]"
+                    className="rounded-control border-border bg-primary text-primary-foreground shadow-card border-2 font-extrabold uppercase"
                     aria-label={`Unlock ${friend.name} for ${friend.cost} beans`}
                     onClick={() => onUnlockFriend(friend.id)}
                   >
