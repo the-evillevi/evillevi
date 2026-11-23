@@ -1,0 +1,11 @@
+---
+/* Evil Labs counterpart of components/layout/DocBlock.astro. */
+const { title } = Astro.props;
+---
+
+<article class="evil-card">
+  <h3 class="mb-3">{title}</h3>
+  <div class="evil-muted space-y-3 leading-7">
+    <slot />
+  </div>
+</article>

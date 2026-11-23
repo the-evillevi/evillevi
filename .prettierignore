@@ -3,3 +3,6 @@ node_modules/
 .pnpm-store/
 .astro/
 coverage/
+# Byte-for-byte copies of the Evil Labs design system (pnpm evil:sync)
+src/styles/evil-labs/
+src/assets/evil-labs/

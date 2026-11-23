@@ -18,7 +18,9 @@
     "test:e2e": "playwright test",
     "test:chess:integration": "node scripts/chess-integration.mjs",
     "chess:sync": "node scripts/sync-chess.mjs",
-    "chess:sync:check": "node scripts/sync-chess.mjs --check"
+    "chess:sync:check": "node scripts/sync-chess.mjs --check",
+    "evil:sync": "node scripts/sync-evil-labs.mjs",
+    "evil:sync:check": "node scripts/sync-evil-labs.mjs --check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",

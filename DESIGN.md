@@ -114,6 +114,11 @@ automatically through CSS custom properties.
 The living reference is the showcase page at `/design-system/neobrutalism`.
 When in doubt, build it there first and compare against neighbors.
 
+The target system is Evil Labs v1, shown on the same components at
+`/design-system/evil-labs` and scoped to that page. It is not applied to the
+rest of the garden yet. Its tokens are copied from the design system folder
+with `pnpm evil:sync`; never edit the copies in `src/styles/evil-labs/`.
+
 ## Colors
 
 - **Always consume tokens via CSS variables** — `var(--nb-peach)`, never raw

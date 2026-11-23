@@ -8,6 +8,7 @@ This directory is the maintained source for verifying what a visitor sees on the
 | Header search                  | [search.md](search.md)                 | `search`               |
 | Projects deck (`/projects`)    | [projects-deck.md](projects-deck.md)   | `projects-deck`        |
 | gg³ chess local practice       | [chess-practice.md](chess-practice.md) | `chess-practice`       |
+| Evil Labs showcase             | [design-system.md](design-system.md)   | `evil-showcase`        |
 
 Not mapped yet: blog posts with wikilinks, KaTeX and mermaid; tags and archives; docs; the Karma, Affogato, AlphaDrop and SC2 bot project pages; RSS. Use the `page` journey for a basic per-route check until they are mapped.
 
