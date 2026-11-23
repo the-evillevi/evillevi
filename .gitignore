@@ -32,3 +32,6 @@ pnpm-debug.log*
 .env.*.local
 playwright-report/
 test-results/
+
+# verify-evillevi skill: dev-server state and evidence
+.verify/
