@@ -59,30 +59,66 @@ async function shot(page, label, fullPage = true) {
   await page.screenshot({ path: file, fullPage });
   return file;
 }
-const theme = (page) => page.evaluate(() => document.documentElement.dataset.theme);
+// The garden's color mode: html[data-evil-mode] (absent = System) and the .dark class kept in step.
+const mode = (page) =>
+  page.evaluate(() => ({
+    mode: document.documentElement.dataset.evilMode ?? "system",
+    dark: document.documentElement.classList.contains("dark"),
+  }));
 
 const journeys = {
-  // Home renders, theme toggle switches light to dark, the choice persists across a reload.
+  // Home renders; the System/Light/Dark control sets the mode, persists it, and the
+  // legacy portfolio pages (Karma) open in the same mode through the nb-theme bridge.
   async "home-theme"(page) {
     const res = await page.goto(`${base}/`);
     record("home responds 200", res.status() === 200, String(res.status()));
-    await page.getByRole("heading", { name: "Featured Projects" }).waitFor();
+    await page.getByRole("heading", { name: "Featured projects" }).waitFor();
     const cards = await page
-      .locator("article", { has: page.getByRole("link", { name: "View Live Demo" }) })
+      .locator("article", { has: page.getByRole("link", { name: "View live demo" }) })
       .count();
     record("home shows project cards", cards > 0, `${cards} cards`);
-    record("starts in light theme", (await theme(page)) === "light", await theme(page));
-    await shot(page, "home-light");
-    await page
+    const start = await mode(page);
+    record(
+      "starts on System, following the OS",
+      start.mode === "system" && start.dark === (opt.theme === "dark"),
+      JSON.stringify(start),
+    );
+    await shot(page, "home-system");
+    const control = page
       .getByRole("navigation", { name: "Primary navigation" })
-      .getByRole("button", { name: "Toggle theme" })
-      .click();
-    record("toggle switches to dark", (await theme(page)) === "dark", await theme(page));
-    const saved = await page.evaluate(() => localStorage.getItem("nb-theme"));
-    record("choice saved to localStorage nb-theme", saved === "dark", String(saved));
+      .getByRole("radiogroup", { name: "Color mode" });
+    await control.getByRole("radio", { name: "Dark" }).click();
+    const dark = await mode(page);
+    record(
+      "Dark sets data-evil-mode and .dark",
+      dark.mode === "dark" && dark.dark,
+      JSON.stringify(dark),
+    );
+    const saved = await page.evaluate(() => [
+      localStorage.getItem("evil-mode"),
+      localStorage.getItem("nb-theme"),
+    ]);
+    record(
+      "choice saved as evil-mode, bridged to nb-theme",
+      saved[0] === "dark" && saved[1] === "dark",
+      saved.join(", "),
+    );
     await page.reload();
-    record("dark theme survives reload", (await theme(page)) === "dark", await theme(page));
+    record("dark survives reload", (await mode(page)).mode === "dark");
     await shot(page, "home-dark-after-reload");
+    await page.goto(`${base}/projects/karma/`);
+    const karma = await page.evaluate(() => document.documentElement.dataset.theme);
+    record("the Karma POC opens in the same mode", karma === "dark", String(karma));
+    await page.goto(`${base}/`);
+    await control.getByRole("radio", { name: "Light" }).click();
+    const light = await mode(page);
+    record(
+      "Light sets data-evil-mode",
+      light.mode === "light" && !light.dark,
+      JSON.stringify(light),
+    );
+    await control.getByRole("radio", { name: "System" }).click();
+    record("System removes data-evil-mode", (await mode(page)).mode === "system");
   },
 
   // Header search opens, loads the content index, finds a post, and the result navigates.

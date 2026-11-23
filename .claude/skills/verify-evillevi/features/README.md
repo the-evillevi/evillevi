@@ -2,13 +2,13 @@
 
 This directory is the maintained source for verifying what a visitor sees on the evillevi site. Read this index before driving the site, then use the matching feature file as the recipe.
 
-| Feature                        | File                                   | Journey in `drive.mjs` |
-| ------------------------------ | -------------------------------------- | ---------------------- |
-| Home page and light/dark theme | [home-theme.md](home-theme.md)         | `home-theme`           |
-| Header search                  | [search.md](search.md)                 | `search`               |
-| Projects deck (`/projects`)    | [projects-deck.md](projects-deck.md)   | `projects-deck`        |
-| gg³ chess local practice       | [chess-practice.md](chess-practice.md) | `chess-practice`       |
-| Evil Labs showcase             | [design-system.md](design-system.md)   | `evil-showcase`        |
+| Feature                     | File                                   | Journey in `drive.mjs` |
+| --------------------------- | -------------------------------------- | ---------------------- |
+| Home page and color mode    | [home-theme.md](home-theme.md)         | `home-theme`           |
+| Header search               | [search.md](search.md)                 | `search`               |
+| Projects deck (`/projects`) | [projects-deck.md](projects-deck.md)   | `projects-deck`        |
+| gg³ chess local practice    | [chess-practice.md](chess-practice.md) | `chess-practice`       |
+| Evil Labs showcase          | [design-system.md](design-system.md)   | `evil-showcase`        |
 
 Not mapped yet: blog posts with wikilinks, KaTeX and mermaid; tags and archives; docs; the Karma, Affogato, AlphaDrop and SC2 bot project pages; RSS. Use the `page` journey for a basic per-route check until they are mapped.
 
@@ -21,7 +21,7 @@ Not mapped yet: blog posts with wikilinks, KaTeX and mermaid; tags and archives;
 
 ## Driving conventions
 
-- Prefer ARIA roles and accessible names (`Toggle theme`, `Open search`, `Primary navigation`) over CSS selectors. Use `data-*` hooks (`data-search-results`, `data-theme-toggle`) where no accessible name exists.
+- Prefer ARIA roles and accessible names (`Color mode`, `Open search`, `Primary navigation`) over CSS selectors. Use `data-*` hooks (`data-search-results`, `data-evil-mode-control`) where no accessible name exists.
 - Act the way a visitor does: click, press keys, type. Never call page functions or set state with `evaluate`, except to read state.
 - Wait for elements or responses, not fixed sleeps. The fixed waits in `projects-deck` cover reveal.js slide transitions, which raise no event Playwright can await.
 

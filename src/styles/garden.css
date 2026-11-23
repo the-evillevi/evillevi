@@ -393,28 +393,3 @@ a.wikilink-broken {
     transform: none;
   }
 }
-
-/*
- * TEMPORARY (revamp phase 2-5): --nb-* aliases so garden markup not yet
- * swept still renders on Evil Labs colors. Deleted once no garden file reads
- * --nb-* (phase 6 grep gate).
- */
-:root,
-[data-evil-theme] {
-  --nb-base: var(--evil-color-background);
-  --nb-surface: var(--evil-color-surface);
-  --nb-text: var(--evil-color-text);
-  --nb-muted: var(--evil-color-text-muted);
-  --nb-ink: var(--evil-color-border);
-  --nb-button-text: var(--evil-color-on-accent);
-  --nb-title-shadow: var(--evil-color-border);
-  --nb-peach: var(--evil-color-accent);
-  --nb-pink: var(--evil-color-accent);
-  --nb-yellow: var(--evil-color-accent);
-  --nb-teal: var(--evil-color-accent);
-  --nb-blue: var(--evil-color-accent);
-  --nb-lavender: var(--evil-color-accent);
-  --nb-green: var(--evil-color-success);
-  --nb-red: var(--evil-color-error);
-  --nb-ease: cubic-bezier(0.4, 0, 0.2, 1);
-}

@@ -8,17 +8,12 @@
  *   shadcn's own dark: utilities.
  * - Bridge to the legacy portfolio POCs (Karma, gg³ chess, neobrutalism):
  *   writes the resolved mode to their `nb-theme` key, so opening one of them
- *   after the garden shows the same mode. `legacyTheme` also mirrors it to
- *   html[data-theme] for garden code that still reads that attribute.
+ *   after the garden shows the same mode.
  * - Exposes window.__evilSetMode(mode) for ModeControl.astro.
  */
-interface Props {
-  legacyTheme?: boolean;
-}
-const { legacyTheme = false } = Astro.props;
 ---
 
-<script is:inline define:vars={{ legacyTheme }}>
+<script is:inline>
   (() => {
     const root = document.documentElement;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -30,7 +25,6 @@ const { legacyTheme = false } = Astro.props;
     const sync = () => {
       const mode = root.dataset.evilMode ?? (media.matches ? "dark" : "light");
       root.classList.toggle("dark", mode === "dark");
-      if (legacyTheme) root.dataset.theme = mode;
       store("nb-theme", mode);
     };
     const apply = (mode) => {

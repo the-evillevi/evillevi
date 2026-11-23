@@ -1,11 +1,11 @@
 # Evil Labs showcase
 
-`/design-system/evil-labs/` shows the Evil Labs v1 visual system on the garden's own Starwind and shadcn components, plus three Spaag-style voxel friends (cat, bee, fox). Everything Evil Labs is scoped to this page. The rest of the garden, including `/design-system/neobrutalism`, still uses the Catppuccin `--nb-*` system.
+`/design-system/evil-labs/` shows the Evil Labs v1 visual system on the garden's own Starwind and shadcn components, plus three Spaag-style voxel friends (cat, bee, fox). The page shows the override approach: Starwind restyled from a page-scoped stylesheet. The rest of the garden is built on Evil Labs directly (`src/styles/garden.css`, `GardenLayout`), and `/design-system/neobrutalism` keeps the legacy Catppuccin `--nb-*` system.
 
 ## Sub-features
 
 - `showcase-render` shows 16 component cards (`#components article.evil-card[id]`) in Montserrat.
-- `mode-control` is the navbar radiogroup "Color mode" with System, Light and Dark. System removes `html[data-evil-mode]` and follows the OS. Light and Dark set it. The page script keeps the `.dark` class in step for Starwind's own `dark:` utilities.
+- `mode-control` is the shared `components/evil/ModeControl.astro` radiogroup "Color mode" with System, Light and Dark, driven by `ThemeScript.astro`. System removes `html[data-evil-mode]` and follows the OS. Light and Dark set it, and `.dark` follows.
 - `mode-persist` stores the choice as `evil-mode` in localStorage. A separate key, so it never touches the garden's `nb-theme`.
 - `family-select` is the navbar "Color family" select. It sets `html[data-evil-theme]` and stores `evil-family`. Not automated.
 - `overlays`: the Starwind dialog and sheet, and the React dialog and sonner toasts, wear the card frame. The journey checks the Starwind dialog and sheet only.
@@ -14,7 +14,7 @@
 
 ## How to get to it (user POV)
 
-- Open `/design-system/evil-labs/`. Nothing links to it yet.
+- Open `/design-system/evil-labs/`. The garden footer links to it ("Visual system: Evil Labs").
 - Use the Color mode control and the family select at the right of the sticky header.
 - Scroll to "Voxel friends", hover an animal (it waves), and change its family select.
 
