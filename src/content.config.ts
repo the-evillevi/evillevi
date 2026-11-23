@@ -1,5 +1,8 @@
 import { glob } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
+import { EVIL_FAMILIES, type EvilFamily } from "@/lib/evil-labs/friends";
+
+const familyIds = EVIL_FAMILIES.map((family) => family.id) as [EvilFamily, ...EvilFamily[]];
 
 function normalizeTags(tags: string[]) {
   return [...new Set(tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean))];
@@ -12,7 +15,8 @@ const baseSchema = ({ image }: { image: () => any }) =>
     publishDate: z.coerce.date().optional(),
     updatedDate: z.coerce.date().optional(),
     heroImage: image().optional(),
-    accentColor: z.string().optional(),
+    /** Evil Labs color family for the entry page (data-evil-theme). Defaults to principal. */
+    family: z.enum(familyIds).optional(),
     tags: z.array(z.string()).default([]).transform(normalizeTags),
     draft: z.boolean().default(false),
     comment: z.boolean().default(true),
